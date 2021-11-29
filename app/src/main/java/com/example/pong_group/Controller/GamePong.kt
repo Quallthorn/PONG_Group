@@ -14,9 +14,10 @@ import com.example.pong_group.databinding.ActivityGamePongBinding
 
 class GamePong : AppCompatActivity(), SurfaceHolder.Callback, View.OnTouchListener {
 
-    var circleX: Float = 100f
-    var circleY: Float = 100f
+    var circleX: Float = 1f
+    var circleY: Float = 250f
     var ballPaint: Paint = Paint()
+    var paddleX: Float = 1f
 
     private lateinit var binder: ActivityGamePongBinding
 
@@ -26,14 +27,17 @@ class GamePong : AppCompatActivity(), SurfaceHolder.Callback, View.OnTouchListen
         binder = ActivityGamePongBinding.inflate(layoutInflater)
         setContentView(binder.root)
 
+        binder.surfaceViewPong.setOnTouchListener(this)
+
         binder.surfaceViewPong.holder.addCallback(this)
     }
 
     private fun drawBall() {
         val canvas: Canvas? = binder.surfaceViewPong.holder.lockCanvas()
         val surfaceBackground = Paint()
-        surfaceBackground.color = Color.RED
+        surfaceBackground.color = Color.BLACK
 
+        //Background
         canvas?.drawRect(
             0f,
             0f,
@@ -42,25 +46,38 @@ class GamePong : AppCompatActivity(), SurfaceHolder.Callback, View.OnTouchListen
             surfaceBackground
         )
 
+        //Paddle
+        canvas?.drawRect(
+            paddleX - 100f,
+            binder.surfaceViewPong.height.toFloat() - 250f,
+            paddleX + 100f,
+            binder.surfaceViewPong.height.toFloat() - 200f,
+            ballPaint
+        )
+
         ballPaint.color = Color.WHITE
-        canvas?.drawCircle(circleX, circleY, 100f, ballPaint)
+//        canvas?.drawCircle(circleX, circleY, 50f, ballPaint)
         binder.surfaceViewPong.holder.unlockCanvasAndPost(canvas)
 
         binder.surfaceViewPong.setZOrderOnTop(true)
     }
 
+    private fun moveBall(){
+
+    }
+
     override fun onTouch(p0: View?, p1: MotionEvent?): Boolean {
-        println(".........In")
         if (p0 is SurfaceView) {
             val x = p1?.x
-            val y = p1?.y
+            //val y = p1?.y
 
             if (x != null) {
-                this.circleX = x
+                //this.circleX = x
+                this.paddleX = x
             }
-            if (y != null) {
-                this.circleY = y
-            }
+//            if (y != null) {
+//                this.circleY = y
+//            }
 
             drawBall()
 
