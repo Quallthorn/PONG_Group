@@ -8,4 +8,16 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="background">#010513</color>
+
+    <color name="pink">#d35886</color>
+    <color name="red">#a22b14</color>
+    <color name="orange">#b24f00</color>
+    <color name="pale_orange">#EB723A</color>
+    <color name="yellow">#d1b000</color>
+    <color name="green">#2c8100</color>
+    <color name="blue">#1765b1</color>
+    <color name="purple">#7844d5</color>
+    <color name="light_blue">#03c1bf</color>
+
+    <color name="space">#0e0d2d</color>
 </resources>
