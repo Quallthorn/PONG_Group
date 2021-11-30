@@ -5,19 +5,27 @@ import android.graphics.Color
 import android.graphics.Paint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.MotionEvent
-import android.view.SurfaceHolder
-import android.view.SurfaceView
-import android.view.View
+import android.view.*
 import com.example.pong_group.R
 import com.example.pong_group.databinding.ActivityGamePongBinding
 
 class GamePong : AppCompatActivity(), SurfaceHolder.Callback, View.OnTouchListener {
 
-    var circleX: Float = 1f
-    var circleY: Float = 250f
-    var ballPaint: Paint = Paint()
-    var paddleX: Float = 1f
+    private var ballPosX: Float = 100f
+    private var ballPosY: Float = 5f
+    private var ballRadius: Float = 5f
+    private var paddleX: Float = 1f
+    private var paddleY: Float = 250f
+    private var paddleH: Float = 10f
+    private var paddleW: Float = 80f
+
+    private val surfaceBackground = Paint()
+    private var ballPaint: Paint = Paint()
+
+    private var move: Boolean = false
+    private var ballSpeed: Float = 20f
+    private var ballDirX: Int = 1
+    private var ballDirY: Int = 1
 
     private lateinit var binder: ActivityGamePongBinding
 
@@ -32,10 +40,21 @@ class GamePong : AppCompatActivity(), SurfaceHolder.Callback, View.OnTouchListen
         binder.surfaceViewPong.holder.addCallback(this)
     }
 
+    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+        return when (keyCode) {
+            KeyEvent.KEYCODE_O -> {
+                move = true
+                fixedUpdate()
+                true
+            }
+            else -> super.onKeyUp(keyCode, event)
+        }
+    }
+
     private fun drawBall() {
         val canvas: Canvas? = binder.surfaceViewPong.holder.lockCanvas()
-        val surfaceBackground = Paint()
         surfaceBackground.color = Color.BLACK
+        ballPaint.color = Color.WHITE
 
         //Background
         canvas?.drawRect(
@@ -48,42 +67,88 @@ class GamePong : AppCompatActivity(), SurfaceHolder.Callback, View.OnTouchListen
 
         //Paddle
         canvas?.drawRect(
-            paddleX - 100f,
-            binder.surfaceViewPong.height.toFloat() - 250f,
-            paddleX + 100f,
-            binder.surfaceViewPong.height.toFloat() - 200f,
+            paddleX - paddleW,
+            binder.surfaceViewPong.height.toFloat() - paddleY,
+            paddleX + paddleW,
+            binder.surfaceViewPong.height.toFloat() - paddleY + paddleH,
             ballPaint
         )
 
-        ballPaint.color = Color.WHITE
-//        canvas?.drawCircle(circleX, circleY, 50f, ballPaint)
-        binder.surfaceViewPong.holder.unlockCanvasAndPost(canvas)
+        //Ball
+        canvas?.drawCircle(ballPosX, ballPosY, 5f, ballPaint)
 
+        binder.surfaceViewPong.holder.unlockCanvasAndPost(canvas)
         binder.surfaceViewPong.setZOrderOnTop(true)
     }
 
-    private fun moveBall(){
+    private fun moveBall() {
+        val canvas: Canvas? = binder.surfaceViewPong.holder.lockCanvas()
+        ballPaint.color = Color.WHITE
 
+        canvas?.drawCircle(ballPosX, ballPosY, ballRadius, ballPaint)
+
+        binder.surfaceViewPong.holder.unlockCanvasAndPost(canvas)
+        binder.surfaceViewPong.setZOrderOnTop(true)
     }
 
     override fun onTouch(p0: View?, p1: MotionEvent?): Boolean {
         if (p0 is SurfaceView) {
             val x = p1?.x
-            //val y = p1?.y
 
             if (x != null) {
-                //this.circleX = x
                 this.paddleX = x
             }
-//            if (y != null) {
-//                this.circleY = y
-//            }
+
+            if (this.ballPosX >= binder.surfaceViewPong.width.toFloat() - ballRadius)
+                this.ballDirX = -1
+            else if (this.ballPosX <= ballRadius)
+                this.ballDirX = 1
+
+            if (this.ballPosY >= binder.surfaceViewPong.height.toFloat() - ballRadius)
+                ballDirY = -1
+            else if (this.ballPosY <= ballRadius)
+                ballDirY = 1
+
+            //Portal?
+//            if (this.ballPosY >= binder.surfaceViewPong.height.toFloat() - paddleY - ballRadius
+//                && this.ballPosY <= binder.surfaceViewPong.height.toFloat() - paddleY + paddleH
+//                && this.ballPosX <= this.paddleX - paddleW
+//                || this.ballPosY >= binder.surfaceViewPong.height.toFloat() - paddleY - ballRadius
+//                && this.ballPosY <= binder.surfaceViewPong.height.toFloat() - paddleY + paddleH
+//                && this.ballPosX >= this.paddleX + paddleW)
+//                ballDirY = ballDirY * -1
+
+            if (this.ballPosY >= binder.surfaceViewPong.height.toFloat() - paddleY - ballRadius
+                && this.ballPosY <= binder.surfaceViewPong.height.toFloat() - paddleY + paddleH
+                && this.ballPosX >= this.paddleX - paddleW
+                && this.ballPosX <= this.paddleX + paddleW)
+                ballDirY = ballDirY * -1
+
+            this.ballPosX += ballDirX * ballSpeed
+            this.ballPosY += ballDirY * ballSpeed
 
             drawBall()
-
             return true
         } else {
             return false
+        }
+    }
+
+    private fun fixedUpdate() {
+        while (move) {
+            if (ballPosX >= binder.surfaceViewPong.width.toFloat() - ballRadius)
+                ballDirX = -1
+            else if (ballPosX <= ballRadius)
+                ballDirX = 1
+
+            if (ballPosY >= binder.surfaceViewPong.height.toFloat() - ballRadius)
+                ballDirY = -1
+            else if (ballPosY <= ballRadius)
+                ballDirY = 1
+
+            ballPosX += ballDirX * ballSpeed
+            ballPosY += ballDirY * ballSpeed
+            drawBall()
         }
     }
 
