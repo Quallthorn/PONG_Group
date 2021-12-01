@@ -3,40 +3,47 @@ package com.example.pong_group.Model
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.os.Binder
-import android.view.SurfaceView
 
-class Ball(context: Context) {
-    var posX = 0f
-    var posY = 0f
+class Ball(context: Context, width: Float, height: Float) {
+    var posX = 50f
+    var posY = 50f
     var paint = Paint()
     var size = 5f
     var speed = 10f
 
-    var dirX = 1
-    var dirY = 1
+    var dirX = 1f
+    var dirY = 1f
 
-    fun update(surface: SurfaceView){
+    var screenWidth = width
+    var screenHeight = height
 
-        if (posX >= surface.width.toFloat() - size)
-            dirX = -1
+    init{
+        posX = screenWidth * 0.5f
+        posY = screenHeight * 0.5f
+    }
+
+
+
+    fun update(pPosX: Float, pPosY: Float, pWidth: Float, pHeight: Float){
+        if (posX >= screenWidth - size)
+            dirX = dirX * -1f
         else if (posX <= size)
-            dirX = 1
+            dirX = dirX * -1f
 
-        if (posY >= surface.height.toFloat() - size)
-            dirY = -1
+        if (posY >= screenHeight - size)
+            dirY = dirY * -1f
         else if (posY <= size)
-            dirY = 1
+            dirY = dirY * -1f
 
-//        if (posY >= surface.height.toFloat() - paddleY - size
-//            && posY <= surface.height.toFloat() - paddleY + paddleH
-//            && posX >= this.paddleX - paddleW
-//            && posX <= this.paddleX + paddleW
-//        )
-//            dirY = dirY * -1
+        if (posY >= screenHeight - pPosY - size
+            && posY <= screenHeight - pPosY + pHeight
+            && posX >= pPosX - pWidth
+            && posX <= pPosX + pWidth
+        )
+            dirY = dirY * -1
 
-        posX += speed
-        posY += speed
+        posX += speed * dirX
+        posY += speed * dirY
     }
 
     fun draw (canvas: Canvas?){
