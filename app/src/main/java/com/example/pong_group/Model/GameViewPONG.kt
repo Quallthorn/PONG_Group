@@ -15,8 +15,9 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     private var running = false
     lateinit var canvas: Canvas
     private lateinit var player: Paddle
-    private lateinit var ball1: Ball
+    //private lateinit var ball1: Ball
     private var ballA = mutableListOf<Ball>()
+    val ballCount = 6
     var mHolder: SurfaceHolder? = holder
     var screenWidth: Float = 0f
     var screenHeight: Float = 0f
@@ -28,18 +29,18 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
 
     fun setup() {
         player = Paddle(this.context, screenWidth, screenHeight)
-        ball1 = Ball(this.context, screenWidth, screenHeight)
-        for (i in 0 until 6) {
-            val newBall = Ball(this.context, screenWidth, screenHeight)
+        //ball1 = Ball(this.context, screenWidth, screenHeight)
+        for (i in 0 until ballCount) {
+            var newBall = Ball(this.context, screenWidth, screenHeight)
             newBall.dirX = ((0..100).random())/100f
             newBall.dirY = ((0..100).random())/100f
             newBall.paint.color = context.resources.getColor(R.color.white)
             ballA.add(newBall)
+            Log.d("TAG", "number: $i")
         }
+        Log.d("TAG", "$ballA")
         player.paint.color = context.resources.getColor(R.color.white)
-        ball1.paint.color = context.resources.getColor(R.color.white)
-        ball1.dirX = 0.25f
-        ball1.dirY = -0.67f
+        //ball1.paint.color = context.resources.getColor(R.color.white)
     }
 
     fun start() {
@@ -58,9 +59,9 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     }
 
     fun update() {
-        ball1.update(player.posX, player.posY, player.width, player.height)
-        for (i in 0 until 6) {
-            ballA[i].update(player.posX, player.posY, player.width, player.height)
+        //ball1.update(player.posX, player.posY, player.width, player.height)
+        ballA.forEach{
+            it.update(player.posX, player.posY, player.width, player.height)
         }
     }
 
@@ -68,9 +69,9 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         canvas = mHolder!!.lockCanvas()
         canvas.drawColor(Color.BLACK)
         player.draw(canvas)
-        ball1.draw(canvas)
-        for (i in 0 until 6) {
-            ballA[i].draw(canvas)
+        //ball1.draw(canvas)
+        ballA.forEach{
+            it.draw(canvas)
         }
         mHolder!!.unlockCanvasAndPost(canvas)
     }

@@ -3,7 +3,6 @@ package com.example.pong_group.Model
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.view.SurfaceView
 
 class Paddle(context: Context, width: Float, height: Float) {
 
