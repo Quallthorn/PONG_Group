@@ -24,23 +24,18 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
 
     init {
         mHolder?.addCallback(this)
-        setup()
+        player = Paddle(this.context, screenWidth, screenHeight)
+
     }
 
     fun setup() {
-        player = Paddle(this.context, screenWidth, screenHeight)
-        //ball1 = Ball(this.context, screenWidth, screenHeight)
         for (i in 0 until ballCount) {
             var newBall = Ball(this.context, screenWidth, screenHeight)
             newBall.dirX = ((0..100).random())/100f
             newBall.dirY = ((0..100).random())/100f
             newBall.paint.color = context.resources.getColor(R.color.white)
             ballA.add(newBall)
-            Log.d("TAG", "number: $i")
         }
-        Log.d("TAG", "$ballA")
-        player.paint.color = context.resources.getColor(R.color.white)
-        //ball1.paint.color = context.resources.getColor(R.color.white)
     }
 
     fun start() {
@@ -84,6 +79,8 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         screenWidth = p2.toFloat()
         screenHeight = p3.toFloat()
         setup()
+        player.screenWidth = screenWidth
+        player.screenHeight = screenHeight
     }
 
     override fun surfaceDestroyed(p0: SurfaceHolder) {

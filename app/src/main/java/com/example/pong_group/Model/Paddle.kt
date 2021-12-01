@@ -3,6 +3,7 @@ package com.example.pong_group.Model
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import com.example.pong_group.R
 
 class Paddle(context: Context, width: Float, height: Float) {
 
@@ -14,6 +15,10 @@ class Paddle(context: Context, width: Float, height: Float) {
 
     var screenWidth = width
     var screenHeight = height
+
+    init {
+        this.paint.color = context.resources.getColor(R.color.white)
+    }
 
     fun update(){
 
