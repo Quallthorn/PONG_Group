@@ -3,10 +3,13 @@ package com.example.pong_group.Model
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Color.WHITE
+import android.graphics.Paint
 import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import com.example.pong_group.R
 
 
 class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callback, Runnable {
@@ -22,6 +25,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     val colorArray = context.resources.obtainTypedArray(com.example.pong_group.R.array.breakout)
     val colors = IntArray(colorArray.length())
     val colorCount = colorArray.length()
+    var rngColor = Paint()
     val ballCount = 1
     var mHolder: SurfaceHolder? = holder
     var screenWidth: Float = 0f
@@ -33,6 +37,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         player.posY = playerY
         CPU = Paddle(this.context, screenWidth,screenHeight)
         CPU.posY = screenHeight - playerY
+        rngColor.color = colors[(0 until colorCount).random()]
     }
 
     fun setup() {
@@ -96,6 +101,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     fun draw() {
         canvas = mHolder!!.lockCanvas()
         canvas.drawColor(Color.BLACK)
+        drawLine()
         player.draw(canvas)
         CPU.draw(canvas)
         //ball1.draw(canvas)
@@ -133,5 +139,25 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
             player.posX = event.x
         }
         return true
+    }
+
+    fun drawLine(){
+        var lineColor = Paint()
+        lineColor.color = context.resources.getColor(R.color.white)
+        var lineX = 0f
+        val amount = 20
+        val lineSpacing = 30
+        val lineW = (screenWidth + lineSpacing) / amount - lineSpacing
+        val thickness = 5f
+        for (i in 0 until amount) {
+            canvas?.drawRect(
+                lineX,
+                screenHeight/2 - thickness,
+                lineX + lineW,
+                screenHeight/2 + thickness,
+                lineColor
+            )
+            lineX += (lineW + lineSpacing)
+        }
     }
 }

@@ -19,6 +19,7 @@ class Ball(context: Context, width: Float, height: Float) {
 
     var draw = true
     val anglesCount = 10 // max 10 possibly 10.9 but not recommended
+    val maxSpeed = 40f
 
     init {
         posX = screenWidth * 0.5f
@@ -119,16 +120,17 @@ class Ball(context: Context, width: Float, height: Float) {
                 dirX = (anglesCount - i) / 10f
             }
         }
-        dirY = -1 * dirY / Math.abs(dirY) * Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
+        //dirY = -1 * dirY / Math.abs(dirY) * Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
+        dirY = -Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
 
-        if (speed < 50) {
+        if (speed < maxSpeed) {
             if (Math.abs(pPosX - pOldX) > screenWidth / 54)
                 speed += 5f
             else
                 speed += 0.1f
 
-            if (speed < 50)
-                speed == 50f
+            if (speed < maxSpeed)
+                speed == maxSpeed
         }
     }
 
@@ -140,9 +142,10 @@ class Ball(context: Context, width: Float, height: Float) {
                 dirX = (anglesCount - i) / 10f
             }
         }
-        dirY = -1 * dirY / Math.abs(dirY) * Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
+        //dirY = -1 * dirY / Math.abs(dirY) * Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
+        dirY = Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
 
-        if (speed < 50) {
+        if (speed < maxSpeed) {
             speed += 0.1f
         }
     }
