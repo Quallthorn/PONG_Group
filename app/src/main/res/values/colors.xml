@@ -16,8 +16,20 @@
     <color name="yellow">#d1b000</color>
     <color name="green">#2c8100</color>
     <color name="blue">#1765b1</color>
-    <color name="purple">#7844d5</color>
+    <color name="violet">#7844d5</color>
     <color name="light_blue">#03c1bf</color>
 
     <color name="space">#0e0d2d</color>
+
+    <array name="breakout">
+        <item>@color/pink</item>
+        <item>@color/red</item>
+        <item>@color/orange</item>
+        <item>@color/pale_orange</item>
+        <item>@color/yellow</item>
+        <item>@color/green</item>
+        <item>@color/blue</item>
+        <item>@color/violet</item>
+        <item>@color/light_blue</item>
+    </array>
 </resources>

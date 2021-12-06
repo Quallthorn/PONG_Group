@@ -23,15 +23,15 @@ class GamePong : AppCompatActivity(), SurfaceHolder.Callback, View.OnTouchListen
 
     private var gridPosX: Float = 0f
     private var gridPosY: Float = 0f
-    private var gridStartX: Float = 10f
+    private var gridStartX: Float = 0f
     private var gridStartY: Float = 120f
-    private var gridSpacingX: Float = 15f
-    private var gridSpacingY: Float = 25f
+    private var gridSpacingX: Float = 0f
+    private var gridSpacingY: Float = 0f
     private var boxH: Float = 50f
     private var boxW: Float = 0f
     private var boxCountX: Int = 10
     private var boxCountY: Int = 6
-    private var randomChance: Int = 0
+    private var randomChance: Int = 1
 
     private val surfaceBackground = Paint()
     private var ballPaint: Paint = Paint()

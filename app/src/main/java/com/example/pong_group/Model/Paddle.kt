@@ -16,12 +16,22 @@ class Paddle(context: Context, width: Float, height: Float) {
     var screenWidth = width
     var screenHeight = height
 
+    var posXOld: Float = 0f
+    val frameCheck = 2
+    var currentFrame = 0
+    val updateOldPos = true
+
     init {
         this.paint.color = context.resources.getColor(R.color.white)
     }
 
     fun update(){
-
+        if (currentFrame == frameCheck){
+            posXOld = posX
+            currentFrame = 0
+        }
+        else
+            currentFrame++
     }
 
     fun draw (canvas: Canvas?){
