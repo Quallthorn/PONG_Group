@@ -20,10 +20,12 @@ class Ball(context: Context, width: Float, height: Float) {
     var screenWidth = width
     var screenHeight = height
 
-    var draw = true
     val anglesCount = 10 // max 10 possibly 10.9 but not recommended
     val pongSoung = MediaPlayer.create(context, R.raw.pong_sound)
-    val maxSpeed = 40f
+    val maxSpeed = 30f
+
+    var changeColor = false
+    var start = false
 
     init {
         posX = screenWidth * 0.5f
@@ -39,20 +41,42 @@ class Ball(context: Context, width: Float, height: Float) {
         pOldX: Float,
         CPUX: Float
     ) {
-        if (draw) {
-            if (posX >= screenWidth - size)
-            {
+        if (start){
+            if (posX >= screenWidth - size) {
                 playSound()
-                dirX = Math.abs(dirX) * -1
+                if (dirY > 0){
+                    dirY += ((0..2).random())/10f
+                    if (dirY > 1 || dirY < 0)
+                        dirY = 0.5f
+                }
+                else{
+                    dirY -= ((0..2).random())/10f
+                    if (dirY < -1 || dirY > 0)
+                        dirY = -0.5f
+                }
+                dirX = -Math.sqrt((1 - dirY * dirY).toDouble()).toFloat()
+            } else if (posX <= size) {
+                playSound()
+                if (dirY > 0){
+                    dirY += ((0..2).random())/10f
+                    if (dirY > 1 || dirY < 0)
+                        dirY = 0.5f
+                }
+                else{
+                    dirY -= ((0..2).random())/10f
+                    if (dirY < -1 || dirY > 0)
+                        dirY = -0.5f
+                }
+                dirX = Math.sqrt((1 - dirY * dirY).toDouble()).toFloat()
             }
-            else if (posX <= size)
-                dirX = Math.abs(dirX)
             if (posY >= screenHeight - size) {
-                dirY = Math.abs(dirY) * -1
                 playSound()
+                dirY = Math.abs(dirY) * -1
                 //draw = false
-            } else if (posY <= size)
+            } else if (posY <= size) {
+                playSound()
                 dirY = Math.abs(dirY)
+            }
 
             if (posY >= screenHeight - pPosY - size
                 && posY <= screenHeight - pPosY + speed
@@ -110,14 +134,7 @@ class Ball(context: Context, width: Float, height: Float) {
     }
 
     fun draw(canvas: Canvas?) {
-        if (draw)
-            canvas?.drawCircle(posX, posY, size, paint)
-    }
-
-    fun setSize(size: Float) {
-        this.posX += size - this.size
-        this.posY += size - this.size
-        this.size = size
+        canvas?.drawCircle(posX, posY, size, paint)
     }
 
     fun bounceP1(pPosX: Float, pWidth: Float, pOldX: Float) {
@@ -128,8 +145,8 @@ class Ball(context: Context, width: Float, height: Float) {
                 dirX = (anglesCount - i) / 10f
             }
         }
-        dirY = -1 * dirY / Math.abs(dirY) * Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
         playSound()
+        changeColor()
         //dirY = -1 * dirY / Math.abs(dirY) * Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
         dirY = -Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
 
@@ -152,8 +169,8 @@ class Ball(context: Context, width: Float, height: Float) {
                 dirX = (anglesCount - i) / 10f
             }
         }
-        dirY = -1 * dirY / Math.abs(dirY) * Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
         playSound()
+        changeColor()
         //dirY = -1 * dirY / Math.abs(dirY) * Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
         dirY = Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
 
@@ -162,7 +179,16 @@ class Ball(context: Context, width: Float, height: Float) {
         }
     }
 
-    fun playSound(){
+    fun centerBall() {
+        posX = screenWidth * 0.5f
+        posY = screenHeight * 0.5f
+    }
+
+    fun playSound() {
         pongSoung.start()
+    }
+
+    fun changeColor() {
+        changeColor = true
     }
 }

@@ -3,7 +3,6 @@ package com.example.pong_group.Controller
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.widget.ImageButton
 import com.example.pong_group.R
 
@@ -22,11 +21,11 @@ class MainActivity : AppCompatActivity() {
         highscore = findViewById(R.id.high_score)
 
         pong.setOnClickListener{
-            Intent(this, GamePong::class.java).apply { startActivity(this) }
+            Intent(this, GameBreakout::class.java).apply { startActivity(this) }
         }
 
         breakout.setOnClickListener{
-            Intent(this, GameBreakout::class.java).apply { startActivity(this) }
+            Intent(this, GamePong::class.java).apply { startActivity(this) }
         }
 
         highscore.setOnClickListener{

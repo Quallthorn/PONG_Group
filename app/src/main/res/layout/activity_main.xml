@@ -15,7 +15,7 @@
         app:cardCornerRadius="20dp">
 
         <ImageButton
-            android:id="@+id/game_1"
+            android:id="@+id/game_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/button_pong"/>
@@ -29,7 +29,7 @@
         app:cardCornerRadius="20dp">
 
         <ImageButton
-            android:id="@+id/game_2"
+            android:id="@+id/game_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/button_breakout"/>

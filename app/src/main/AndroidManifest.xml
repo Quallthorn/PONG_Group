@@ -13,10 +13,10 @@
             android:name=".Controller.HighScore"
             android:exported="false" />
         <activity
-            android:name=".Controller.GameBreakout"
+            android:name=".Controller.GamePong"
             android:exported="false" />
         <activity
-            android:name=".Controller.GamePong"
+            android:name=".Controller.GameBreakout"
             android:exported="false" />
         <activity
             android:name=".Controller.MainActivity"

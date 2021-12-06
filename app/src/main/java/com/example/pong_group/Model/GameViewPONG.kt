@@ -3,9 +3,8 @@ package com.example.pong_group.Model
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Color.WHITE
 import android.graphics.Paint
-import android.util.Log
+import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
@@ -20,32 +19,45 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     private var player: Paddle
     private var CPU: Paddle
     private val playerY = 250f
-    //private lateinit var ball1: Ball
+    private var ball1: Ball
     private var ballA = mutableListOf<Ball>()
-    val colorArray = context.resources.obtainTypedArray(com.example.pong_group.R.array.breakout)
+    val colorArray = context.resources.obtainTypedArray(R.array.breakout)
     val colors = IntArray(colorArray.length())
     val colorCount = colorArray.length()
     var rngColor = Paint()
-    val ballCount = 1
+    val ballCount = 0
     var mHolder: SurfaceHolder? = holder
     var screenWidth: Float = 0f
     var screenHeight: Float = 0f
 
-    init {
-        mHolder?.addCallback(this)
-        player = Paddle(this.context, screenWidth, screenHeight)
-        player.posY = playerY
-        CPU = Paddle(this.context, screenWidth,screenHeight)
-        CPU.posY = screenHeight - playerY
-        rngColor.color = colors[(0 until colorCount).random()]
-    }
+    val numberXcpu = 100f
+    val numberYcpu = 100f
+    val numberXp = 100f
+    val numberYp = 1000f
+    val numberW = 20f
+    val numberWL = 90f
+    val numberH = 180f
 
-    fun setup() {
+    init {
         for (i in 0 until colorCount) {
             colors[i] = colorArray.getColor(i, 0)
         }
         colorArray.recycle()
+        mHolder?.addCallback(this)
 
+        player = Paddle(this.context, screenWidth, screenHeight)
+        player.posY = playerY
+
+        CPU = Paddle(this.context, screenWidth, screenHeight)
+        CPU.posY = screenHeight - playerY
+
+        ball1 = Ball(context, screenWidth, screenHeight)
+        changeColors()
+    }
+
+    fun setup() {
+        ball1.centerBall()
+        ball1.start = true
         for (i in 0 until ballCount) {
             var newBall = Ball(this.context, screenWidth, screenHeight)
             var s = (0..100).random()/100f
@@ -86,16 +98,25 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     fun update() {
         player.update()
         CPU.update()
-        if (!ballA.isEmpty()){
-            if (CPU.posX <= ballA[0].posX - CPU.width/4)
-                CPU.posX += ballA[0].speed / (1..2).random()
-            else if (CPU.posX >= ballA[0].posX + CPU.width/4)
-                CPU.posX -= ballA[0].speed / (1..2).random()
-        }
-        //ball1.update(player.posX, player.posY, player.width, player.height)
+
+        if (CPU.posX <= ball1.posX - CPU.width / 4)
+            CPU.posX += ball1.speed / (1..2).random()
+        else if (CPU.posX >= ball1.posX + CPU.width / 4)
+            CPU.posX -= ball1.speed / (1..2).random()
+
+        ball1.update(
+            player.posX,
+            player.posY,
+            player.width,
+            player.height,
+            player.posXOld,
+            CPU.posX
+        )
         ballA.forEach{
             it.update(player.posX, player.posY, player.width, player.height, player.posXOld, CPU.posX)
         }
+        if (ball1.changeColor)
+            changeColors()
     }
 
     fun draw() {
@@ -104,8 +125,8 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         drawLine()
         player.draw(canvas)
         CPU.draw(canvas)
-        //ball1.draw(canvas)
-        ballA.forEach{
+        ball1.draw(canvas)
+        ballA.forEach {
             it.draw(canvas)
         }
         mHolder!!.unlockCanvasAndPost(canvas)
@@ -118,6 +139,8 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     override fun surfaceChanged(p0: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
         screenWidth = p2.toFloat()
         screenHeight = p3.toFloat()
+        ball1.screenWidth = screenWidth
+        ball1.screenHeight = screenHeight
         setup()
         player.screenWidth = screenWidth
         player.screenHeight = screenHeight
@@ -135,15 +158,13 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (event != null && event.x >= player.width/2 && event.x <= screenWidth - player.width/2) {
+        if (event != null && event.x >= player.width / 2 && event.x <= screenWidth - player.width / 2) {
             player.posX = event.x
         }
         return true
     }
 
-    fun drawLine(){
-        var lineColor = Paint()
-        lineColor.color = context.resources.getColor(R.color.white)
+    fun drawLine() {
         var lineX = 0f
         val amount = 20
         val lineSpacing = 30
@@ -152,12 +173,21 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         for (i in 0 until amount) {
             canvas?.drawRect(
                 lineX,
-                screenHeight/2 - thickness,
+                screenHeight / 2 - thickness,
                 lineX + lineW,
-                screenHeight/2 + thickness,
-                lineColor
+                screenHeight / 2 + thickness,
+                rngColor
             )
             lineX += (lineW + lineSpacing)
         }
+    }
+
+    fun changeColors(){
+        rngColor.color = colors[(0 until colorCount).random()]
+        player.paint = rngColor
+        CPU.paint = rngColor
+        ball1.paint = rngColor
+
+        ball1.changeColor = false
     }
 }
