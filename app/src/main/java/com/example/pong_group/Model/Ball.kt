@@ -3,6 +3,8 @@ package com.example.pong_group.Model
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.media.MediaPlayer
+import com.example.pong_group.R
 
 class Ball(context: Context, width: Float, height: Float) {
     private var size = 10f
@@ -10,6 +12,7 @@ class Ball(context: Context, width: Float, height: Float) {
     var posY = size
     var paint = Paint()
     var speed = 10f
+    var context = context
 
     var dirX = 0.5f
     var dirY = 0.5f
@@ -19,6 +22,7 @@ class Ball(context: Context, width: Float, height: Float) {
 
     var draw = true
     val anglesCount = 10 // max 10 possibly 10.9 but not recommended
+    val pongSoung = MediaPlayer.create(context, R.raw.pong_sound)
 
     init {
         posX = screenWidth * 0.5f
@@ -36,11 +40,15 @@ class Ball(context: Context, width: Float, height: Float) {
     ) {
         if (draw) {
             if (posX >= screenWidth - size)
+            {
+                playSound()
                 dirX = Math.abs(dirX) * -1
+            }
             else if (posX <= size)
                 dirX = Math.abs(dirX)
             if (posY >= screenHeight - size) {
                 dirY = Math.abs(dirY) * -1
+                playSound()
                 //draw = false
             } else if (posY <= size)
                 dirY = Math.abs(dirY)
@@ -120,6 +128,7 @@ class Ball(context: Context, width: Float, height: Float) {
             }
         }
         dirY = -1 * dirY / Math.abs(dirY) * Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
+        playSound()
 
         if (speed < 50) {
             if (Math.abs(pPosX - pOldX) > screenWidth / 54)
@@ -141,9 +150,14 @@ class Ball(context: Context, width: Float, height: Float) {
             }
         }
         dirY = -1 * dirY / Math.abs(dirY) * Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
+        playSound()
 
         if (speed < 50) {
             speed += 0.1f
         }
+    }
+
+    fun playSound(){
+        pongSoung.start()
     }
 }
