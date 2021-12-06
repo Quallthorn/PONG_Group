@@ -3,6 +3,7 @@ package com.example.pong_group.Model
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
@@ -14,12 +15,14 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     private var running = false
     lateinit var canvas: Canvas
     private var player: Paddle
+    private var CPU: Paddle
+    private val playerY = 250f
     //private lateinit var ball1: Ball
     private var ballA = mutableListOf<Ball>()
     val colorArray = context.resources.obtainTypedArray(com.example.pong_group.R.array.breakout)
     val colors = IntArray(colorArray.length())
     val colorCount = colorArray.length()
-    val ballCount = 20
+    val ballCount = 1
     var mHolder: SurfaceHolder? = holder
     var screenWidth: Float = 0f
     var screenHeight: Float = 0f
@@ -27,6 +30,9 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     init {
         mHolder?.addCallback(this)
         player = Paddle(this.context, screenWidth, screenHeight)
+        player.posY = playerY
+        CPU = Paddle(this.context, screenWidth,screenHeight)
+        CPU.posY = screenHeight - playerY
     }
 
     fun setup() {
@@ -74,9 +80,16 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
 
     fun update() {
         player.update()
+        CPU.update()
+        if (!ballA.isEmpty()){
+            if (CPU.posX <= ballA[0].posX - CPU.width/4)
+                CPU.posX += ballA[0].speed / (1..2).random()
+            else if (CPU.posX >= ballA[0].posX + CPU.width/4)
+                CPU.posX -= ballA[0].speed / (1..2).random()
+        }
         //ball1.update(player.posX, player.posY, player.width, player.height)
         ballA.forEach{
-            it.update(player.posX, player.posY, player.width, player.height, player.posXOld)
+            it.update(player.posX, player.posY, player.width, player.height, player.posXOld, CPU.posX)
         }
     }
 
@@ -84,6 +97,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         canvas = mHolder!!.lockCanvas()
         canvas.drawColor(Color.BLACK)
         player.draw(canvas)
+        CPU.draw(canvas)
         //ball1.draw(canvas)
         ballA.forEach{
             it.draw(canvas)

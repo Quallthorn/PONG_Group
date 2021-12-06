@@ -7,8 +7,8 @@ import com.example.pong_group.R
 
 class Paddle(context: Context, width: Float, height: Float) {
 
-    var posX: Float = 1f
-    var posY: Float = 250f
+    var posX: Float = 500f
+    var posY: Float = 1f
     var height: Float = 10f
     var width: Float = 80f
     var paint = Paint()
@@ -19,7 +19,6 @@ class Paddle(context: Context, width: Float, height: Float) {
     var posXOld: Float = 0f
     val frameCheck = 2
     var currentFrame = 0
-    val updateOldPos = true
 
     init {
         this.paint.color = context.resources.getColor(R.color.white)

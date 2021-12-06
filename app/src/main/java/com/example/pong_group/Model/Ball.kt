@@ -5,7 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 
 class Ball(context: Context, width: Float, height: Float) {
-    private var size = 5f
+    private var size = 10f
     var posX = size
     var posY = size
     var paint = Paint()
@@ -26,34 +26,39 @@ class Ball(context: Context, width: Float, height: Float) {
     }
 
 
-    fun update(pPosX: Float, pPosY: Float, pWidth: Float, pHeight: Float, pOldX: Float) {
+    fun update(
+        pPosX: Float,
+        pPosY: Float,
+        pWidth: Float,
+        pHeight: Float,
+        pOldX: Float,
+        CPUX: Float
+    ) {
         if (draw) {
-            if (posX >= screenWidth - size || posX <= size)
-                dirX *= -1
+            if (posX >= screenWidth - size)
+                dirX = Math.abs(dirX) * -1
+            else if (posX <= size)
+                dirX = Math.abs(dirX)
             if (posY >= screenHeight - size) {
-                dirY = dirY * -1f
+                dirY = Math.abs(dirY) * -1
                 //draw = false
             } else if (posY <= size)
-                dirY = dirY * -1f
+                dirY = Math.abs(dirY)
 
             if (posY >= screenHeight - pPosY - size
-                && posY <= screenHeight - pPosY + pHeight
+                && posY <= screenHeight - pPosY + speed
                 && posX >= pPosX - pWidth
                 && posX <= pPosX + pWidth
             ) {
-                for (i in 1 until anglesCount) {
-                    if (posX >= pPosX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= pPosX - (pWidth / anglesCount) * (anglesCount - i))
-                        dirX = -(anglesCount - i) / 10f
-                    else if (posX <= pPosX + (pWidth / anglesCount) * (anglesCount + 1 - i) && posX >= pPosX + (pWidth / anglesCount) * (anglesCount - i)) {
-                        dirX = (anglesCount - i) / 10f
-                    }
-                }
-                dirY = -Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
+                bounceP1(pPosX, pWidth, pOldX)
+            }
 
-                if (Math.abs(pPosX - pOldX) > 20f)
-                    speed += 10f
-                else
-                    speed = 10f
+            if (posY <= pPosY + size
+                && posY >= pPosY - speed
+                && posX >= CPUX - pWidth
+                && posX <= CPUX + pWidth
+            ) {
+                bounceCPU(CPUX, pWidth)
             }
 
 //            if (posY >= screenHeight - pPosY - size
@@ -104,5 +109,41 @@ class Ball(context: Context, width: Float, height: Float) {
         this.posX += size - this.size
         this.posY += size - this.size
         this.size = size
+    }
+
+    fun bounceP1(pPosX: Float, pWidth: Float, pOldX: Float) {
+        for (i in 1 until anglesCount) {
+            if (posX >= pPosX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= pPosX - (pWidth / anglesCount) * (anglesCount - i))
+                dirX = -(anglesCount - i) / 10f
+            else if (posX <= pPosX + (pWidth / anglesCount) * (anglesCount + 1 - i) && posX >= pPosX + (pWidth / anglesCount) * (anglesCount - i)) {
+                dirX = (anglesCount - i) / 10f
+            }
+        }
+        dirY = -1 * dirY / Math.abs(dirY) * Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
+
+        if (speed < 50) {
+            if (Math.abs(pPosX - pOldX) > screenWidth / 54)
+                speed += 5f
+            else
+                speed += 0.1f
+
+            if (speed < 50)
+                speed == 50f
+        }
+    }
+
+    fun bounceCPU(CPUX: Float, pWidth: Float) {
+        for (i in 1 until anglesCount) {
+            if (posX >= CPUX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= CPUX - (pWidth / anglesCount) * (anglesCount - i))
+                dirX = -(anglesCount - i) / 10f
+            else if (posX <= CPUX + (pWidth / anglesCount) * (anglesCount + 1 - i) && posX >= CPUX + (pWidth / anglesCount) * (anglesCount - i)) {
+                dirX = (anglesCount - i) / 10f
+            }
+        }
+        dirY = -1 * dirY / Math.abs(dirY) * Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
+
+        if (speed < 50) {
+            speed += 0.1f
+        }
     }
 }
