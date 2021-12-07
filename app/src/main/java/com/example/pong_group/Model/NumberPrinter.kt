@@ -9,74 +9,99 @@ class NumberPrinter {
     val numberWL = 90f
     val numberH = 180f
 
-    fun drawOne(canvas: Canvas, startX: Float, startY: Float, paint: Paint){
+    //Numbers
+    fun drawOne(canvas: Canvas, startX: Float, startY: Float, paint: Paint) {
+        lineVerticalLong(canvas,startX,startY,paint)
+    }
+
+    fun drawTwo(canvas: Canvas, startX: Float, startY: Float, paint: Paint) {
+        for (i in 0..2)
+            lineHorizontal(canvas,startX,startY+numberH/7*i*3,paint)
+        lineVerticalHalf(canvas,startX+numberWL-numberW,startY,paint)
+        lineVerticalHalf(canvas,startX,startY+numberH/7*3,paint)
+    }
+
+    fun drawThree(canvas: Canvas, startX: Float, startY: Float, paint: Paint) {
+        for (i in 0..2)
+            lineHorizontal(canvas,startX,startY+numberH/7*i*3,paint)
+        lineVerticalLong(canvas,startX+numberWL-numberW,startY,paint)
+    }
+
+    fun drawFour(canvas: Canvas, startX: Float, startY: Float, paint: Paint) {
+        lineVerticalHalf(canvas,startX,startY,paint)
+        lineVerticalLong(canvas,startX+numberWL-numberW,startY,paint)
+        lineHorizontal(canvas,startX,startY+numberH/7*3,paint)
+    }
+
+    fun drawFive(canvas: Canvas, startX: Float, startY: Float, paint: Paint) {
+        for (i in 0..2)
+            lineHorizontal(canvas,startX,startY+numberH/7*i*3,paint)
+        lineVerticalHalf(canvas,startX+numberWL-numberW,startY+numberH/7*3,paint)
+        lineVerticalHalf(canvas,startX,startY,paint)
+    }
+
+    fun drawSix(canvas: Canvas, startX: Float, startY: Float, paint: Paint) {
+        for (i in 1..2)
+            lineHorizontal(canvas,startX,startY+numberH/7*i*3,paint)
+        lineVerticalHalf(canvas,startX,startY+numberH/7*3,paint)
+        lineVerticalLong(canvas,startX+numberWL-numberW,startY,paint)
+    }
+
+    fun drawSeven(canvas: Canvas, startX: Float, startY: Float, paint: Paint) {
+        lineHorizontal(canvas,startX,startY,paint)
+        lineVerticalLong(canvas,startX+numberWL-numberW,startY,paint)
+    }
+
+    fun drawEight(canvas: Canvas, startX: Float, startY: Float, paint: Paint) {
+        for (i in 0..2)
+            lineHorizontal(canvas,startX,startY+numberH/7*i*3,paint)
+        for (i in 0..1)
+            lineVerticalLong(canvas,startX+(numberWL-numberW)*i,startY,paint)
+    }
+
+    fun drawNine(canvas: Canvas, startX: Float, startY: Float, paint: Paint) {
+        for (i in 0..1)
+            lineHorizontal(canvas,startX,startY+numberH/7*i*3,paint)
+        lineVerticalHalf(canvas,startX,startY,paint)
+        lineVerticalLong(canvas,startX+numberWL-numberW,startY,paint)
+    }
+
+    fun drawZero(canvas: Canvas, startX: Float, startY: Float, paint: Paint) {
+        for (i in 0..1)
+            lineHorizontal(canvas,startX,startY+numberH/7*i*6,paint)
+        for (i in 0..1)
+            lineVerticalLong(canvas,startX+(numberWL-numberW)*i,startY,paint)
+    }
+
+
+    //Lines
+    fun lineVerticalLong(canvas: Canvas, posX: Float, posY: Float, paint: Paint){
         canvas?.drawRect(
-            startX,
-            startY,
-            startX + numberW,
-            startY + numberH,
+            posX,
+            posY,
+            posX + numberW,
+            posY + numberH,
             paint
         )
     }
 
-    fun drawTwo(canvas: Canvas, startX: Float, startY: Float, paint: Paint){
-        var posX = startX
-        var posY = startY
-        val segment = (numberH)/7
-        for (i in 1..7){
-            if (i == 1 || i == 4 || i == 7)
-                canvas?.drawRect(
-                    posX,
-                    posY,
-                    posX + numberWL,
-                    posY + segment,
-                    paint
-                )
-            else if (i == 2 || i == 3) {
-                canvas?.drawRect(
-                    posX + numberWL - numberW,
-                    posY,
-                    posX + numberWL,
-                    posY + segment,
-                    paint
-                )
-            }
-            else {
-                canvas?.drawRect(
-                    posX,
-                    posY,
-                    posX + numberW,
-                    posY + segment,
-                    paint
-                )
-            }
-            posY += segment
-        }
+    fun lineVerticalHalf(canvas: Canvas, posX: Float, posY: Float, paint: Paint){
+        canvas?.drawRect(
+            posX,
+            posY,
+            posX + numberW,
+            posY + numberH/7*4,
+            paint
+        )
     }
 
-    fun drawThree(canvas: Canvas, startX: Float, startY: Float, paint: Paint){
-        var posX = startX
-        var posY = startY
-        val segment = (numberH)/7
-        for (i in 1..7){
-            if (i == 1 || i == 4 || i == 7)
-                canvas?.drawRect(
-                    posX,
-                    posY,
-                    posX + numberWL,
-                    posY + segment,
-                    paint
-                )
-            else {
-                canvas?.drawRect(
-                    posX + numberWL - numberW,
-                    posY,
-                    posX + numberWL,
-                    posY + segment,
-                    paint
-                )
-            }
-            posY += segment
-        }
+    fun lineHorizontal(canvas: Canvas, posX: Float, posY: Float, paint: Paint){
+        canvas?.drawRect(
+            posX,
+            posY,
+            posX + numberWL,
+            posY + numberH/7,
+            paint
+        )
     }
 }

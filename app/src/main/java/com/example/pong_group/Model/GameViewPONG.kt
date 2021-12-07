@@ -123,6 +123,8 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         canvas = mHolder!!.lockCanvas()
         canvas.drawColor(Color.BLACK)
         drawLine()
+        //drawNine(canvas, numberXp, numberYp, rngColor)
+        //drawZero(canvas, numberXcpu, numberYcpu, rngColor)
         player.draw(canvas)
         CPU.draw(canvas)
         ball1.draw(canvas)
