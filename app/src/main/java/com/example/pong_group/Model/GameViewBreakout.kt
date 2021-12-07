@@ -4,14 +4,14 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings
-import com.example.pong_group.Services.NumberPrinter
 
-
-class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callback, Runnable {
+class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.Callback, Runnable {
 
     private var thread: Thread? = null
     private var running = false
@@ -19,23 +19,32 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     private var player: Paddle
     private var CPU: Paddle
     private val playerY = 250f
-    private var ball1: Ball
-    private var ballA = mutableListOf<Ball>()
+    private var ball1: BallBreakout
+    private var ballA = mutableListOf<BallBreakout>()
+    private var bricks = mutableListOf<Brick>()
     var rngColor = Paint()
     val ballCount = 0
     var mHolder: SurfaceHolder? = holder
     var screenWidth: Float = 0f
     var screenHeight: Float = 0f
 
-    val numberFromEdge = 100f
-    val numberFromMiddle = 100f
-    var numberXcpu = 0f
-    var numberYcpu = 0f
-    var numberXp = 0f
-    var numberYp = 0f
+    var gridPosX: Float = 0f
+    var gridPosY: Float = 0f
+    var gridStartX: Float = 0f
+    var gridStartY: Float = 120f
+    var gridSpacingX: Float = 0f
+    var gridSpacingY: Float = 0f
+    var brickH: Float = 50f
+    var brickW: Float = 0f
+    var brickCountX: Int = 20
+    var brickCountY: Int = 6
+    var randomChance: Int = 0
 
     init {
         mHolder?.addCallback(this)
+
+        gridPosX = gridStartX
+        gridPosY = gridStartY
 
         player = Paddle(this.context, screenWidth, screenHeight)
         player.posY = playerY
@@ -43,27 +52,20 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         CPU = Paddle(this.context, screenWidth, screenHeight)
         CPU.posY = screenHeight - playerY
 
-        ball1 = Ball(context, screenWidth, screenHeight)
+        ball1 = BallBreakout(context, screenWidth, screenHeight)
         changeColors()
     }
 
     fun setup() {
-
-        numberXcpu = numberFromEdge
-        numberYcpu = screenHeight/2 - numberFromMiddle - NumberPrinter.numberH
-        numberXp = screenWidth - numberFromEdge - NumberPrinter.numberWL
-        numberYp = screenHeight/2 + numberFromMiddle
-
-        ball1.centerBall()
-        ball1.start = true
+        ball1.centerBall(player.posX, player.posY)
         for (i in 0 until ballCount) {
-            var newBall = Ball(this.context, screenWidth, screenHeight)
-            var s = (0..100).random()/100f
+            var newBall = BallBreakout(this.context, screenWidth, screenHeight)
+            var s = (0..100).random() / 100f
             newBall.dirX = s
             newBall.dirY = Math.sqrt((1 - newBall.dirX * newBall.dirX).toDouble()).toFloat()
             var d = (0..3).random()
             //var d = 2
-            when(d){
+            when (d) {
                 1 -> newBall.dirX = newBall.dirX * -1
                 2 -> newBall.dirY = newBall.dirY * -1
                 3 -> {
@@ -74,6 +76,20 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
             }
             newBall.paint.color = GameSettings.getRandomColorFromArray()
             ballA.add(newBall)
+        }
+
+        brickW = ((screenWidth - gridStartX * 2 + gridSpacingX) / brickCountX) - gridSpacingX
+        var rowNumber = 0
+        for (i in 0 until (brickCountX * brickCountY)) {
+            var newBrick = Brick(brickW, brickH, gridPosX, gridPosY)
+            getBrickColor(rowNumber, newBrick)
+            gridPosX += (gridSpacingX + brickW)
+            if (gridPosX >= (gridSpacingX + brickW) * brickCountX) {
+                gridPosX = gridStartX
+                gridPosY += (gridSpacingY + brickH)
+                rowNumber++
+            }
+            bricks.add(newBrick)
         }
     }
 
@@ -94,23 +110,17 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
 
     fun update() {
         player.update()
-        CPU.update()
-
-        if (CPU.posX <= ball1.posX - CPU.width / 4)
-            CPU.posX += ball1.speed / (1..2).random()
-        else if (CPU.posX >= ball1.posX + CPU.width / 4)
-            CPU.posX -= ball1.speed / (1..2).random()
-
         ball1.update(
             player.posX,
             player.posY,
             player.width,
-            player.height,
             player.posXOld,
-            CPU.posX
         )
-        ballA.forEach{
-            it.update(player.posX, player.posY, player.width, player.height, player.posXOld, CPU.posX)
+        ballA.forEach {
+            it.update(player.posX, player.posY, player.width, player.posXOld)
+        }
+        bricks.forEach {
+            it.update(ball1.size, ball1.posX, ball1.posY)
         }
         if (ball1.changeColor)
             changeColors()
@@ -119,43 +129,23 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     fun draw() {
         canvas = mHolder!!.lockCanvas()
         canvas.drawColor(Color.BLACK)
-        drawLine()
-        NumberPrinter.drawNine(canvas, numberXp, numberYp, rngColor)
-        NumberPrinter.drawZero(canvas, numberXcpu, numberYcpu, rngColor)
         player.draw(canvas)
-        CPU.draw(canvas)
         ball1.draw(canvas)
         ballA.forEach {
+            it.draw(canvas)
+        }
+        bricks.forEach {
             it.draw(canvas)
         }
         mHolder!!.unlockCanvasAndPost(canvas)
     }
 
-    fun changeColors(){
+    fun changeColors() {
         rngColor.color = GameSettings.getRandomColorFromArray()
         player.paint = rngColor
         CPU.paint = rngColor
         ball1.paint = rngColor
-
         ball1.changeColor = false
-    }
-
-    fun drawLine() {
-        var lineX = 0f
-        val amount = 20
-        val lineSpacing = 30
-        val lineW = (screenWidth + lineSpacing) / amount - lineSpacing
-        val thickness = 5f
-        for (i in 0 until amount) {
-            canvas?.drawRect(
-                lineX,
-                screenHeight / 2 - thickness,
-                lineX + lineW,
-                screenHeight / 2 + thickness,
-                rngColor
-            )
-            lineX += (lineW + lineSpacing)
-        }
     }
 
     override fun surfaceCreated(p0: SurfaceHolder) {
@@ -188,5 +178,35 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
             player.posX = event.x
         }
         return true
+    }
+
+    fun getBrickColor(rowNumber: Int, newBrick: Brick){
+        when (rowNumber) {
+            0 -> {
+                newBrick.paint.color = context.resources.getColor(R.color.red)
+                true
+            }
+            1 -> {
+                newBrick.paint.color = context.resources.getColor(R.color.orange)
+                true
+            }
+            2 -> {
+                newBrick.paint.color = context.resources.getColor(R.color.pale_orange)
+                true
+            }
+            3 -> {
+                newBrick.paint.color = context.resources.getColor(R.color.yellow)
+                true
+            }
+            4 -> {
+                newBrick.paint.color = context.resources.getColor(R.color.green)
+                true
+            }
+            5 -> {
+                newBrick.paint.color = context.resources.getColor(R.color.blue)
+                true
+            }
+            else -> {newBrick.paint.color = context.resources.getColor(R.color.white)}
+        }
     }
 }

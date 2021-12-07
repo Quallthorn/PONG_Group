@@ -22,10 +22,22 @@
 
     <color name="space">#0e0d2d</color>
 
-    <array name="breakout">
+    <array name="rainbow">
         <item>@color/pink</item>
         <item>@color/red</item>
         <item>@color/orange</item>
+        <item>@color/yellow</item>
+        <item>@color/green</item>
+        <item>@color/blue</item>
+        <item>@color/violet</item>
+        <item>@color/light_blue</item>
+    </array>
+
+    <array name="breakout_bricks">
+        <item>@color/pink</item>
+        <item>@color/red</item>
+        <item>@color/orange</item>
+        <item>@color/pale_orange</item>
         <item>@color/yellow</item>
         <item>@color/green</item>
         <item>@color/blue</item>

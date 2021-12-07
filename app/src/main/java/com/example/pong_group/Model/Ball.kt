@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.media.MediaPlayer
 import com.example.pong_group.R
+import com.example.pong_group.Services.NumberPrinter
 
 class Ball(context: Context, width: Float, height: Float) {
     private var size = 10f
@@ -70,12 +71,15 @@ class Ball(context: Context, width: Float, height: Float) {
                 dirX = Math.sqrt((1 - dirY * dirY).toDouble()).toFloat()
             }
             if (posY >= screenHeight - size) {
-                playSound()
-                dirY = Math.abs(dirY) * -1
-                //draw = false
+//                playSound()
+//                dirY = Math.abs(dirY) * -1
+                centerBall()
+                NumberPrinter.scoreCPU += 1
             } else if (posY <= size) {
-                playSound()
-                dirY = Math.abs(dirY)
+//                playSound()
+//                dirY = Math.abs(dirY)
+                centerBall()
+                NumberPrinter.scoreP += 1
             }
 
             if (posY >= screenHeight - pPosY - size
@@ -147,7 +151,6 @@ class Ball(context: Context, width: Float, height: Float) {
         }
         playSound()
         changeColor()
-        //dirY = -1 * dirY / Math.abs(dirY) * Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
         dirY = -Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
 
         if (speed < maxSpeed) {
@@ -171,7 +174,6 @@ class Ball(context: Context, width: Float, height: Float) {
         }
         playSound()
         changeColor()
-        //dirY = -1 * dirY / Math.abs(dirY) * Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
         dirY = Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
 
         if (speed < maxSpeed) {
