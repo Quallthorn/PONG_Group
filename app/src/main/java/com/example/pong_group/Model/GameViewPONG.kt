@@ -22,28 +22,20 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     private val playerY = 250f
     private var ball1: Ball
     private var ballA = mutableListOf<Ball>()
-//    val colorArray = context.resources.obtainTypedArray(R.array.breakout)
-//    val colors = IntArray(colorArray.length())
-//    val colorCount = colorArray.length()
     var rngColor = Paint()
     val ballCount = 0
     var mHolder: SurfaceHolder? = holder
     var screenWidth: Float = 0f
     var screenHeight: Float = 0f
 
-    val numberXcpu = 100f
-    val numberYcpu = 100f
-    val numberXp = 100f
-    val numberYp = 1000f
-    val numberW = 20f
-    val numberWL = 90f
-    val numberH = 180f
+    val numberFromEdge = 100f
+    val numberFromMiddle = 100f
+    var numberXcpu = 0f
+    var numberYcpu = 0f
+    var numberXp = 0f
+    var numberYp = 0f
 
     init {
-//        for (i in 0 until colorCount) {
-//            colors[i] = colorArray.getColor(i, 0)
-//        }
-//        colorArray.recycle()
         mHolder?.addCallback(this)
 
         player = Paddle(this.context, screenWidth, screenHeight)
@@ -57,6 +49,12 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     }
 
     fun setup() {
+
+        numberXcpu = numberFromEdge
+        numberYcpu = screenHeight/2 - numberFromMiddle - NumberPrinter.numberH
+        numberXp = screenWidth - numberFromEdge - NumberPrinter.numberWL
+        numberYp = screenHeight/2 + numberFromMiddle
+
         ball1.centerBall()
         ball1.start = true
         for (i in 0 until ballCount) {
@@ -75,8 +73,6 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
                 }
                 else -> {}
             }
-//            var c = (0 until colorCount).random()
-//            newBall.paint.color = colors[c]
             newBall.paint.color = GameSettings.getRandomColorFromArray()
             ballA.add(newBall)
         }
@@ -125,8 +121,8 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         canvas = mHolder!!.lockCanvas()
         canvas.drawColor(Color.BLACK)
         drawLine()
-        //drawNine(canvas, numberXp, numberYp, rngColor)
-        //drawZero(canvas, numberXcpu, numberYcpu, rngColor)
+        NumberPrinter.drawNine(canvas, numberXp, numberYp, rngColor)
+        NumberPrinter.drawZero(canvas, numberXcpu, numberYcpu, rngColor)
         player.draw(canvas)
         CPU.draw(canvas)
         ball1.draw(canvas)
@@ -187,7 +183,6 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     }
 
     fun changeColors(){
-//        rngColor.color = colors[(0 until colorCount).random()]
         rngColor.color = GameSettings.getRandomColorFromArray()
         player.paint = rngColor
         CPU.paint = rngColor
