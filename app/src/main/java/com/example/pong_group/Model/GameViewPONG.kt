@@ -43,7 +43,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         CPU = Paddle(this.context, screenWidth, screenHeight)
         CPU.posY = screenHeight - playerY
 
-        ball1 = Ball(context, screenWidth, screenHeight)
+        ball1 = Ball(screenWidth, screenHeight)
         changeColors()
     }
 
@@ -57,7 +57,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         ball1.centerBall()
         ball1.start = true
         for (i in 0 until ballCount) {
-            var newBall = Ball(this.context, screenWidth, screenHeight)
+            var newBall = Ball(screenWidth, screenHeight)
             var s = (0..100).random()/100f
             newBall.dirX = s
             newBall.dirY = Math.sqrt((1 - newBall.dirX * newBall.dirX).toDouble()).toFloat()
@@ -105,12 +105,11 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
             player.posX,
             player.posY,
             player.width,
-            player.height,
             player.posXOld,
             CPU.posX
         )
         ballA.forEach{
-            it.update(player.posX, player.posY, player.width, player.height, player.posXOld, CPU.posX)
+            it.update(player.posX, player.posY, player.width, player.posXOld, CPU.posX)
         }
         if (ball1.changeColor)
             changeColors()

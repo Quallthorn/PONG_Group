@@ -5,15 +5,15 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.media.MediaPlayer
 import com.example.pong_group.R
+import com.example.pong_group.Services.GameSounds
 import com.example.pong_group.Services.NumberPrinter
 
-class Ball(context: Context, width: Float, height: Float) {
+class Ball(width: Float, height: Float) {
     private var size = 10f
     var posX = size
     var posY = size
     var paint = Paint()
     var speed = 10f
-    var context = context
 
     var dirX = 0.5f
     var dirY = 0.5f
@@ -22,7 +22,6 @@ class Ball(context: Context, width: Float, height: Float) {
     var screenHeight = height
 
     val anglesCount = 10 // max 10 possibly 10.9 but not recommended
-    val pongSoung = MediaPlayer.create(context, R.raw.pong_sound)
     val maxSpeed = 30f
 
     var changeColor = false
@@ -38,13 +37,12 @@ class Ball(context: Context, width: Float, height: Float) {
         pPosX: Float,
         pPosY: Float,
         pWidth: Float,
-        pHeight: Float,
         pOldX: Float,
         CPUX: Float
     ) {
         if (start){
             if (posX >= screenWidth - size) {
-                playSound()
+                GameSounds.playSound()
                 if (dirY > 0){
                     dirY += ((0..2).random())/10f
                     if (dirY > 1 || dirY < 0)
@@ -57,7 +55,7 @@ class Ball(context: Context, width: Float, height: Float) {
                 }
                 dirX = -Math.sqrt((1 - dirY * dirY).toDouble()).toFloat()
             } else if (posX <= size) {
-                playSound()
+                GameSounds.playSound()
                 if (dirY > 0){
                     dirY += ((0..2).random())/10f
                     if (dirY > 1 || dirY < 0)
@@ -149,7 +147,7 @@ class Ball(context: Context, width: Float, height: Float) {
                 dirX = (anglesCount - i) / 10f
             }
         }
-        playSound()
+        GameSounds.playSound()
         changeColor()
         dirY = -Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
 
@@ -172,7 +170,7 @@ class Ball(context: Context, width: Float, height: Float) {
                 dirX = (anglesCount - i) / 10f
             }
         }
-        playSound()
+        GameSounds.playSound()
         changeColor()
         dirY = Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
 
@@ -184,10 +182,6 @@ class Ball(context: Context, width: Float, height: Float) {
     fun centerBall() {
         posX = screenWidth * 0.5f
         posY = screenHeight * 0.5f
-    }
-
-    fun playSound() {
-        pongSoung.start()
     }
 
     fun changeColor() {

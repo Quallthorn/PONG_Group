@@ -52,14 +52,14 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         CPU = Paddle(this.context, screenWidth, screenHeight)
         CPU.posY = screenHeight - playerY
 
-        ball1 = BallBreakout(context, screenWidth, screenHeight)
+        ball1 = BallBreakout(screenWidth, screenHeight)
         changeColors()
     }
 
     fun setup() {
         ball1.centerBall(player.posX, player.posY)
         for (i in 0 until ballCount) {
-            var newBall = BallBreakout(this.context, screenWidth, screenHeight)
+            var newBall = BallBreakout(screenWidth, screenHeight)
             var s = (0..100).random() / 100f
             newBall.dirX = s
             newBall.dirY = Math.sqrt((1 - newBall.dirX * newBall.dirX).toDouble()).toFloat()
@@ -120,7 +120,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             it.update(player.posX, player.posY, player.width, player.posXOld)
         }
         bricks.forEach {
-            it.update(ball1.size, ball1.posX, ball1.posY)
+            it.update(ball1)
         }
         if (ball1.changeColor)
             changeColors()

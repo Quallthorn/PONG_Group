@@ -4,16 +4,17 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.media.MediaPlayer
+import com.example.pong_group.Controller.App
 import com.example.pong_group.R
+import com.example.pong_group.Services.GameSounds
 import com.example.pong_group.Services.NumberPrinter
 
-class BallBreakout(context: Context, width: Float, height: Float) {
+class BallBreakout(width: Float, height: Float) {
     var size = 5f
     var posX = size
     var posY = size
     var paint = Paint()
-    var speed = 10f
-    var context = context
+    var speed = 30f
 
     var dirX = 0.5f
     var dirY = 0.5f
@@ -22,8 +23,7 @@ class BallBreakout(context: Context, width: Float, height: Float) {
     var screenHeight = height
 
     val anglesCount = 10 // max 10 possibly 10.9 but not recommended
-    val pongSoung = MediaPlayer.create(context, R.raw.pong_sound)
-    val maxSpeed = 30f
+    val maxSpeed = 20f
 
     var changeColor = false
 
@@ -39,36 +39,18 @@ class BallBreakout(context: Context, width: Float, height: Float) {
         pOldX: Float
     ) {
         if (posX >= screenWidth - size) {
-            playSound()
-            if (dirY > 0) {
-                dirY += ((0..2).random()) / 10f
-                if (dirY > 1 || dirY < 0)
-                    dirY = 0.5f
-            } else {
-                dirY -= ((0..2).random()) / 10f
-                if (dirY < -1 || dirY > 0)
-                    dirY = -0.5f
-            }
-            dirX = -Math.sqrt((1 - dirY * dirY).toDouble()).toFloat()
-        } else if (posX <= size) {
-            playSound()
-            if (dirY > 0) {
-                dirY += ((0..2).random()) / 10f
-                if (dirY > 1 || dirY < 0)
-                    dirY = 0.5f
-            } else {
-                dirY -= ((0..2).random()) / 10f
-                if (dirY < -1 || dirY > 0)
-                    dirY = -0.5f
-            }
-            dirX = Math.sqrt((1 - dirY * dirY).toDouble()).toFloat()
+            GameSounds.playSound()
+            dirX = Math.abs(dirX) * -1
+        }
+        else if (posX <= size){
+            GameSounds.playSound()
+            dirX = Math.abs(dirX)
         }
         if (posY >= screenHeight - size) {
             centerBall(pPosX, pPosY)
             dirY = Math.abs(dirY) * -1
-            NumberPrinter.scoreCPU += 1
         } else if (posY <= size) {
-            playSound()
+            GameSounds.playSound()
             dirY = Math.abs(dirY)
         }
 
@@ -95,28 +77,18 @@ class BallBreakout(context: Context, width: Float, height: Float) {
                 dirX = (anglesCount - i) / 10f
             }
         }
-        playSound()
+        GameSounds.playSound()
         changeColor()
         dirY = -Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
 
         if (speed < maxSpeed) {
-            if (Math.abs(pPosX - pOldX) > screenWidth / 54)
-                speed += 5f
-            else
-                speed += 0.1f
-
-            if (speed < maxSpeed)
-                speed == maxSpeed
+            speed += 0.1f
         }
     }
 
     fun centerBall(pPosX: Float, pPosY: Float) {
         posX = pPosX
         posY = screenHeight - (pPosY + screenHeight * 0.01f)
-    }
-
-    fun playSound() {
-        pongSoung.start()
     }
 
     fun changeColor() {
