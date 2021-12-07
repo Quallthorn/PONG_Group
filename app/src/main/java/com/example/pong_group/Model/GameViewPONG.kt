@@ -8,6 +8,7 @@ import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.example.pong_group.Services.GameSettings
+import kotlin.math.sqrt
 import com.example.pong_group.Services.NumberPrinter
 
 
@@ -15,55 +16,56 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
 
     private var thread: Thread? = null
     private var running = false
-    lateinit var canvas: Canvas
     private var player: Paddle
-    private var CPU: Paddle
+    private var cpu: Paddle
     private val playerY = 250f
     private var ball1: Ball
     private var ballA = mutableListOf<Ball>()
-    var rngColor = Paint()
-    val ballCount = 0
+    private val ballCount = 0
     var mHolder: SurfaceHolder? = holder
     var screenWidth: Float = 0f
     var screenHeight: Float = 0f
 
     val numberFromEdge = 100f
     val numberFromMiddle = 100f
-    var numberXcpu = 0f
-    var numberYcpu = 0f
-    var numberXp = 0f
-    var numberYp = 0f
+
+
+    companion object{
+        var canvas: Canvas = Canvas()
+    }
 
     init {
         mHolder?.addCallback(this)
 
-        player = Paddle(this.context, screenWidth, screenHeight)
+        player = Paddle(screenWidth, screenHeight, false)
         player.posY = playerY
 
-        CPU = Paddle(this.context, screenWidth, screenHeight)
-        CPU.posY = screenHeight - playerY
+        cpu = Paddle(screenWidth, screenHeight, true)
+        cpu.posY = screenHeight - playerY
 
         ball1 = Ball(screenWidth, screenHeight)
         changeColors()
     }
 
     fun setup() {
+        player.scorePositionX = screenWidth - numberFromEdge - NumberPrinter.numberWL
+        player.scorePositionY = screenHeight/2 + numberFromMiddle
+        cpu.scorePositionX = numberFromEdge
+        cpu.scorePositionY= screenHeight/2 - numberFromMiddle - NumberPrinter.numberH
 
-        numberXcpu = numberFromEdge
-        numberYcpu = screenHeight/2 - numberFromMiddle - NumberPrinter.numberH
-        numberXp = screenWidth - numberFromEdge - NumberPrinter.numberWL
-        numberYp = screenHeight/2 + numberFromMiddle
 
-        ball1.centerBall()
+
+        ball1.centerBall(true)
         ball1.start = true
         for (i in 0 until ballCount) {
             var newBall = Ball(screenWidth, screenHeight)
             var s = (0..100).random()/100f
+            val newBall = Ball(screenWidth, screenHeight)
+            val s = (0..100).random()/100f
             newBall.dirX = s
-            newBall.dirY = Math.sqrt((1 - newBall.dirX * newBall.dirX).toDouble()).toFloat()
-            var d = (0..3).random()
+            newBall.dirY = sqrt((1 - newBall.dirX * newBall.dirX).toDouble()).toFloat()
             //var d = 2
-            when(d){
+            when((0..3).random()){
                 1 -> newBall.dirX = newBall.dirX * -1
                 2 -> newBall.dirY = newBall.dirY * -1
                 3 -> {
@@ -92,51 +94,42 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         }
     }
 
-    fun update() {
+    private fun update() {
         player.update()
-        CPU.update()
+        cpu.update()
 
-        if (CPU.posX <= ball1.posX - CPU.width / 4)
-            CPU.posX += ball1.speed / (1..2).random()
-        else if (CPU.posX >= ball1.posX + CPU.width / 4)
-            CPU.posX -= ball1.speed / (1..2).random()
+        if (cpu.posX <= ball1.posX - cpu.width / 4)
+            cpu.posX += ball1.speed / (1..2).random()
+        else if (cpu.posX >= ball1.posX + cpu.width / 4)
+            cpu.posX -= ball1.speed / (1..2).random()
 
         ball1.update(
             player.posX,
             player.posY,
             player.width,
+            player.height,
             player.posXOld,
-            CPU.posX
+            cpu.posX
         )
         ballA.forEach{
             it.update(player.posX, player.posY, player.width, player.posXOld, CPU.posX)
+            it.update(player.posX, player.posY, player.width, player.height, player.posXOld, cpu.posX)
         }
         if (ball1.changeColor)
             changeColors()
     }
 
-    fun draw() {
+    private fun draw() {
         canvas = mHolder!!.lockCanvas()
         canvas.drawColor(Color.BLACK)
         drawLine()
-        NumberPrinter.drawNine(canvas, numberXp, numberYp, rngColor)
-        NumberPrinter.drawZero(canvas, numberXcpu, numberYcpu, rngColor)
-        player.draw(canvas)
-        CPU.draw(canvas)
+        player.draw()
+        cpu.draw()
         ball1.draw(canvas)
         ballA.forEach {
             it.draw(canvas)
         }
         mHolder!!.unlockCanvasAndPost(canvas)
-    }
-
-    fun changeColors(){
-        rngColor.color = GameSettings.getRandomColorFromArray()
-        player.paint = rngColor
-        CPU.paint = rngColor
-        ball1.paint = rngColor
-
-        ball1.changeColor = false
     }
 
     fun drawLine() {
@@ -187,5 +180,14 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
             player.posX = event.x
         }
         return true
+    }
+
+    private fun changeColors(){
+         GameSettings.getRandomColorFromArray()
+        player.paint = GameSettings.curPaint
+        cpu.paint = GameSettings.curPaint
+        ball1.paint = GameSettings.curPaint
+
+        ball1.changeColor = false
     }
 }

@@ -4,16 +4,19 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.media.MediaPlayer
+import com.example.pong_group.Controller.App
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSounds
 import com.example.pong_group.Services.NumberPrinter
 
 class Ball(width: Float, height: Float) {
+class Ball( width: Float, height: Float) {
     private var size = 10f
     var posX = size
     var posY = size
     var paint = Paint()
     var speed = 10f
+
 
     var dirX = 0.5f
     var dirY = 0.5f
@@ -22,10 +25,12 @@ class Ball(width: Float, height: Float) {
     var screenHeight = height
 
     val anglesCount = 10 // max 10 possibly 10.9 but not recommended
+    val pongSoung = MediaPlayer.create(App.instance, R.raw.pong_sound)
     val maxSpeed = 30f
 
     var changeColor = false
     var start = false
+    var resetBallStatus = false
 
     init {
         posX = screenWidth * 0.5f
@@ -37,6 +42,7 @@ class Ball(width: Float, height: Float) {
         pPosX: Float,
         pPosY: Float,
         pWidth: Float,
+        pHeight: Float,
         pOldX: Float,
         CPUX: Float
     ) {
@@ -68,16 +74,28 @@ class Ball(width: Float, height: Float) {
                 }
                 dirX = Math.sqrt((1 - dirY * dirY).toDouble()).toFloat()
             }
+
+            //player side
             if (posY >= screenHeight - size) {
 //                playSound()
 //                dirY = Math.abs(dirY) * -1
                 centerBall()
                 NumberPrinter.scoreCPU += 1
+                playSound()
+                centerBall(false)
+
+//                dirY = Math.abs(dirY) * -1
+                //draw = false
+
+                //cpu side
             } else if (posY <= size) {
 //                playSound()
 //                dirY = Math.abs(dirY)
                 centerBall()
                 NumberPrinter.scoreP += 1
+                playSound()
+//                dirY = Math.abs(dirY)
+                centerBall(true)
             }
 
             if (posY >= screenHeight - pPosY - size
@@ -179,7 +197,33 @@ class Ball(width: Float, height: Float) {
         }
     }
 
-    fun centerBall() {
+    fun centerBall(isCpu: Boolean) {
+
+        if (resetBallStatus == true){
+            if(isCpu){
+                Paddle.cpuScore += 1
+                if (Paddle.cpuScore> Paddle.absoluteScore){
+                    Paddle.absoluteScore = Paddle.cpuScore
+                }
+            } else {
+                Paddle.playerScore +=1
+                if (Paddle.playerScore > Paddle.absoluteScore){
+                    Paddle.absoluteScore = Paddle.playerScore
+                }
+            }
+        } else {
+            resetBallStatus = true
+        }
+
+        if (Paddle.absoluteScore > 9) {
+            Paddle.playerScore = 0
+            Paddle.cpuScore = 0
+            Paddle.absoluteScore = 0
+            resetBallStatus = false
+        }
+
+
+
         posX = screenWidth * 0.5f
         posY = screenHeight * 0.5f
     }
