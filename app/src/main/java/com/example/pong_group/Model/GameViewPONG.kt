@@ -9,6 +9,7 @@ import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.example.pong_group.R
+import com.example.pong_group.Services.GameSettings
 
 
 class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callback, Runnable {
@@ -21,9 +22,9 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     private val playerY = 250f
     private var ball1: Ball
     private var ballA = mutableListOf<Ball>()
-    val colorArray = context.resources.obtainTypedArray(R.array.breakout)
-    val colors = IntArray(colorArray.length())
-    val colorCount = colorArray.length()
+//    val colorArray = context.resources.obtainTypedArray(R.array.breakout)
+//    val colors = IntArray(colorArray.length())
+//    val colorCount = colorArray.length()
     var rngColor = Paint()
     val ballCount = 0
     var mHolder: SurfaceHolder? = holder
@@ -39,10 +40,10 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     val numberH = 180f
 
     init {
-        for (i in 0 until colorCount) {
-            colors[i] = colorArray.getColor(i, 0)
-        }
-        colorArray.recycle()
+//        for (i in 0 until colorCount) {
+//            colors[i] = colorArray.getColor(i, 0)
+//        }
+//        colorArray.recycle()
         mHolder?.addCallback(this)
 
         player = Paddle(this.context, screenWidth, screenHeight)
@@ -74,8 +75,9 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
                 }
                 else -> {}
             }
-            var c = (0 until colorCount).random()
-            newBall.paint.color = colors[c]
+//            var c = (0 until colorCount).random()
+//            newBall.paint.color = colors[c]
+            newBall.paint.color = GameSettings.getRandomColorFromArray()
             ballA.add(newBall)
         }
     }
@@ -183,7 +185,8 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     }
 
     fun changeColors(){
-        rngColor.color = colors[(0 until colorCount).random()]
+//        rngColor.color = colors[(0 until colorCount).random()]
+        rngColor.color = GameSettings.getRandomColorFromArray()
         player.paint = rngColor
         CPU.paint = rngColor
         ball1.paint = rngColor
