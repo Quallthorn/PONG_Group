@@ -1,5 +1,6 @@
 package com.example.pong_group.Services
 
+import android.graphics.Paint
 import com.example.pong_group.Controller.App
 import com.example.pong_group.R
 import java.util.*
@@ -7,8 +8,6 @@ import java.util.*
 object GameSettings {
 
     val colorArray = App.instance.resources.obtainTypedArray(R.array.rainbow)
-    //val breakoutColorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks)
-    val colorArray = App.instance.resources.obtainTypedArray(R.array.breakout)
     var curPaint = Paint()
 
     fun getRandomColorFromArray(): Int{

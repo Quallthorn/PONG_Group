@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
@@ -17,7 +16,6 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     private var running = false
     lateinit var canvas: Canvas
     private var player: Paddle
-    private var CPU: Paddle
     private val playerY = 250f
     private var ball1: BallBreakout
     private var ballA = mutableListOf<BallBreakout>()
@@ -46,11 +44,8 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         gridPosX = gridStartX
         gridPosY = gridStartY
 
-        player = Paddle(this.context, screenWidth, screenHeight)
+        player = Paddle(screenWidth, screenHeight, false)
         player.posY = playerY
-
-        CPU = Paddle(this.context, screenWidth, screenHeight)
-        CPU.posY = screenHeight - playerY
 
         ball1 = BallBreakout(screenWidth, screenHeight)
         changeColors()
@@ -129,7 +124,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     fun draw() {
         canvas = mHolder!!.lockCanvas()
         canvas.drawColor(Color.BLACK)
-        player.draw(canvas)
+        player.draw()
         ball1.draw(canvas)
         ballA.forEach {
             it.draw(canvas)
@@ -143,7 +138,6 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     fun changeColors() {
         rngColor.color = GameSettings.getRandomColorFromArray()
         player.paint = rngColor
-        CPU.paint = rngColor
         ball1.paint = rngColor
         ball1.changeColor = false
     }

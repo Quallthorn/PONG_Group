@@ -9,7 +9,6 @@ import com.example.pong_group.R
 import com.example.pong_group.Services.GameSounds
 import com.example.pong_group.Services.NumberPrinter
 
-class Ball(width: Float, height: Float) {
 class Ball( width: Float, height: Float) {
     private var size = 10f
     var posX = size
@@ -79,9 +78,7 @@ class Ball( width: Float, height: Float) {
             if (posY >= screenHeight - size) {
 //                playSound()
 //                dirY = Math.abs(dirY) * -1
-                centerBall()
-                NumberPrinter.scoreCPU += 1
-                playSound()
+                GameSounds.playSound()
                 centerBall(false)
 
 //                dirY = Math.abs(dirY) * -1
@@ -91,10 +88,7 @@ class Ball( width: Float, height: Float) {
             } else if (posY <= size) {
 //                playSound()
 //                dirY = Math.abs(dirY)
-                centerBall()
-                NumberPrinter.scoreP += 1
-                playSound()
-//                dirY = Math.abs(dirY)
+                GameSounds.playSound()
                 centerBall(true)
             }
 

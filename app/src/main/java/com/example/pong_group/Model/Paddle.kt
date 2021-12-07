@@ -6,6 +6,7 @@ import android.graphics.Paint
 import com.example.pong_group.Controller.App
 import com.example.pong_group.Model.GameViewPONG.Companion.canvas
 import com.example.pong_group.R
+import com.example.pong_group.Services.NumberPrinter
 
 class Paddle( width: Float, height: Float, isCpu: Boolean) {
 

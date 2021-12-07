@@ -60,8 +60,6 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         for (i in 0 until ballCount) {
             var newBall = Ball(screenWidth, screenHeight)
             var s = (0..100).random()/100f
-            val newBall = Ball(screenWidth, screenHeight)
-            val s = (0..100).random()/100f
             newBall.dirX = s
             newBall.dirY = sqrt((1 - newBall.dirX * newBall.dirX).toDouble()).toFloat()
             //var d = 2
@@ -112,7 +110,6 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
             cpu.posX
         )
         ballA.forEach{
-            it.update(player.posX, player.posY, player.width, player.posXOld, CPU.posX)
             it.update(player.posX, player.posY, player.width, player.height, player.posXOld, cpu.posX)
         }
         if (ball1.changeColor)
@@ -144,10 +141,19 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
                 screenHeight / 2 - thickness,
                 lineX + lineW,
                 screenHeight / 2 + thickness,
-                rngColor
+                GameSettings.curPaint
             )
             lineX += (lineW + lineSpacing)
         }
+    }
+
+    private fun changeColors(){
+        GameSettings.getRandomColorFromArray()
+        player.paint = GameSettings.curPaint
+        cpu.paint = GameSettings.curPaint
+        ball1.paint = GameSettings.curPaint
+
+        ball1.changeColor = false
     }
 
     override fun surfaceCreated(p0: SurfaceHolder) {
@@ -180,14 +186,5 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
             player.posX = event.x
         }
         return true
-    }
-
-    private fun changeColors(){
-         GameSettings.getRandomColorFromArray()
-        player.paint = GameSettings.curPaint
-        cpu.paint = GameSettings.curPaint
-        ball1.paint = GameSettings.curPaint
-
-        ball1.changeColor = false
     }
 }
