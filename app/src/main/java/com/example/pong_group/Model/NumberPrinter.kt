@@ -3,7 +3,7 @@ package com.example.pong_group.Model
 import android.graphics.Canvas
 import android.graphics.Paint
 
-class NumberPrinter {
+object NumberPrinter {
 
     val numberW = 20f
     val numberWL = 90f
