@@ -23,8 +23,6 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     var rngColor = Paint()
     val ballCount = 0
     var mHolder: SurfaceHolder? = holder
-    var screenWidth: Float = 0f
-    var screenHeight: Float = 0f
 
     var gridPosX: Float = 0f
     var gridPosY: Float = 0f
@@ -44,17 +42,17 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         gridPosX = gridStartX
         gridPosY = gridStartY
 
-        player = Paddle(screenWidth, screenHeight, false)
+        player = Paddle(false)
         player.posY = playerY
 
-        ball1 = BallBreakout(screenWidth, screenHeight)
+        ball1 = BallBreakout()
         changeColors()
     }
 
     fun setup() {
         ball1.centerBall(player.posX, player.posY)
         for (i in 0 until ballCount) {
-            var newBall = BallBreakout(screenWidth, screenHeight)
+            var newBall = BallBreakout()
             var s = (0..100).random() / 100f
             newBall.dirX = s
             newBall.dirY = Math.sqrt((1 - newBall.dirX * newBall.dirX).toDouble()).toFloat()
@@ -73,7 +71,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             ballA.add(newBall)
         }
 
-        brickW = ((screenWidth - gridStartX * 2 + gridSpacingX) / brickCountX) - gridSpacingX
+        brickW = ((GameSettings.screenWidth - gridStartX * 2 + gridSpacingX) / brickCountX) - gridSpacingX
         var rowNumber = 0
         for (i in 0 until (brickCountX * brickCountY)) {
             var newBrick = Brick(brickW, brickH, gridPosX, gridPosY)
@@ -147,13 +145,8 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     }
 
     override fun surfaceChanged(p0: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
-        screenWidth = p2.toFloat()
-        screenHeight = p3.toFloat()
-        ball1.screenWidth = screenWidth
-        ball1.screenHeight = screenHeight
+        GameSettings.setScreenDimen(p2.toFloat(), p3.toFloat())
         setup()
-        player.screenWidth = screenWidth
-        player.screenHeight = screenHeight
     }
 
     override fun surfaceDestroyed(p0: SurfaceHolder) {
@@ -168,7 +161,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (event != null && event.x >= player.width / 2 && event.x <= screenWidth - player.width / 2) {
+        if (event != null && event.x >= player.width / 2 && event.x <= GameSettings.screenWidth - player.width / 2) {
             player.posX = event.x
         }
         return true

@@ -1,26 +1,22 @@
 package com.example.pong_group.Model
 
-import android.content.Context
-import android.graphics.Canvas
 import android.graphics.Paint
 import com.example.pong_group.Controller.App
 import com.example.pong_group.Model.GameViewPONG.Companion.canvas
 import com.example.pong_group.R
+import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.NumberPrinter
 
-class Paddle( width: Float, height: Float, isCpu: Boolean) {
+class Paddle(isCpu: Boolean) {
 
     var posX: Float = 500f
     var posY: Float = 1f
     var height: Float = 10f
     var width: Float = 80f
     var paint = Paint()
-    var scores = 0
-    var scorePositionX = 0f
+    var scorePositionXL = 0f
+    var scorePositionXR = 0f
     var scorePositionY = 0f
-
-    var screenWidth = width
-    var screenHeight = height
 
     var posXOld: Float = 0f
     val frameCheck = 2
@@ -50,17 +46,19 @@ class Paddle( width: Float, height: Float, isCpu: Boolean) {
     fun draw (){
         canvas.drawRect(
             posX - width,
-            screenHeight - posY,
+            GameSettings.screenHeight - posY,
             posX + width,
-            screenHeight - posY + height,
+            GameSettings.screenHeight - posY + height,
             paint
         )
 
         if(isCpu) {
-            NumberPrinter.drawNumber(playerScore, scorePositionX, scorePositionY)
+            NumberPrinter.drawNumber(playerScore, scorePositionXL, scorePositionY, scorePositionXR)
         } else {
-            NumberPrinter.drawNumber(cpuScore, scorePositionX, scorePositionY)
+            if (cpuScore <= 9)
+                NumberPrinter.drawNumber(cpuScore, scorePositionXL, scorePositionY, scorePositionXR)
+            else
+                NumberPrinter.drawNumber(cpuScore, scorePositionXR, scorePositionY, scorePositionXL)
         }
-
     }
 }

@@ -6,10 +6,11 @@ import android.graphics.Paint
 import android.media.MediaPlayer
 import com.example.pong_group.Controller.App
 import com.example.pong_group.R
+import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSounds
 import com.example.pong_group.Services.NumberPrinter
 
-class BallBreakout(width: Float, height: Float) {
+class BallBreakout() {
     var size = 5f
     var posX = size
     var posY = size
@@ -19,17 +20,14 @@ class BallBreakout(width: Float, height: Float) {
     var dirX = 0.5f
     var dirY = 0.5f
 
-    var screenWidth = width
-    var screenHeight = height
-
     val anglesCount = 10 // max 10 possibly 10.9 but not recommended
     val maxSpeed = 20f
 
     var changeColor = false
 
     init {
-        posX = screenWidth * 0.5f
-        posY = screenHeight * 0.5f
+        posX = GameSettings.screenWidth * 0.5f
+        posY = GameSettings.screenHeight * 0.5f
     }
 
     fun update(
@@ -38,7 +36,7 @@ class BallBreakout(width: Float, height: Float) {
         pWidth: Float,
         pOldX: Float
     ) {
-        if (posX >= screenWidth - size) {
+        if (posX >= GameSettings.screenWidth - size) {
             GameSounds.playSound()
             dirX = Math.abs(dirX) * -1
         }
@@ -46,7 +44,7 @@ class BallBreakout(width: Float, height: Float) {
             GameSounds.playSound()
             dirX = Math.abs(dirX)
         }
-        if (posY >= screenHeight - size) {
+        if (posY >= GameSettings.screenHeight - size) {
             centerBall(pPosX, pPosY)
             dirY = Math.abs(dirY) * -1
         } else if (posY <= size) {
@@ -54,8 +52,8 @@ class BallBreakout(width: Float, height: Float) {
             dirY = Math.abs(dirY)
         }
 
-        if (posY >= screenHeight - pPosY - size
-            && posY <= screenHeight - pPosY + speed
+        if (posY >= GameSettings.screenHeight - pPosY - size
+            && posY <= GameSettings.screenHeight - pPosY + speed
             && posX >= pPosX - pWidth
             && posX <= pPosX + pWidth
         ) {
@@ -88,7 +86,7 @@ class BallBreakout(width: Float, height: Float) {
 
     fun centerBall(pPosX: Float, pPosY: Float) {
         posX = pPosX
-        posY = screenHeight - (pPosY + screenHeight * 0.01f)
+        posY = GameSettings.screenHeight - (pPosY + GameSettings.screenHeight * 0.01f)
     }
 
     fun changeColor() {

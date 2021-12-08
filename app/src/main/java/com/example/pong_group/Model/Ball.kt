@@ -1,52 +1,43 @@
 package com.example.pong_group.Model
 
-import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.media.MediaPlayer
-import com.example.pong_group.Controller.App
-import com.example.pong_group.R
+import android.util.Log
+import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSounds
-import com.example.pong_group.Services.NumberPrinter
 
-class Ball( width: Float, height: Float) {
-    private var size = 10f
-    var posX = size
-    var posY = size
-    var paint = Paint()
-    var speed = 10f
-
-
+class Ball() {
+    var radius = 10f
+    var posX = radius
+    var posY = radius
     var dirX = 0.5f
     var dirY = 0.5f
+    var paint = Paint()
 
-    var screenWidth = width
-    var screenHeight = height
-
-    val anglesCount = 10 // max 10 possibly 10.9 but not recommended
-    val pongSoung = MediaPlayer.create(App.instance, R.raw.pong_sound)
-    val maxSpeed = 30f
+    private val anglesCount = 10 // max 10 possibly 10.9 but not recommended
+    private val startSpeed = 10f
+    var speed = 10f
+    private val maxSpeed = 30f
 
     var changeColor = false
     var start = false
-    var resetBallStatus = false
+    var p1Scored = false
 
     init {
-        posX = screenWidth * 0.5f
-        posY = screenHeight * 0.5f
+        posX = GameSettings.screenWidth * 0.5f
+        posY = GameSettings.screenHeight * 0.5f
     }
-
 
     fun update(
         pPosX: Float,
         pPosY: Float,
         pWidth: Float,
-        pHeight: Float,
         pOldX: Float,
-        CPUX: Float
+        cpuX: Float
     ) {
         if (start){
-            if (posX >= screenWidth - size) {
+            //right side
+            if (posX >= GameSettings.screenWidth - radius) {
                 GameSounds.playSound()
                 if (dirY > 0){
                     dirY += ((0..2).random())/10f
@@ -59,7 +50,9 @@ class Ball( width: Float, height: Float) {
                         dirY = -0.5f
                 }
                 dirX = -Math.sqrt((1 - dirY * dirY).toDouble()).toFloat()
-            } else if (posX <= size) {
+
+            //left side
+            } else if (posX <= radius) {
                 GameSounds.playSound()
                 if (dirY > 0){
                     dirY += ((0..2).random())/10f
@@ -74,39 +67,129 @@ class Ball( width: Float, height: Float) {
                 dirX = Math.sqrt((1 - dirY * dirY).toDouble()).toFloat()
             }
 
+
             //player side
-            if (posY >= screenHeight - size) {
-//                playSound()
-//                dirY = Math.abs(dirY) * -1
-                GameSounds.playSound()
-                centerBall(false)
-
-//                dirY = Math.abs(dirY) * -1
-                //draw = false
-
-                //cpu side
-            } else if (posY <= size) {
-//                playSound()
-//                dirY = Math.abs(dirY)
-                GameSounds.playSound()
-                centerBall(true)
+            if (posY >= GameSettings.screenHeight - radius) {
+                dirY = -1f
+                dirX = 0f
+                p1Scored = true
+                posY = GameSettings.screenHeight - (pPosY + radius)
+                resetBall(false)
+            //cpu side
+            } else if (posY <= radius) {
+                dirY = 1f
+                dirX = 0f
+                p1Scored = false
+                posY = pPosY + radius
+                resetBall(true)
             }
 
-            if (posY >= screenHeight - pPosY - size
-                && posY <= screenHeight - pPosY + speed
+
+            //player paddle
+            if (posY >= GameSettings.screenHeight - pPosY - radius
+                && posY <= GameSettings.screenHeight - pPosY + speed
                 && posX >= pPosX - pWidth
                 && posX <= pPosX + pWidth
             ) {
                 bounceP1(pPosX, pWidth, pOldX)
             }
 
-            if (posY <= pPosY + size
+            //cpu paddle
+            if (posY <= pPosY + radius
                 && posY >= pPosY - speed
-                && posX >= CPUX - pWidth
-                && posX <= CPUX + pWidth
+                && posX >= cpuX - pWidth
+                && posX <= cpuX + pWidth
             ) {
-                bounceCPU(CPUX, pWidth)
+                bounceCPU(cpuX, pWidth)
             }
+
+            posX += speed * dirX
+            posY += speed * dirY
+        }
+        else{
+            posX = if (p1Scored)
+                pPosX
+            else{
+                cpuX
+            }
+        }
+    }
+
+    fun draw(canvas: Canvas?) {
+        canvas?.drawCircle(posX, posY, radius, paint)
+    }
+
+    fun bounceP1(pPosX: Float, pWidth: Float, pOldX: Float) {
+        for (i in 1 until anglesCount) {
+            if (posX >= pPosX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= pPosX - (pWidth / anglesCount) * (anglesCount - i))
+                dirX = -(anglesCount - i) / 10f
+            else if (posX <= pPosX + (pWidth / anglesCount) * (anglesCount + 1 - i) && posX >= pPosX + (pWidth / anglesCount) * (anglesCount - i)) {
+                dirX = (anglesCount - i) / 10f
+            }
+        }
+        GameSounds.playSound()
+        changeColor()
+        dirY = -Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
+
+        if (speed < maxSpeed) {
+            if (Math.abs(pPosX - pOldX) > GameSettings.screenWidth / 54)
+                speed += 5f
+            else
+                speed += 0.1f
+
+            if (speed < maxSpeed)
+                speed == maxSpeed
+        }
+    }
+
+    fun bounceCPU(CPUX: Float, pWidth: Float) {
+        for (i in 1 until anglesCount) {
+            if (posX >= CPUX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= CPUX - (pWidth / anglesCount) * (anglesCount - i))
+                dirX = -(anglesCount - i) / 10f
+            else if (posX <= CPUX + (pWidth / anglesCount) * (anglesCount + 1 - i) && posX >= CPUX + (pWidth / anglesCount) * (anglesCount - i)) {
+                dirX = (anglesCount - i) / 10f
+            }
+        }
+        GameSounds.playSound()
+        changeColor()
+        dirY = Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
+
+        if (speed < maxSpeed) {
+            speed += 0.1f
+        }
+    }
+
+    fun resetBall(isCpu: Boolean) {
+            if (isCpu) {
+                Paddle.cpuScore += 1
+                if (Paddle.cpuScore > Paddle.absoluteScore) {
+                    Paddle.absoluteScore = Paddle.cpuScore
+                }
+            } else {
+                Paddle.playerScore += 1
+                if (Paddle.playerScore > Paddle.absoluteScore) {
+                    Paddle.absoluteScore = Paddle.playerScore
+                }
+            }
+        if (Paddle.absoluteScore > 50) {
+            Paddle.playerScore = 0
+            Paddle.cpuScore = 0
+            Paddle.absoluteScore = 0
+        }
+
+        start = false
+        speed = startSpeed
+    }
+
+    fun centerBall(){
+        posX = GameSettings.screenWidth/2
+        posY = GameSettings.screenHeight/2
+    }
+
+    fun changeColor() {
+        changeColor = true
+    }
+}
 
 //            if (posY >= screenHeight - pPosY - size
 //                && posY <= screenHeight - pPosY + pHeight
@@ -141,88 +224,3 @@ class Ball( width: Float, height: Float) {
 //                    dirY = -Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
 //                }
 //            }
-
-            posX += speed * dirX
-            posY += speed * dirY
-        }
-    }
-
-    fun draw(canvas: Canvas?) {
-        canvas?.drawCircle(posX, posY, size, paint)
-    }
-
-    fun bounceP1(pPosX: Float, pWidth: Float, pOldX: Float) {
-        for (i in 1 until anglesCount) {
-            if (posX >= pPosX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= pPosX - (pWidth / anglesCount) * (anglesCount - i))
-                dirX = -(anglesCount - i) / 10f
-            else if (posX <= pPosX + (pWidth / anglesCount) * (anglesCount + 1 - i) && posX >= pPosX + (pWidth / anglesCount) * (anglesCount - i)) {
-                dirX = (anglesCount - i) / 10f
-            }
-        }
-        GameSounds.playSound()
-        changeColor()
-        dirY = -Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
-
-        if (speed < maxSpeed) {
-            if (Math.abs(pPosX - pOldX) > screenWidth / 54)
-                speed += 5f
-            else
-                speed += 0.1f
-
-            if (speed < maxSpeed)
-                speed == maxSpeed
-        }
-    }
-
-    fun bounceCPU(CPUX: Float, pWidth: Float) {
-        for (i in 1 until anglesCount) {
-            if (posX >= CPUX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= CPUX - (pWidth / anglesCount) * (anglesCount - i))
-                dirX = -(anglesCount - i) / 10f
-            else if (posX <= CPUX + (pWidth / anglesCount) * (anglesCount + 1 - i) && posX >= CPUX + (pWidth / anglesCount) * (anglesCount - i)) {
-                dirX = (anglesCount - i) / 10f
-            }
-        }
-        GameSounds.playSound()
-        changeColor()
-        dirY = Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
-
-        if (speed < maxSpeed) {
-            speed += 0.1f
-        }
-    }
-
-    fun centerBall(isCpu: Boolean) {
-
-        if (resetBallStatus == true){
-            if(isCpu){
-                Paddle.cpuScore += 1
-                if (Paddle.cpuScore> Paddle.absoluteScore){
-                    Paddle.absoluteScore = Paddle.cpuScore
-                }
-            } else {
-                Paddle.playerScore +=1
-                if (Paddle.playerScore > Paddle.absoluteScore){
-                    Paddle.absoluteScore = Paddle.playerScore
-                }
-            }
-        } else {
-            resetBallStatus = true
-        }
-
-        if (Paddle.absoluteScore > 9) {
-            Paddle.playerScore = 0
-            Paddle.cpuScore = 0
-            Paddle.absoluteScore = 0
-            resetBallStatus = false
-        }
-
-
-
-        posX = screenWidth * 0.5f
-        posY = screenHeight * 0.5f
-    }
-
-    fun changeColor() {
-        changeColor = true
-    }
-}

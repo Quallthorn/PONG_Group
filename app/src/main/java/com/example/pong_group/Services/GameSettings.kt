@@ -7,6 +7,9 @@ import java.util.*
 
 object GameSettings {
 
+    var screenWidth: Float = 0f
+    var screenHeight: Float = 0f
+
     val colorArray = App.instance.resources.obtainTypedArray(R.array.rainbow)
     var curPaint = Paint()
 
@@ -24,4 +27,9 @@ object GameSettings {
 //        val colorInt = colorArray.getColor(randomIndex, 0)
 //        return colorInt
 //    }
+
+    fun setScreenDimen(width: Float, height: Float){
+        screenWidth = width
+        screenHeight = height
+    }
 }
