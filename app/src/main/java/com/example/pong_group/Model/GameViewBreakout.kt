@@ -14,27 +14,27 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
     private var thread: Thread? = null
     private var running = false
-    lateinit var canvas: Canvas
-    private var player: Paddle
-    private val playerY = 250f
-    private var ball1: BallBreakout
-    private var ballA = mutableListOf<BallBreakout>()
+    private var player: PaddleBreakout
+    private var paddlePosY = 0f
+    private var ball: BallBreakout
     private var bricks = mutableListOf<Brick>()
-    var rngColor = Paint()
-    val ballCount = 0
-    var mHolder: SurfaceHolder? = holder
+    private var rngColor = Paint()
+    private var mHolder: SurfaceHolder? = holder
 
     var gridPosX: Float = 0f
     var gridPosY: Float = 0f
     var gridStartX: Float = 0f
     var gridStartY: Float = 120f
-    var gridSpacingX: Float = 0f
-    var gridSpacingY: Float = 0f
+    var gridSpacingX: Float = 50f
+    var gridSpacingY: Float = 50f
     var brickH: Float = 50f
     var brickW: Float = 0f
-    var brickCountX: Int = 20
+    var brickCountX: Int = 10
     var brickCountY: Int = 6
-    var randomChance: Int = 0
+
+    companion object {
+        var canvasBreakout = Canvas()
+    }
 
     init {
         mHolder?.addCallback(this)
@@ -42,34 +42,15 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         gridPosX = gridStartX
         gridPosY = gridStartY
 
-        player = Paddle(false)
-        player.posY = playerY
-
-        ball1 = BallBreakout()
+        player = PaddleBreakout()
+        ball = BallBreakout()
         changeColors()
     }
 
-    fun setup() {
-        ball1.centerBall(player.posX, player.posY)
-        for (i in 0 until ballCount) {
-            var newBall = BallBreakout()
-            var s = (0..100).random() / 100f
-            newBall.dirX = s
-            newBall.dirY = Math.sqrt((1 - newBall.dirX * newBall.dirX).toDouble()).toFloat()
-            var d = (0..3).random()
-            //var d = 2
-            when (d) {
-                1 -> newBall.dirX = newBall.dirX * -1
-                2 -> newBall.dirY = newBall.dirY * -1
-                3 -> {
-                    newBall.dirY = newBall.dirY * -1
-                    newBall.dirX = newBall.dirX * -1
-                }
-                else -> {}
-            }
-            newBall.paint.color = GameSettings.getRandomColorFromArray()
-            ballA.add(newBall)
-        }
+    private fun setup() {
+        ball.centerBall(player.posX, player.posY)
+        paddlePosY = GameSettings.screenHeight / 7.2f
+        player.posY = paddlePosY
 
         brickW = ((GameSettings.screenWidth - gridStartX * 2 + gridSpacingX) / brickCountX) - gridSpacingX
         var rowNumber = 0
@@ -86,13 +67,13 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         }
     }
 
-    fun start() {
+    private fun start() {
         running = true
         thread = Thread(this)
         thread?.start()
     }
 
-    fun stop() {
+    private fun stop() {
         running = false
         try {
             thread?.join()
@@ -101,43 +82,36 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         }
     }
 
-    fun update() {
-        player.update()
-        ball1.update(
+    private fun update() {
+        //player.update()
+        ball.update(
             player.posX,
             player.posY,
-            player.width,
-            player.posXOld,
+            player.width
         )
-        ballA.forEach {
-            it.update(player.posX, player.posY, player.width, player.posXOld)
-        }
         bricks.forEach {
-            it.update(ball1)
+            it.update(ball)
         }
-        if (ball1.changeColor)
+        if (ball.changeColor)
             changeColors()
     }
 
-    fun draw() {
-        canvas = mHolder!!.lockCanvas()
-        canvas.drawColor(Color.BLACK)
+    private fun draw() {
+        canvasBreakout = mHolder!!.lockCanvas()
+        canvasBreakout.drawColor(Color.BLACK)
         player.draw()
-        ball1.draw(canvas)
-        ballA.forEach {
-            it.draw(canvas)
-        }
+        ball.draw()
         bricks.forEach {
-            it.draw(canvas)
+            it.draw()
         }
-        mHolder!!.unlockCanvasAndPost(canvas)
+        mHolder!!.unlockCanvasAndPost(canvasBreakout)
     }
 
-    fun changeColors() {
+    private fun changeColors() {
         rngColor.color = GameSettings.getRandomColorFromArray()
         player.paint = rngColor
-        ball1.paint = rngColor
-        ball1.changeColor = false
+        ball.paint = rngColor
+        ball.changeColor = false
     }
 
     override fun surfaceCreated(p0: SurfaceHolder) {
@@ -161,7 +135,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (event != null && event.x >= player.width / 2 && event.x <= GameSettings.screenWidth - player.width / 2) {
+        if (event != null) {
             player.posX = event.x
         }
         return true
@@ -197,3 +171,35 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         }
     }
 }
+//for multiple balls (power up?)
+//private var ballA = mutableListOf<BallBreakout>()
+//val ballCount = 0
+
+//        for (i in 0 until ballCount) {
+//            var newBall = BallBreakout()
+//            var s = (0..100).random() / 100f
+//            newBall.dirX = s
+//            newBall.dirY = Math.sqrt((1 - newBall.dirX * newBall.dirX).toDouble()).toFloat()
+//            var d = (0..3).random()
+//            when (d) {
+//                1 -> newBall.dirX = newBall.dirX * -1
+//                2 -> newBall.dirY = newBall.dirY * -1
+//                3 -> {
+//                    newBall.dirY = newBall.dirY * -1
+//                    newBall.dirX = newBall.dirX * -1
+//                }
+//                else -> {}
+//            }
+//            newBall.paint.color = GameSettings.getRandomColorFromArray()
+//            ballA.add(newBall)
+//        }
+
+// in update ()
+//        ballA.forEach {
+//            it.update(player.posX, player.posY, player.width, player.posXOld)
+//        }
+
+// in draw()
+//        ballA.forEach {
+//            it.draw(canvas)
+//        }

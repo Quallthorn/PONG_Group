@@ -8,10 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
 import com.example.pong_group.Model.GameViewBreakout
-import com.example.pong_group.Model.GameViewPONG
 import com.example.pong_group.R
 import com.example.pong_group.databinding.ActivityGameBreakoutBinding
-import com.example.pong_group.databinding.ActivityGamePongBinding
 
 class GameBreakout : AppCompatActivity(), SurfaceHolder.Callback, View.OnTouchListener {
 

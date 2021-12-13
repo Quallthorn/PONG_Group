@@ -6,12 +6,13 @@ import com.example.pong_group.R
 import java.util.*
 
 object GameSettings {
-
     var screenWidth: Float = 0f
     var screenHeight: Float = 0f
 
     val colorArray = App.instance.resources.obtainTypedArray(R.array.rainbow)
     var curPaint = Paint()
+
+    var breakBuffer = false
 
     fun getRandomColorFromArray(): Int{
         val r = Random()

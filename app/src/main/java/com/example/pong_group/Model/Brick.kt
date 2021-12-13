@@ -1,14 +1,12 @@
 package com.example.pong_group.Model
 
-import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
-import android.media.MediaPlayer
 import android.util.Log
-import com.example.pong_group.Controller.App
-import com.example.pong_group.R
+import com.example.pong_group.Model.GameViewBreakout.Companion.canvasBreakout
 import com.example.pong_group.Services.GameSounds
+import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 class Brick(w: Float, h: Float, x: Float, y: Float) {
     var posX = 0f
@@ -24,6 +22,11 @@ class Brick(w: Float, h: Float, x: Float, y: Float) {
     var d = 0f
 
     var broken = false
+    private var waitOneFrame = false
+
+    private var inXColumn = false
+    private var inYRow = false
+    private var xFirst = false
 
     init {
         posX = x
@@ -35,45 +38,58 @@ class Brick(w: Float, h: Float, x: Float, y: Float) {
     //bSize: Float, bPosX: Float, bPosY: Float,
     fun update(ball: BallBreakout) {
         if (!broken) {
-            if (ball.posX + ball.size >= posX
-                && ball.posX - ball.size <= posX + width
-                && ball.posY + ball.size >= posY
-                && ball.posY - ball.size <= posY + height
-            ) {
-                dT = Math.abs(ball.posY + ball.size - posY)
-                dB = Math.abs(ball.posY - ball.size - (posY + height))
-                dR = Math.abs(ball.posX - ball.size - (posX + width))
-                dL = Math.abs(ball.posX + ball.size - posX)
-                d = minOf(dT, dB, dR, dL)
-                Log.d("values", "all: $dT, $dB, $dR, $dL")
-                Log.d("values", "min: $d")
-
-                if(d == dT)
-                    ball.dirY = Math.abs(ball.dirY) * -1
-                else if (d == dB)
-                    ball.dirY = Math.abs(ball.dirY)
-                else if (d == dR)
-                    ball.dirX = Math.abs(ball.dirX) * -1
-                else
-                    ball.dirX = Math.abs(ball.dirX)
-
-//                if (Math.abs(ball.posX + ball.size - posX) <= 10f)
-//                    ball.dirX = Math.abs(ball.dirX) * -1
-//                if (Math.abs(ball.posX - ball.size - (posX + width)) <= 10f)
-//                    ball.dirX = Math.abs(ball.dirX)
-//                if (Math.abs(ball.posY + ball.size - posY) <= 10f)
-//                    ball.dirY = Math.abs(ball.dirY) * -1
-//                if (Math.abs(ball.posY - ball.size - (posY + height)) <= 10f)
-//                    ball.dirY = Math.abs(ball.dirY)
-                broken = true
-                GameSounds.playSound()
+            if (ball.posX + ball.radius >= posX && ball.posX - ball.radius <= posX + width){
+                if (sqrt((ball.posX-posX).pow(2) + (ball.posY-posY).pow(2)) <= ball.radius
+                    || sqrt((ball.posX-posX - width).pow(2) + (ball.posY-posY).pow(2)) <= ball.radius
+                    || ball.posX >= posX && ball.posX <= posX + width){
+                    xFirst = !inYRow
+                    inXColumn = true
+                }
             }
+            else
+                inXColumn = false
+
+            if (ball.posY + ball.radius >= posY && ball.posY - ball.radius <= posY + height){
+                if (sqrt((ball.posY-posY).pow(2) + (ball.posX-posX).pow(2)) <= ball.radius
+                    || sqrt((ball.posY-posY - height).pow(2) + (ball.posX-posX).pow(2)) <= ball.radius
+                    || ball.posY >= posY && ball.posY <= posY + height){
+                    xFirst = inXColumn
+                    inYRow = true
+                }
+            }
+            else
+                inYRow = false
+
+            if (inXColumn && inYRow){
+                if (xFirst)
+                    ball.dirY *= -1
+                else
+                    ball.dirX *= -1
+                GameSounds.playSound()
+                broken = true
+            }
+//            if (ball.posX + ball.radius + ball.speed * abs(ball.dirX) >= posX
+//                && ball.posX - ball.radius - ball.speed * abs(ball.dirX) <= posX + width
+//                && ball.posY + ball.radius + ball.speed * abs(ball.dirY) >= posY
+//                && ball.posY - ball.radius - ball.speed * abs(ball.dirY) <= posY + height
+//                && !waitOneFrame
+//            ) {
+//                waitOneFrame = true
+//            }
+//            if (ball.posX + ball.radius >= posX
+//                && ball.posX - ball.radius <= posX + width
+//                && ball.posY + ball.radius >= posY
+//                && ball.posY - ball.radius <= posY + height
+//                && waitOneFrame
+//            ) {
+//                breakBrick(ball)
+//            }
         }
     }
 
-    fun draw(canvas: Canvas) {
+    fun draw() {
         if (!broken) {
-            canvas?.drawRect(
+            canvasBreakout?.drawRect(
                 posX,
                 posY,
                 posX + width,
@@ -81,5 +97,25 @@ class Brick(w: Float, h: Float, x: Float, y: Float) {
                 paint
             )
         }
+    }
+
+    private fun breakBrick(ball: BallBreakout) {
+        dT = abs(ball.posY + ball.radius - posY)
+        dB = abs(ball.posY - ball.radius - (posY + height))
+        dR = abs(ball.posX - ball.radius - (posX + width))
+        dL = abs(ball.posX + ball.radius - posX)
+
+        d = minOf(dT, dB, dR, dL)
+        Log.d("values", "all: $dT, $dB, $dR, $dL")
+        Log.d("values", "min: $d")
+
+        when (d) {
+            dT -> ball.dirY = abs(ball.dirY) * -1
+            dB -> ball.dirY = abs(ball.dirY)
+            dR -> ball.dirX = abs(ball.dirX)
+            else -> ball.dirX = abs(ball.dirX) * -1
+        }
+        GameSounds.playSound()
+        broken = true
     }
 }

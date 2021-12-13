@@ -19,7 +19,7 @@ class Paddle(isCpu: Boolean) {
     var scorePositionY = 0f
 
     var posXOld: Float = 0f
-    val frameCheck = 2
+    private val frameCheck = 2
     var currentFrame = 0
     var isCpu = isCpu
 

@@ -1,27 +1,24 @@
 package com.example.pong_group.Model
 
-import android.content.Context
-import android.graphics.Canvas
 import android.graphics.Paint
-import android.media.MediaPlayer
-import com.example.pong_group.Controller.App
-import com.example.pong_group.R
+import com.example.pong_group.Model.GameViewBreakout.Companion.canvasBreakout
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSounds
-import com.example.pong_group.Services.NumberPrinter
+import kotlin.math.abs
+import kotlin.math.sqrt
 
 class BallBreakout() {
-    var size = 5f
-    var posX = size
-    var posY = size
+    var radius = 50f
+    var posX = radius
+    var posY = radius
     var paint = Paint()
-    var speed = 30f
+    var speed = 5f
 
     var dirX = 0.5f
     var dirY = 0.5f
 
-    val anglesCount = 10 // max 10 possibly 10.9 but not recommended
-    val maxSpeed = 20f
+    private val anglesCount = 10 // max 10 possibly 10.9 but not recommended
+    private val maxSpeed = 20f
 
     var changeColor = false
 
@@ -33,41 +30,40 @@ class BallBreakout() {
     fun update(
         pPosX: Float,
         pPosY: Float,
-        pWidth: Float,
-        pOldX: Float
+        pWidth: Float
     ) {
-        if (posX >= GameSettings.screenWidth - size) {
+        if (posX >= GameSettings.screenWidth - radius) {
             GameSounds.playSound()
-            dirX = Math.abs(dirX) * -1
+            dirX = abs(dirX) * -1
         }
-        else if (posX <= size){
+        else if (posX <= radius){
             GameSounds.playSound()
-            dirX = Math.abs(dirX)
+            dirX = abs(dirX)
         }
-        if (posY >= GameSettings.screenHeight - size) {
+        if (posY >= GameSettings.screenHeight - radius) {
             centerBall(pPosX, pPosY)
-            dirY = Math.abs(dirY) * -1
-        } else if (posY <= size) {
+            dirY = abs(dirY) * -1
+        } else if (posY <= radius) {
             GameSounds.playSound()
-            dirY = Math.abs(dirY)
+            dirY = abs(dirY)
         }
 
-        if (posY >= GameSettings.screenHeight - pPosY - size
+        if (posY >= GameSettings.screenHeight - pPosY - radius
             && posY <= GameSettings.screenHeight - pPosY + speed
-            && posX >= pPosX - pWidth
-            && posX <= pPosX + pWidth
+            && posX + radius >= pPosX - pWidth
+            && posX - radius <= pPosX + pWidth
         ) {
-            bounceP1(pPosX, pWidth, pOldX)
+            bounceP1(pPosX, pWidth)
         }
         posX += speed * dirX
         posY += speed * dirY
     }
 
-    fun draw(canvas: Canvas?) {
-        canvas?.drawCircle(posX, posY, size, paint)
+    fun draw() {
+        canvasBreakout?.drawCircle(posX, posY, radius, paint)
     }
 
-    fun bounceP1(pPosX: Float, pWidth: Float, pOldX: Float) {
+    private fun bounceP1(pPosX: Float, pWidth: Float) {
         for (i in 1 until anglesCount) {
             if (posX >= pPosX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= pPosX - (pWidth / anglesCount) * (anglesCount - i))
                 dirX = -(anglesCount - i) / 10f
@@ -77,16 +73,16 @@ class BallBreakout() {
         }
         GameSounds.playSound()
         changeColor()
-        dirY = -Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
+        dirY = -sqrt((1 - dirX * dirX).toDouble()).toFloat()
 
-        if (speed < maxSpeed) {
-            speed += 0.1f
-        }
+//        if (speed < maxSpeed) {
+//            speed += 0.1f
+//        }
     }
 
     fun centerBall(pPosX: Float, pPosY: Float) {
         posX = pPosX
-        posY = GameSettings.screenHeight - (pPosY + GameSettings.screenHeight * 0.01f)
+        posY = GameSettings.screenHeight - (pPosY + GameSettings.screenHeight * 0.05f)
     }
 
     fun changeColor() {

@@ -1,8 +1,6 @@
 package com.example.pong_group.Services
 
-import android.graphics.Canvas
 import com.example.pong_group.Model.GameViewPONG.Companion.canvas
-import com.example.pong_group.Services.GameSettings
 
 object NumberPrinter {
 

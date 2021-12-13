@@ -1,8 +1,7 @@
 package com.example.pong_group.Model
 
-import android.graphics.Canvas
 import android.graphics.Paint
-import android.util.Log
+import com.example.pong_group.Model.GameViewPONG.Companion.canvas
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSounds
 
@@ -88,8 +87,8 @@ class Ball() {
             //player paddle
             if (posY >= GameSettings.screenHeight - pPosY - radius
                 && posY <= GameSettings.screenHeight - pPosY + speed
-                && posX >= pPosX - pWidth
-                && posX <= pPosX + pWidth
+                && posX + radius >= pPosX - pWidth
+                && posX - radius <= pPosX + pWidth
             ) {
                 bounceP1(pPosX, pWidth, pOldX)
             }
@@ -115,8 +114,8 @@ class Ball() {
         }
     }
 
-    fun draw(canvas: Canvas?) {
-        canvas?.drawCircle(posX, posY, radius, paint)
+    fun draw() {
+        canvas.drawCircle(posX, posY, radius, paint)
     }
 
     fun bounceP1(pPosX: Float, pWidth: Float, pOldX: Float) {

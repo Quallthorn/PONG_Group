@@ -11,7 +11,6 @@ import com.example.pong_group.Services.GameSounds
 import kotlin.math.sqrt
 import com.example.pong_group.Services.NumberPrinter
 
-
 class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callback, Runnable {
 
     private var thread: Thread? = null
@@ -22,16 +21,14 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     private var ball1: Ball
     private var ballA = mutableListOf<Ball>()
     private val ballCount = 0
-    var mHolder: SurfaceHolder? = holder
-//    var screenWidth: Float = 0f
-//    var screenHeight: Float = 0f
+    private var mHolder: SurfaceHolder? = holder
 
-    val numberFromEdge = 100f
-    val numberFromMiddle = 100f
+    private val numberFromEdge = 100f
+    private val numberFromMiddle = 100f
 
 
     companion object {
-        var canvas: Canvas = Canvas()
+        var canvas = Canvas()
     }
 
     init {
@@ -43,7 +40,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         changeColors()
     }
 
-    fun setup() {
+    private fun setup() {
         player.scorePositionXL = GameSettings.screenWidth - numberFromEdge - NumberPrinter.numberWL
         player.scorePositionXR =
             GameSettings.screenWidth - numberFromEdge - NumberPrinter.numberWL * 2 - NumberPrinter.numberW
@@ -79,13 +76,13 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         }
     }
 
-    fun start() {
+    private fun start() {
         running = true
         thread = Thread(this)
         thread?.start()
     }
 
-    fun stop() {
+    private fun stop() {
         running = false
         try {
             thread?.join()
@@ -143,21 +140,21 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         drawLine()
         player.draw()
         cpu.draw()
-        ball1.draw(canvas)
+        ball1.draw()
         ballA.forEach {
-            it.draw(canvas)
+            it.draw()
         }
         mHolder!!.unlockCanvasAndPost(canvas)
     }
 
-    fun drawLine() {
+    private fun drawLine() {
         var lineX = 0f
         val amount = 20
         val lineSpacing = 30
         val lineW = (GameSettings.screenWidth + lineSpacing) / amount - lineSpacing
         val thickness = 5f
         for (i in 0 until amount) {
-            canvas?.drawRect(
+            canvas.drawRect(
                 lineX,
                 GameSettings.screenHeight / 2 - thickness,
                 lineX + lineW,
