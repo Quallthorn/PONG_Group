@@ -18,8 +18,6 @@ class GameThread(
 
         while (running) {
             startTime = System.nanoTime()
-
-
             try {
                 canvasBreakout = surfaceHolder.lockCanvas()?.also {
                     synchronized(surfaceHolder) {

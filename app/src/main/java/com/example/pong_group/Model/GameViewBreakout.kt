@@ -29,7 +29,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     private var rngColor = Paint()
 
     private val colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks)
-    var level = 2
+    var level = 1
     var gridPosX: Float = 0f
     var gridPosY: Float = 0f
     var gridStartX: Float = 0f
@@ -67,6 +67,8 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         changeColors()
         totalCountOfBricks = brickCountX*brickCountY
         thread = GameThread(holder, this)
+
+        GameSettings.gameSetUpBreakout(brickCountX, brickCountY)
     }
 
     private fun setup() {
@@ -75,16 +77,17 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         ball.centerBall(player.posX, player.posY)
 
         brickW = ((GameSettings.screenWidth - gridStartX * 2 + gridSpacingX) / brickCountX) - gridSpacingX
-        var rowNumber = 1
+        var colorNumber = 1
+        var pointBase = brickCountY
         if (level == 2)
-            rowNumber = 0
+            colorNumber = 0
 
         for (i in 0 until (brickCountX * brickCountY)) {
             //set position
-            var newBrick = Brick(brickW, brickH, gridPosX, gridPosY)
+            var newBrick = Brick(brickW, brickH, gridPosX, gridPosY, pointBase)
 
             //set color
-            val colorInt = colorArray.getColor(rowNumber, 0)
+            val colorInt = colorArray.getColor(colorNumber, 0)
             newBrick.paint.color = colorInt
 
             //change position for next brick
@@ -92,7 +95,8 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             if (gridPosX >= (gridSpacingX + brickW) * brickCountX) {
                 gridPosX = gridStartX
                 gridPosY += (gridSpacingY + brickH)
-                rowNumber++
+                colorNumber++
+                pointBase--
             }
             bricks.add(newBrick)
         }
@@ -154,7 +158,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         return true
     }
 
-    fun checkEndOfTheGame(){
+    private fun checkEndOfTheGame(){
         if(totalCountOfBricks == 0) {
             val layout = LinearLayout(App.instance)
 

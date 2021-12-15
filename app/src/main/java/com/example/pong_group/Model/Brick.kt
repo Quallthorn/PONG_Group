@@ -1,18 +1,21 @@
 package com.example.pong_group.Model
 
 import android.graphics.Paint
+import android.util.Log
 import com.example.pong_group.Model.GameViewBreakout.Companion.canvasBreakout
+import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSounds
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class Brick(w: Float, h: Float, x: Float, y: Float) {
+class Brick(w: Float, h: Float, x: Float, y: Float, s: Int) {
     var posX = 0f
     var posY = 0f
     var width = 0f
     var height = 0f
     var paint = Paint()
+    var pointBase = 0
 
     var dT = 0f
     var dB = 0f
@@ -27,6 +30,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float) {
         posY = y
         width = w
         height = h
+        pointBase = s
     }
 
     fun update(ball: BallBreakout) {
@@ -56,18 +60,18 @@ class Brick(w: Float, h: Float, x: Float, y: Float) {
     }
 
     private fun ballCollide(ball: BallBreakout) {
-        dT = abs(ball.posY + ball.radius - posY)
-        dB = abs(ball.posY - ball.radius - (posY + height))
-        dR = abs(ball.posX - ball.radius - (posX + width))
-        dL = abs(ball.posX + ball.radius - posX)
+        dT = abs(ball.posY - posY)
+        dB = abs(ball.posY - (posY + height))
+        dR = abs(ball.posX - (posX + width))
+        dL = abs(ball.posX - posX)
 
-        d = if (ball.dirX < 0 && ball.dirY < 0){
+        d = if (ball.dirX < 0 && ball.dirY < 0) {
             minOf(dB, dR)
-        } else if (ball.dirX > 0 && ball.dirY < 0){
+        } else if (ball.dirX > 0 && ball.dirY < 0) {
             minOf(dB, dL)
-        } else if (ball.dirX < 0 && ball.dirY > 0){
+        } else if (ball.dirX < 0 && ball.dirY > 0) {
             minOf(dT, dR)
-        } else{
+        } else {
             minOf(dT, dL)
         }
 
@@ -98,7 +102,9 @@ class Brick(w: Float, h: Float, x: Float, y: Float) {
         GameSounds.playSound()
         broken = true
         GameViewBreakout.totalCountOfBricks -= 1
-        // add ppoints to game += 5000
+        GameSettings.addScore(pointBase)
+        Log.d("Score", "Total Score: ${GameSettings.scoreBreakout}")
+        // add points to game += 5000
 //        GameViewBreakout.checkEndOfTheGame()
-        }
+    }
 }

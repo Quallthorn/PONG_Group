@@ -12,7 +12,7 @@ class BallBreakout() {
     var posX = radius
     var posY = radius
     var paint = Paint()
-    var speed = 10f
+    private var speed = 10f
 
     var dirX = 0.5f
     var dirY = 0.5f
