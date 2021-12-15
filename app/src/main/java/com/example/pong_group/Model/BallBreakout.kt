@@ -8,7 +8,7 @@ import kotlin.math.abs
 import kotlin.math.sqrt
 
 class BallBreakout() {
-    var radius = 50f
+    var radius = 5f
     var posX = radius
     var posY = radius
     var paint = Paint()
@@ -18,7 +18,7 @@ class BallBreakout() {
     var dirY = 0.5f
 
     private val anglesCount = 10 // max 10 possibly 10.9 but not recommended
-    private val maxSpeed = 20f
+    private val maxSpeed = 30f
 
     var changeColor = false
 
@@ -60,7 +60,7 @@ class BallBreakout() {
     }
 
     fun draw() {
-        canvasBreakout?.drawCircle(posX, posY, radius, paint)
+        canvasBreakout.drawCircle(posX, posY, radius, paint)
     }
 
     private fun bounce(pPosX: Float, pWidth: Float) {
@@ -97,10 +97,10 @@ class BallBreakout() {
 
     fun centerBall(pPosX: Float, pPosY: Float) {
         posX = pPosX
-        posY = GameSettings.screenHeight - (pPosY + GameSettings.screenHeight * 0.05f)
+        posY = GameSettings.screenHeight - (pPosY + radius)
     }
 
-    fun changeColor() {
+    private fun changeColor() {
         changeColor = true
     }
 }

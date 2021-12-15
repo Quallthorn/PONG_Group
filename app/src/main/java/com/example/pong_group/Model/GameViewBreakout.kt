@@ -48,9 +48,9 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     }
 
     private fun setup() {
-        ball.centerBall(player.posX, player.posY)
         paddlePosY = GameSettings.screenHeight / 7.2f
         player.posY = paddlePosY
+        ball.centerBall(player.posX, player.posY)
 
         brickW = ((GameSettings.screenWidth - gridStartX * 2 + gridSpacingX) / brickCountX) - gridSpacingX
         var rowNumber = 0
@@ -141,7 +141,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         return true
     }
 
-    fun getBrickColor(rowNumber: Int, newBrick: Brick){
+    private fun getBrickColor(rowNumber: Int, newBrick: Brick){
         when (rowNumber) {
             0 -> {
                 newBrick.paint.color = context.resources.getColor(R.color.red)

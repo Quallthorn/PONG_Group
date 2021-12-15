@@ -10,6 +10,7 @@ import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSounds
 import kotlin.math.sqrt
 import com.example.pong_group.Services.NumberPrinter
+import kotlin.math.abs
 
 class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callback, Runnable {
 
@@ -106,8 +107,8 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
                 cpu.posX -= GameSettings.screenWidth / 250f
 
             if (!ball1.p1Scored
-                && Math.abs(cpu.posX - GameSettings.screenWidth / 2) <= 5f
-                && Math.abs(ball1.posX - GameSettings.screenWidth / 2) <= 5f
+                && abs(cpu.posX - GameSettings.screenWidth / 2) <= 5f
+                && abs(ball1.posX - GameSettings.screenWidth / 2) <= 5f
             ){
                 GameSounds.playSound()
                 ball1.start = true
