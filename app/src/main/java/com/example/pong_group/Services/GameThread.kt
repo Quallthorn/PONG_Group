@@ -15,6 +15,7 @@ class GameThread(
     override fun run() {
         var startTime: Long
         val targetTime = (1000 / targetFPS).toLong()
+        var cLocked = false
 
         while (running) {
             startTime = System.nanoTime()
@@ -22,14 +23,24 @@ class GameThread(
 
             try {
                 canvasBreakout = surfaceHolder.lockCanvas()?.also {
+                    cLocked = true
                     synchronized(surfaceHolder) {
                         gameView.update()
                         gameView.draw(it)
                     }
                     surfaceHolder.unlockCanvasAndPost(it)
+                    cLocked = false
                 }!!
             } catch (ignored: Exception){
+                if (!cLocked){
+                    canvasBreakout = this.surfaceHolder.lockCanvas();
+                    cLocked = true;
+                }
 
+                if (cLocked) {
+                    surfaceHolder.unlockCanvasAndPost(canvasBreakout);
+                    cLocked = false;
+                }
             }
 
             try {
