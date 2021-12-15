@@ -97,5 +97,8 @@ class Brick(w: Float, h: Float, x: Float, y: Float) {
     private fun breakBrick() {
         GameSounds.playSound()
         broken = true
-    }
+        GameViewBreakout.totalCountOfBricks -= 1
+        // add ppoints to game += 5000
+//        GameViewBreakout.checkEndOfTheGame()
+        }
 }

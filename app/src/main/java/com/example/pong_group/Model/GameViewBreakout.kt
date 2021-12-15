@@ -8,9 +8,16 @@ import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.example.pong_group.Controller.App
+import android.view.View
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameThread
+
+import android.widget.TextView
+
+import android.widget.LinearLayout
+import androidx.core.content.res.ResourcesCompat
+
 
 class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.Callback{
 
@@ -46,6 +53,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
     companion object {
         var canvasBreakout = Canvas()
+        var totalCountOfBricks = 0
     }
 
     init {
@@ -57,7 +65,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         player = PaddleBreakout()
         ball = BallBreakout()
         changeColors()
-
+        totalCountOfBricks = brickCountX*brickCountY
         thread = GameThread(holder, this)
     }
 
@@ -113,6 +121,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             bricks.forEach { brick ->
                 brick.draw()
             }
+            checkEndOfTheGame()
         }
     }
 
@@ -143,6 +152,31 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             player.posX = event.x
         }
         return true
+    }
+
+    fun checkEndOfTheGame(){
+        if(totalCountOfBricks == 0) {
+            val layout = LinearLayout(App.instance)
+
+            val textView = TextView(App.instance)
+            textView.visibility = View.VISIBLE
+            textView.text = "GAME \n OVER"
+            textView.textSize = 100f
+            val typeFace = ResourcesCompat.getFont(App.instance, R.font.arcade_classic)
+            textView.typeface = typeFace
+            textView.setTextColor(App.instance.resources.getColor(R.color.white))
+            layout.addView(textView)
+
+            layout.measure(canvasBreakout.width, canvasBreakout.height)
+            layout.layout(0, 0, canvasBreakout.width, canvasBreakout.height)
+
+
+            canvasBreakout.translate((canvasBreakout.width/2).toFloat()-(textView.width/2).toFloat(), (canvasBreakout.width/2).toFloat())
+
+            layout.draw(canvasBreakout)
+            thread.running = false
+
+        }
     }
 }
 //for multiple balls (power up?)
