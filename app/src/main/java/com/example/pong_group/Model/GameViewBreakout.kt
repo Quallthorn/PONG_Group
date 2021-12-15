@@ -9,10 +9,12 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings
+import com.example.pong_group.Services.GameThread
 
-class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.Callback, Runnable {
+class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.Callback{
 
-    private var thread: Thread? = null
+//    private var thread: Thread? = null
+    private val thread: GameThread
     private var running = false
     private var player: PaddleBreakout
     private var paddlePosY = 0f
@@ -37,7 +39,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     }
 
     init {
-        mHolder?.addCallback(this)
+        holder.addCallback(this)
 
         gridPosX = gridStartX
         gridPosY = gridStartY
@@ -45,6 +47,8 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         player = PaddleBreakout()
         ball = BallBreakout()
         changeColors()
+
+        thread = GameThread(holder, this)
     }
 
     private fun setup() {
@@ -67,22 +71,22 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         }
     }
 
-    private fun start() {
-        running = true
-        thread = Thread(this)
-        thread?.start()
-    }
+//    private fun start() {
+//        running = true
+//        thread = Thread(this)
+//        thread?.start()
+//    }
+//
+//    private fun stop() {
+//        running = false
+//        try {
+//            thread?.join()
+//        } catch (e: InterruptedException) {
+//            e.printStackTrace()
+//        }
+//    }
 
-    private fun stop() {
-        running = false
-        try {
-            thread?.join()
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun update() {
+    fun update() {
         //player.update()
         ball.update(
             player.posX,
@@ -96,15 +100,19 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             changeColors()
     }
 
-    private fun draw() {
-        canvasBreakout = mHolder!!.lockCanvas()
-        canvasBreakout.drawColor(Color.BLACK)
-        player.draw()
-        ball.draw()
-        bricks.forEach {
-            it.draw()
+    override  fun draw(canvas: Canvas) {
+        super.draw(canvas)
+//        canvasBreakout = mHolder!!.lockCanvas()
+        canvas.also {
+            it.drawColor(Color.BLACK)
+            player.draw()
+            ball.draw()
+            bricks.forEach { brick ->
+                brick.draw()
+            }
         }
-        mHolder!!.unlockCanvasAndPost(canvasBreakout)
+
+//        mHolder!!.unlockCanvasAndPost(canvasBreakout)
     }
 
     private fun changeColors() {
@@ -115,7 +123,8 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     }
 
     override fun surfaceCreated(p0: SurfaceHolder) {
-        start()
+        thread.running = true
+        thread.start()
     }
 
     override fun surfaceChanged(p0: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
@@ -124,15 +133,16 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     }
 
     override fun surfaceDestroyed(p0: SurfaceHolder) {
-        stop()
+        thread.running = false
+        thread.join()
     }
 
-    override fun run() {
-        while (running) {
-            update()
-            draw()
-        }
-    }
+//    override fun run() {
+//        while (running) {
+//            update()
+//            draw()
+//        }
+//    }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null) {
