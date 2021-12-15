@@ -25,11 +25,11 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     var gridPosY: Float = 0f
     var gridStartX: Float = 0f
     var gridStartY: Float = 120f
-    var gridSpacingX: Float = 50f
-    var gridSpacingY: Float = 50f
+    var gridSpacingX: Float = 0f
+    var gridSpacingY: Float = 0f
     var brickH: Float = 50f
     var brickW: Float = 0f
-    var brickCountX: Int = 10
+    var brickCountX: Int = 15
     var brickCountY: Int = 6
 
     companion object {

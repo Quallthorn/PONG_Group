@@ -12,7 +12,7 @@ class BallBreakout() {
     var posX = radius
     var posY = radius
     var paint = Paint()
-    var speed = 5f
+    var speed = 10f
 
     var dirX = 0.5f
     var dirY = 0.5f
@@ -53,7 +53,7 @@ class BallBreakout() {
             && posX + radius >= pPosX - pWidth
             && posX - radius <= pPosX + pWidth
         ) {
-            bounceP1(pPosX, pWidth)
+            bounce(pPosX, pWidth)
         }
         posX += speed * dirX
         posY += speed * dirY
@@ -63,21 +63,36 @@ class BallBreakout() {
         canvasBreakout?.drawCircle(posX, posY, radius, paint)
     }
 
-    private fun bounceP1(pPosX: Float, pWidth: Float) {
-        for (i in 1 until anglesCount) {
-            if (posX >= pPosX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= pPosX - (pWidth / anglesCount) * (anglesCount - i))
-                dirX = -(anglesCount - i) / 10f
-            else if (posX <= pPosX + (pWidth / anglesCount) * (anglesCount + 1 - i) && posX >= pPosX + (pWidth / anglesCount) * (anglesCount - i)) {
-                dirX = (anglesCount - i) / 10f
+    private fun bounce(pPosX: Float, pWidth: Float) {
+        when {
+            posX < pPosX - pWidth -> {
+                dirX = -0.9f
+                if (speed < maxSpeed) {
+                    speed += 1f
+                }
+            }
+            posX > pPosX + pWidth -> {
+                dirX = 0.9f
+                if (speed < maxSpeed) {
+                    speed += 1f
+                }
+            }
+            else -> {
+                for (i in 1 until anglesCount) {
+                    if (posX >= pPosX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= pPosX - (pWidth / anglesCount) * (anglesCount - i))
+                        dirX = -(anglesCount - i) / 10f
+                    else if (posX <= pPosX + (pWidth / anglesCount) * (anglesCount + 1 - i) && posX >= pPosX + (pWidth / anglesCount) * (anglesCount - i)) {
+                        dirX = (anglesCount - i) / 10f
+                    }
+                }
+                if (speed < maxSpeed) {
+                    speed += 0.1f
+                }
             }
         }
+        dirY = -sqrt((1 - dirX * dirX).toDouble()).toFloat()
         GameSounds.playSound()
         changeColor()
-        dirY = -sqrt((1 - dirX * dirX).toDouble()).toFloat()
-
-//        if (speed < maxSpeed) {
-//            speed += 0.1f
-//        }
     }
 
     fun centerBall(pPosX: Float, pPosY: Float) {

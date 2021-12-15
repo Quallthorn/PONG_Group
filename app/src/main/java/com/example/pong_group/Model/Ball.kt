@@ -4,6 +4,8 @@ import android.graphics.Paint
 import com.example.pong_group.Model.GameViewPONG.Companion.canvas
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSounds
+import kotlin.math.abs
+import kotlin.math.sqrt
 
 class Ball() {
     var radius = 10f
@@ -31,6 +33,7 @@ class Ball() {
         pPosX: Float,
         pPosY: Float,
         pWidth: Float,
+        pHeight: Float,
         pOldX: Float,
         cpuX: Float
     ) {
@@ -48,7 +51,7 @@ class Ball() {
                     if (dirY < -1 || dirY > 0)
                         dirY = -0.5f
                 }
-                dirX = -Math.sqrt((1 - dirY * dirY).toDouble()).toFloat()
+                dirX = -sqrt(1 - dirY * dirY)
 
             //left side
             } else if (posX <= radius) {
@@ -63,7 +66,7 @@ class Ball() {
                     if (dirY < -1 || dirY > 0)
                         dirY = -0.5f
                 }
-                dirX = Math.sqrt((1 - dirY * dirY).toDouble()).toFloat()
+                dirX = sqrt(1 - dirY * dirY)
             }
 
 
@@ -79,7 +82,7 @@ class Ball() {
                 dirY = 1f
                 dirX = 0f
                 p1Scored = false
-                posY = pPosY + radius
+                posY = pPosY + pHeight + radius
                 resetBall(true)
             }
 
@@ -118,47 +121,62 @@ class Ball() {
         canvas.drawCircle(posX, posY, radius, paint)
     }
 
-    fun bounceP1(pPosX: Float, pWidth: Float, pOldX: Float) {
-        for (i in 1 until anglesCount) {
-            if (posX >= pPosX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= pPosX - (pWidth / anglesCount) * (anglesCount - i))
-                dirX = -(anglesCount - i) / 10f
-            else if (posX <= pPosX + (pWidth / anglesCount) * (anglesCount + 1 - i) && posX >= pPosX + (pWidth / anglesCount) * (anglesCount - i)) {
-                dirX = (anglesCount - i) / 10f
+    private fun bounceP1(pPosX: Float, pWidth: Float, pOldX: Float) {
+        when {
+            posX < pPosX - pWidth -> {
+                dirX = -0.9f
+                if (speed < maxSpeed) {
+                    speed += 5f
+                }
+            }
+            posX > pPosX + pWidth -> {
+                dirX = 0.9f
+                if (speed < maxSpeed) {
+                    speed += 5f
+                }
+            }
+            else -> {
+                for (i in 1 until anglesCount) {
+                    if (posX >= pPosX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= pPosX - (pWidth / anglesCount) * (anglesCount - i))
+                        dirX = -(anglesCount - i) / 10f
+                    else if (posX <= pPosX + (pWidth / anglesCount) * (anglesCount + 1 - i) && posX >= pPosX + (pWidth / anglesCount) * (anglesCount - i)) {
+                        dirX = (anglesCount - i) / 10f
+                    }
+                }
+                if (speed < maxSpeed) {
+                    speed += if (abs(pPosX - pOldX) > GameSettings.screenWidth / 54)
+                        5f
+                    else
+                        0.1f
+
+                    if (speed < maxSpeed)
+                        speed == maxSpeed
+                }
             }
         }
         GameSounds.playSound()
         changeColor()
-        dirY = -Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
-
-        if (speed < maxSpeed) {
-            if (Math.abs(pPosX - pOldX) > GameSettings.screenWidth / 54)
-                speed += 5f
-            else
-                speed += 0.1f
-
-            if (speed < maxSpeed)
-                speed == maxSpeed
-        }
+        dirY = -sqrt(1 - dirX * dirX)
     }
 
-    fun bounceCPU(CPUX: Float, pWidth: Float) {
+    private fun bounceCPU (cpuX: Float, pWidth: Float) {
         for (i in 1 until anglesCount) {
-            if (posX >= CPUX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= CPUX - (pWidth / anglesCount) * (anglesCount - i))
+            if (posX >= cpuX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= cpuX - (pWidth / anglesCount) * (anglesCount - i))
                 dirX = -(anglesCount - i) / 10f
-            else if (posX <= CPUX + (pWidth / anglesCount) * (anglesCount + 1 - i) && posX >= CPUX + (pWidth / anglesCount) * (anglesCount - i)) {
+            else if (posX <= cpuX + (pWidth / anglesCount) * (anglesCount + 1 - i) && posX >= cpuX + (pWidth / anglesCount) * (anglesCount - i)) {
                 dirX = (anglesCount - i) / 10f
             }
         }
         GameSounds.playSound()
         changeColor()
-        dirY = Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
+        dirY = sqrt(1 - dirX * dirX)
 
         if (speed < maxSpeed) {
             speed += 0.1f
         }
     }
 
-    fun resetBall(isCpu: Boolean) {
+    private fun resetBall(isCpu: Boolean) {
             if (isCpu) {
                 Paddle.cpuScore += 1
                 if (Paddle.cpuScore > Paddle.absoluteScore) {
@@ -185,17 +203,10 @@ class Ball() {
         posY = GameSettings.screenHeight/2
     }
 
-    fun changeColor() {
+    private fun changeColor() {
         changeColor = true
     }
 }
-
-//            if (posY >= screenHeight - pPosY - size
-//                && posY <= screenHeight - pPosY + pHeight
-//                && posX >= pPosX - pWidth
-//                && posX <= pPosX + pWidth
-//            ) {
-//                dirY = dirY * -1
 
 //                if (Math.abs(pPosX - pOldX) > 5f) {
 //                    // [old] --> [new]
@@ -220,6 +231,6 @@ class Ball() {
 //                    else if (dirX < -1.0f)
 //                        dirX = -0.8f
 //
-//                    dirY = -Math.sqrt((1 - dirX * dirX).toDouble()).toFloat()
+//                    dirY = -sqrt(1 - dirX * dirX)
 //                }
 //            }

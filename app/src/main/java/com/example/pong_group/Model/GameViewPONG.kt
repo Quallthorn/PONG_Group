@@ -118,6 +118,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
             player.posX,
             player.posY,
             player.width,
+            player.height,
             player.posXOld,
             cpu.posX
         )
@@ -126,6 +127,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
                 player.posX,
                 player.posY,
                 player.width,
+                player.height,
                 player.posXOld,
                 cpu.posX
             )
