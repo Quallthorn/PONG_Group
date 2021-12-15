@@ -17,6 +17,7 @@
     <color name="yellow">#d1b000</color>
     <color name="green">#2c8100</color>
     <color name="blue">#1765b1</color>
+    <color name="sky_blue">#2297C6</color>
     <color name="violet">#7844d5</color>
     <color name="light_blue">#03c1bf</color>
 
@@ -29,8 +30,8 @@
         <item>@color/yellow</item>
         <item>@color/green</item>
         <item>@color/blue</item>
-        <item>@color/violet</item>
         <item>@color/light_blue</item>
+        <item>@color/violet</item>
     </array>
 
     <array name="breakout_bricks">
@@ -41,7 +42,7 @@
         <item>@color/yellow</item>
         <item>@color/green</item>
         <item>@color/blue</item>
+        <item>@color/sky_blue</item>
         <item>@color/violet</item>
-        <item>@color/light_blue</item>
     </array>
 </resources>

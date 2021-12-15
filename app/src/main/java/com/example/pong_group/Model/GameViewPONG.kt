@@ -209,3 +209,11 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         return true
     }
 }
+
+
+//E/AndroidRuntime: FATAL EXCEPTION: Thread-3
+//Process: com.example.pong_group, PID: 15811
+//java.lang.NullPointerException: mHolder!!.lockCanvas() must not be null
+//at com.example.pong_group.Model.GameViewPONG.draw(GameViewPONG.kt:141)
+//at com.example.pong_group.Model.GameViewPONG.run(GameViewPONG.kt:195)
+//at java.lang.Thread.run(Thread.java:923)

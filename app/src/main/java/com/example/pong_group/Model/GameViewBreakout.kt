@@ -7,22 +7,22 @@ import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import com.example.pong_group.Controller.App
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameThread
 
 class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.Callback{
 
-//    private var thread: Thread? = null
     private val thread: GameThread
-    private var running = false
     private var player: PaddleBreakout
     private var paddlePosY = 0f
     private var ball: BallBreakout
     private var bricks = mutableListOf<Brick>()
     private var rngColor = Paint()
-    private var mHolder: SurfaceHolder? = holder
 
+    private val colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks)
+    var level = 2
     var gridPosX: Float = 0f
     var gridPosY: Float = 0f
     var gridStartX: Float = 0f
@@ -31,8 +31,18 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     var gridSpacingY: Float = 0f
     var brickH: Float = 50f
     var brickW: Float = 0f
-    var brickCountX: Int = 15
-    var brickCountY: Int = 6
+    private val brickCountX: Int = 15
+    private val brickCountY: Int = (when (level) {
+        1 -> {
+            6
+        }
+        2 -> {
+            9
+        }
+        else -> {
+            0
+        }
+    })
 
     companion object {
         var canvasBreakout = Canvas()
@@ -57,10 +67,19 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         ball.centerBall(player.posX, player.posY)
 
         brickW = ((GameSettings.screenWidth - gridStartX * 2 + gridSpacingX) / brickCountX) - gridSpacingX
-        var rowNumber = 0
+        var rowNumber = 1
+        if (level == 2)
+            rowNumber = 0
+
         for (i in 0 until (brickCountX * brickCountY)) {
+            //set position
             var newBrick = Brick(brickW, brickH, gridPosX, gridPosY)
-            getBrickColor(rowNumber, newBrick)
+
+            //set color
+            val colorInt = colorArray.getColor(rowNumber, 0)
+            newBrick.paint.color = colorInt
+
+            //change position for next brick
             gridPosX += (gridSpacingX + brickW)
             if (gridPosX >= (gridSpacingX + brickW) * brickCountX) {
                 gridPosX = gridStartX
@@ -70,21 +89,6 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             bricks.add(newBrick)
         }
     }
-
-//    private fun start() {
-//        running = true
-//        thread = Thread(this)
-//        thread?.start()
-//    }
-//
-//    private fun stop() {
-//        running = false
-//        try {
-//            thread?.join()
-//        } catch (e: InterruptedException) {
-//            e.printStackTrace()
-//        }
-//    }
 
     fun update() {
         //player.update()
@@ -102,7 +106,6 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
     override  fun draw(canvas: Canvas) {
         super.draw(canvas)
-//        canvasBreakout = mHolder!!.lockCanvas()
         canvas.also {
             it.drawColor(Color.BLACK)
             player.draw()
@@ -111,8 +114,6 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
                 brick.draw()
             }
         }
-
-//        mHolder!!.unlockCanvasAndPost(canvasBreakout)
     }
 
     private fun changeColors() {
@@ -137,48 +138,11 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         thread.join()
     }
 
-//    override fun run() {
-//        while (running) {
-//            update()
-//            draw()
-//        }
-//    }
-
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null) {
             player.posX = event.x
         }
         return true
-    }
-
-    private fun getBrickColor(rowNumber: Int, newBrick: Brick){
-        when (rowNumber) {
-            0 -> {
-                newBrick.paint.color = context.resources.getColor(R.color.red)
-                true
-            }
-            1 -> {
-                newBrick.paint.color = context.resources.getColor(R.color.orange)
-                true
-            }
-            2 -> {
-                newBrick.paint.color = context.resources.getColor(R.color.pale_orange)
-                true
-            }
-            3 -> {
-                newBrick.paint.color = context.resources.getColor(R.color.yellow)
-                true
-            }
-            4 -> {
-                newBrick.paint.color = context.resources.getColor(R.color.green)
-                true
-            }
-            5 -> {
-                newBrick.paint.color = context.resources.getColor(R.color.blue)
-                true
-            }
-            else -> {newBrick.paint.color = context.resources.getColor(R.color.white)}
-        }
     }
 }
 //for multiple balls (power up?)
