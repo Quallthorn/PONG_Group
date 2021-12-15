@@ -29,6 +29,8 @@ class Brick(w: Float, h: Float, x: Float, y: Float) {
         width = w
         height = h
     }
+
+
     fun update(ball: BallBreakout) {
         if (!broken) {
             if (ball.posX >= posX && ball.posX <= posX + width && ball.posY + ball.radius >= posY && ball.posY - ball.radius <= posY + height
@@ -40,6 +42,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float) {
             ) {
                 breakBrick(ball)
             }
+
         }
     }
 
@@ -85,5 +88,9 @@ class Brick(w: Float, h: Float, x: Float, y: Float) {
         }
         GameSounds.playSound()
         broken = true
+        GameViewBreakout.totalCountOfBricks -= 1
+        // add ppoints to game += 5000
+//        GameViewBreakout.checkEndOfTheGame()
+        Log.d("Scores", "Current number of bricks is ${GameViewBreakout.totalCountOfBricks}")
     }
 }

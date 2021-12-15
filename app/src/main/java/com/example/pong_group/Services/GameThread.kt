@@ -9,7 +9,7 @@ class GameThread(
     private val gameView: GameViewBreakout
 ) : Thread() {
 
-    private val targetFPS = 60
+    private val targetFPS = 120
     var running: Boolean = false
 
     override fun run() {
