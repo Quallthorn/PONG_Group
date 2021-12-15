@@ -4,11 +4,13 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.example.pong_group.Controller.App
 import android.view.View
+import android.widget.Button
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameThread
@@ -27,6 +29,9 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     private var ball: BallBreakout
     private var bricks = mutableListOf<Brick>()
     private var rngColor = Paint()
+
+    lateinit var restartButton: Button
+
 
     private val colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks)
     var level = 1
@@ -54,6 +59,8 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     companion object {
         var canvasBreakout = Canvas()
         var totalCountOfBricks = 0
+
+
     }
 
     init {
@@ -69,7 +76,14 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         thread = GameThread(holder, this)
 
         GameSettings.gameSetUpBreakout(brickCountX, brickCountY)
+
+        setupButton()
+        restartButton.setOnClickListener {
+            Log.d("Button", "button pressed")
+        }
     }
+
+
 
     private fun setup() {
         paddlePosY = GameSettings.screenHeight / 7.2f
@@ -116,7 +130,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             changeColors()
     }
 
-    override  fun draw(canvas: Canvas) {
+    override fun draw(canvas: Canvas) {
         super.draw(canvas)
         canvas.also {
             it.drawColor(Color.BLACK)
@@ -155,33 +169,54 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         if (event != null) {
             player.posX = event.x
         }
+
         return true
     }
 
-    private fun checkEndOfTheGame(){
+
+    fun checkEndOfTheGame(){
         if(totalCountOfBricks == 0) {
             val layout = LinearLayout(App.instance)
+            layout.orientation = LinearLayout.VERTICAL
 
-            val textView = TextView(App.instance)
-            textView.visibility = View.VISIBLE
-            textView.text = "GAME \n OVER"
-            textView.textSize = 100f
+            val GameOverTextView = TextView(App.instance)
+            GameOverTextView.visibility = View.VISIBLE
+            GameOverTextView.text = "GAME \n OVER"
+            GameOverTextView.textSize = 100f
             val typeFace = ResourcesCompat.getFont(App.instance, R.font.arcade_classic)
-            textView.typeface = typeFace
-            textView.setTextColor(App.instance.resources.getColor(R.color.white))
-            layout.addView(textView)
+            GameOverTextView.typeface = typeFace
+            GameOverTextView.setTextColor(App.instance.resources.getColor(R.color.white))
+
+            layout.addView(GameOverTextView)
+            layout.addView(restartButton)
+
 
             layout.measure(canvasBreakout.width, canvasBreakout.height)
             layout.layout(0, 0, canvasBreakout.width, canvasBreakout.height)
 
 
-            canvasBreakout.translate((canvasBreakout.width/2).toFloat()-(textView.width/2).toFloat(), (canvasBreakout.width/2).toFloat())
+            canvasBreakout.translate((canvasBreakout.width/2).toFloat()-(GameOverTextView.width/2).toFloat(), (canvasBreakout.width/2).toFloat())
+
 
             layout.draw(canvasBreakout)
             thread.running = false
 
         }
     }
+
+    fun setupButton(){
+        restartButton = Button(App.instance)
+        restartButton.text = "Restart"
+        val typeFace = ResourcesCompat.getFont(App.instance, R.font.arcade_classic)
+        restartButton.typeface = typeFace
+        restartButton.textSize = 40f
+        restartButton.setTextColor(App.instance.resources.getColor(R.color.white))
+    }
+
+
+
+
+
 }
 //for multiple balls (power up?)
 //private var ballA = mutableListOf<BallBreakout>()
