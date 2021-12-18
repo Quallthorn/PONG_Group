@@ -15,7 +15,7 @@ class PaddleBreakout() {
     var paint = Paint()
 
     init {
-        this.paint.color = App.instance.resources.getColor(R.color.white)
+        this.paint.color = App.instance.resources.getColor(R.color.white, App.instance.theme)
     }
 
     fun update(){

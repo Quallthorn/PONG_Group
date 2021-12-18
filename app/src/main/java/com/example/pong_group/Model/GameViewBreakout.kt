@@ -1,15 +1,14 @@
 package com.example.pong_group.Model
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.os.Build
 import android.util.Log
-import android.view.MotionEvent
-import android.view.SurfaceHolder
-import android.view.SurfaceView
+import android.view.*
 import com.example.pong_group.Controller.App
-import android.view.View
 import android.widget.Button
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings
@@ -18,20 +17,21 @@ import com.example.pong_group.Services.GameThread
 import android.widget.TextView
 
 import android.widget.LinearLayout
+import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
 
 
 class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.Callback{
 
-    private val thread: GameThread
+    private var thread: GameThread
     private var player: PaddleBreakout
     private var paddlePosY = 0f
     private var ball: BallBreakout
     private var bricks = mutableListOf<Brick>()
     private var rngColor = Paint()
 
-    lateinit var restartButton: Button
-
+    private lateinit var restartButton: SurfaceViewButton
+    var pause = false
 
     private val colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks)
     var level = 2
@@ -59,31 +59,22 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     companion object {
         var canvasBreakout = Canvas()
         var totalCountOfBricks = 0
-
-
+        var isGameFinished = false
     }
 
     init {
         holder.addCallback(this)
-
-        gridPosX = gridStartX
-        gridPosY = gridStartY
-
         player = PaddleBreakout()
         ball = BallBreakout()
         changeColors()
-        totalCountOfBricks = brickCountX*brickCountY
-        thread = GameThread(holder, this)
 
-        setupButton()
-        restartButton.setOnClickListener {
-            Log.d("Button", "button pressed")
-        }
+        thread = GameThread(holder, this)
     }
 
-
-
     private fun setup() {
+        gridPosX = gridStartX
+        gridPosY = gridStartY
+        totalCountOfBricks = brickCountX*brickCountY
         paddlePosY = GameSettings.screenHeight / 7.2f
         player.posY = paddlePosY
         ball.centerBall(player.posX, player.posY)
@@ -92,6 +83,8 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         var rowNumber = 1
         if (level == 2)
             rowNumber = 0
+
+        bricks.clear()
 
         for (i in 0 until (brickCountX * brickCountY)) {
             //set position
@@ -135,7 +128,8 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             bricks.forEach { brick ->
                 brick.draw()
             }
-            checkEndOfTheGame()
+
+
         }
     }
 
@@ -147,6 +141,9 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     }
 
     override fun surfaceCreated(p0: SurfaceHolder) {
+        if (thread.state == Thread.State.TERMINATED) {
+            thread = GameThread(holder, this)
+        }
         thread.running = true
         thread.start()
     }
@@ -157,8 +154,14 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     }
 
     override fun surfaceDestroyed(p0: SurfaceHolder) {
-        thread.running = false
-        thread.join()
+        while (thread.isAlive) {
+            try {
+                thread.running = false
+                thread.join()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -166,49 +169,66 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             player.posX = event.x
         }
 
+        val x = event?.x
+        val y = event?.y
+
+        if (isGameFinished) {
+            if (restartButton.btn_rect!!.contains(x!!,y!!)){
+                setup()
+                isGameFinished = false
+                resumeThread()
+            }
+        }
         return true
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.M)
     fun checkEndOfTheGame(){
         if(totalCountOfBricks == 134) {
             val layout = LinearLayout(App.instance)
             layout.orientation = LinearLayout.VERTICAL
+            layout.gravity = Gravity.CENTER
 
             val GameOverTextView = TextView(App.instance)
+
             GameOverTextView.visibility = View.VISIBLE
-            GameOverTextView.text = "GAME \n OVER"
+            GameOverTextView.text = "GAME\nOVER"
             GameOverTextView.textSize = 100f
+            GameOverTextView.gravity = Gravity.CENTER
             val typeFace = ResourcesCompat.getFont(App.instance, R.font.arcade_classic)
             GameOverTextView.typeface = typeFace
-            GameOverTextView.setTextColor(App.instance.resources.getColor(R.color.white))
+            GameOverTextView.setTextColor(App.instance.resources.getColor(R.color.white, context.theme))
+
+            val measure = GameOverTextView.measure(0,0)
+            val gameTextViewHeight = GameOverTextView.measuredHeight
+
 
             layout.addView(GameOverTextView)
-            layout.addView(restartButton)
-
 
             layout.measure(canvasBreakout.width, canvasBreakout.height)
             layout.layout(0, 0, canvasBreakout.width, canvasBreakout.height)
-
-
-            canvasBreakout.translate((canvasBreakout.width/2).toFloat()-(GameOverTextView.width/2).toFloat(), (canvasBreakout.width/2).toFloat())
-
-
             layout.draw(canvasBreakout)
-            thread.running = false
+
+            val icon = BitmapFactory.decodeResource(App.instance.resources, R.drawable.reset)
+            restartButton = SurfaceViewButton( icon)
+            val restartButtonX = (canvasBreakout.width/2).toFloat()- restartButton.width/2
+            val restartButtonY = (canvasBreakout.width/2).toFloat()+gameTextViewHeight + 80f
+            restartButton.setPosition(restartButtonX, restartButtonY)
+            restartButton.draw(canvasBreakout)
+            isGameFinished = true
+            pauseThread()
         }
     }
 
-    fun setupButton(){
-        restartButton = Button(App.instance)
-        restartButton.text = "Restart"
-        val typeFace = ResourcesCompat.getFont(App.instance, R.font.arcade_classic)
-        restartButton.typeface = typeFace
-        restartButton.textSize = 40f
-        restartButton.setTextColor(App.instance.resources.getColor(R.color.white))
+    fun resumeThread() {
+        pause = false
+        surfaceCreated(holder)
     }
 
-
+    fun pauseThread() {
+        pause = true
+    }
 
 
 

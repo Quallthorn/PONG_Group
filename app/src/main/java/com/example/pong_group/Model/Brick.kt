@@ -1,6 +1,7 @@
 package com.example.pong_group.Model
 
 import android.graphics.Paint
+import android.util.Log
 import com.example.pong_group.Model.GameViewBreakout.Companion.canvasBreakout
 import com.example.pong_group.Services.GameSounds
 import kotlin.math.abs
