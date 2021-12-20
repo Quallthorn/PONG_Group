@@ -20,6 +20,7 @@ import android.widget.TextView
 import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
+import com.example.pong_group.Services.SharedBreakout
 
 
 class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
@@ -28,7 +29,6 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     private var player: PaddleBreakout
     private var paddlePosY = 0f
     private var ball: BallBreakout
-    private var bricks = mutableListOf<Brick>()
     private var rngColor = Paint()
 
     private lateinit var restartButton: SurfaceViewButton
@@ -46,29 +46,27 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     var gridSpacingY: Float = 0f
     var brickH: Float = 50f
     var brickW: Float = 0f
-    private var brickCountX: Int = 15
-    private var brickCountY: Int
 
     companion object {
         var canvasBreakout = Canvas()
         var totalCountOfBricks = 0
         var isGameFinished = false
         var outOfLives = false
-        var lives = 1000
-        var breakBuffer = true
+        var lives = 3
+        var breakReady = true
     }
 
     init {
         if (classic) {
-            brickCountX = 14
-            brickCountY = 8
+            SharedBreakout.brickCountX = 14
+            SharedBreakout.brickCountY = 8
             gridSpacingX = 5f
             gridSpacingY = 5f
             brickH = 20f
             colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks_classic)
         } else {
             colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks)
-            brickCountY = (when (level) {
+            SharedBreakout.brickCountY = (when (level) {
                 1 -> {
                     6
                 }
@@ -91,7 +89,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
         thread = GameThread(holder, this)
 
-        GameSettings.gameSetUpBreakout(brickCountX, brickCountY)
+        SharedBreakout.gameSetUpBreakout()
     }
 
 
@@ -99,26 +97,26 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     private fun setup() {
         gridPosX = gridSqueezeX
         gridPosY = gridStartY
-        totalCountOfBricks = brickCountX*brickCountY
+        totalCountOfBricks = SharedBreakout.brickCountX*SharedBreakout.brickCountY
         paddlePosY = GameSettings.screenHeight / 7.2f
         player.posY = paddlePosY
         ball.centerBall(player.posX, player.posY)
 
         brickW =
-            ((GameSettings.screenWidth - gridSqueezeX * 2) / brickCountX) - gridSpacingX
+            ((GameSettings.screenWidth - gridSqueezeX * 2) / SharedBreakout.brickCountX) - gridSpacingX
         var colorNumber = 1
-        var pointBase = brickCountY
+        var pointBase = SharedBreakout.brickCountY
         if (level == 2 || classic)
             colorNumber = 0
         if (classic) {
             pointBase = 7
         }
 
-        bricks.clear()
+        SharedBreakout.bricks.clear()
 
-        for (i in 0 until (brickCountX * brickCountY)) {
+        for (i in 0 until (SharedBreakout.brickCountX * SharedBreakout.brickCountY)) {
             //set position
-            var newBrick = Brick(brickW, brickH, gridPosX, gridPosY, pointBase, 5)
+            var newBrick = Brick(brickW, brickH, gridPosX, gridPosY, pointBase, i)
 
             //set color
             val colorInt = colorArray.getColor(colorNumber, 0)
@@ -126,7 +124,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
             //change position for next brick
             gridPosX += (gridSpacingX + brickW)
-            if (gridPosX >= (gridSpacingX + brickW) * brickCountX + gridSqueezeX) {
+            if (gridPosX >= (gridSpacingX + brickW) * SharedBreakout.brickCountX + gridSqueezeX) {
                 gridPosX = gridSqueezeX
                 gridPosY += (gridSpacingY + brickH)
                 colorNumber++
@@ -140,41 +138,18 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
                 else
                     pointBase--
             }
-            bricks.add(newBrick)
+            SharedBreakout.bricks.add(newBrick)
         }
     }
 
     fun update() {
         //player.update()
         ball.update(player)
-        bricks.forEach {
+        SharedBreakout.bricks.forEach {
             it.update(ball)
         }
         if (ball.changeColor)
             changeColors()
-    }
-
-    fun checkSurroundings(pos: Int){
-        var onEdge = checkEdge(pos, true)
-        if (!onEdge)
-            bricks[pos + 1].breakable
-        else {
-            onEdge = checkEdge(pos, false)
-            if (!onEdge)
-                bricks[pos + 1].breakable
-        }
-        bricks[pos + 15].breakable
-        bricks[pos - 15].breakable
-    }
-
-    private fun checkEdge(pos: Int, right: Boolean): Boolean{
-        for (i in 1 until brickCountX step brickCountY){
-            if (right && pos + 1 == i)
-                return true
-            else if (!right && pos - 1 == i)
-                return true
-        }
-        return false
     }
 
     override fun draw(canvas: Canvas) {
@@ -184,7 +159,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             player.draw()
             if (!outOfLives)
                 ball.draw()
-            bricks.forEach { brick ->
+            SharedBreakout.bricks.forEach { brick ->
                 brick.draw()
             }
 

@@ -2,14 +2,14 @@ package com.example.pong_group.Model
 
 import android.graphics.Paint
 import com.example.pong_group.Controller.App
-import com.example.pong_group.Model.GameViewBreakout.Companion.breakBuffer
+import com.example.pong_group.Model.GameViewBreakout.Companion.breakReady
 import com.example.pong_group.Model.GameViewBreakout.Companion.canvasBreakout
-import com.example.pong_group.Model.GameViewBreakout.Companion.isGameFinished
 import com.example.pong_group.Model.GameViewBreakout.Companion.lives
 import com.example.pong_group.Model.GameViewBreakout.Companion.outOfLives
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSounds
+import com.example.pong_group.Services.SharedBreakout
 import kotlin.math.abs
 import kotlin.math.sqrt
 
@@ -31,7 +31,7 @@ class BallBreakout() {
 
     init {
         if (classic)
-            speed = GameSettings.ballSpeedStart
+            speed = SharedBreakout.ballSpeedStart
         paint.color = App.instance.resources.getColor(R.color.white)
         posX = GameSettings.screenWidth * 0.5f
         posY = GameSettings.screenHeight * 0.5f
@@ -53,9 +53,9 @@ class BallBreakout() {
         } else if (posY <= radius) {
             GameSounds.playSound()
             dirY = abs(dirY)
-            if (classic && !GameSettings.upperWallHit){
+            if (classic && !SharedBreakout.upperWallHit){
                 player.halfSize()
-                GameSettings.upperWallHit = true
+                SharedBreakout.upperWallHit = true
             }
         }
 
@@ -72,7 +72,7 @@ class BallBreakout() {
         if (lives == 0){
             outOfLives = true
         }
-        breakBuffer = true
+        breakReady = true
     }
 
     fun draw() {
@@ -101,7 +101,7 @@ class BallBreakout() {
                 }
             }
         if (classic)
-            speed = GameSettings.ballSpeed
+            speed = SharedBreakout.ballSpeed
         dirY = -sqrt((1 - dirX * dirX).toDouble()).toFloat()
         GameSounds.playSound()
         changeColor()
