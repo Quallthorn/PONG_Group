@@ -205,12 +205,20 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
                 isButtonClickable = false
                 if(level == 1 && !outOfLives){
                     level = 2
-                    SharedBreakout.brickCountY = 9
+                    if (!classic){
+                        SharedBreakout.brickCountY = 9
+                    }
+                    else{
+                        SharedBreakout.brickCountY = 8
+                    }
                 } else {
                     lives = 3
                     GameSettings.scoreBreakout = 0
                     level = 1
-                    SharedBreakout.brickCountY = 6
+                    if (!classic)
+                        SharedBreakout.brickCountY = 6
+                    else
+                        SharedBreakout.brickCountY = 8
                 }
                 setup()
                 resumeThread()
@@ -233,13 +241,16 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
                 val textParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, 1F)
 
                 gameOverTextView.visibility = View.VISIBLE
-                if(outOfLives) {
-                    gameOverTextView.text = "YOU\nLOSE"
-                } else if(level == 1){
-                    gameOverTextView.text = "NEXT\nLEVEL"
-                }
-                else {
-                    gameOverTextView.text = "GAME\nOVER"
+                when {
+                    outOfLives -> {
+                        gameOverTextView.text = "YOU\nLOSE"
+                    }
+                    level == 1 -> {
+                        gameOverTextView.text = "NEXT\nLEVEL"
+                    }
+                    else -> {
+                        gameOverTextView.text = "GAME\nOVER"
+                    }
                 }
                 gameOverTextView.textSize = 100f
                 gameOverTextView.setLineSpacing(0f, 0.7f)
