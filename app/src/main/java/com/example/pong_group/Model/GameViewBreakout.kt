@@ -1,6 +1,7 @@
 package com.example.pong_group.Model
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
@@ -218,7 +219,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
     @RequiresApi(Build.VERSION_CODES.M)
     fun checkEndOfTheGame(){
-        if(totalCountOfBricks == 0) {
+        if(totalCountOfBricks == 89) {
             val layout = LinearLayout(App.instance)
             layout.orientation = LinearLayout.VERTICAL
             layout.gravity = Gravity.CENTER

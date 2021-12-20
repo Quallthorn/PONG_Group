@@ -187,6 +187,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
 
     override fun surfaceDestroyed(p0: SurfaceHolder) {
         stop()
+
     }
 
     override fun run() {

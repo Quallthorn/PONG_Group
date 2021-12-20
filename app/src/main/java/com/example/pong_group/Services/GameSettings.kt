@@ -27,7 +27,7 @@ object GameSettings {
     var maxSpeedAchieved = false
     // scores
     var highScoreBreakout = 0f
-    var scoreBreakout = 0f
+    var scoreBreakout = 0
     var brickCounts = mutableListOf<Int>()
     var lowestBrick by Delegates.notNull<Int>()
     var totalRows by Delegates.notNull<Int>()
