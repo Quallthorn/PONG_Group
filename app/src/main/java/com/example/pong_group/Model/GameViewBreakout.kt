@@ -1,6 +1,7 @@
 package com.example.pong_group.Model
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -21,7 +22,7 @@ import android.widget.LinearLayout
 import androidx.core.content.res.ResourcesCompat
 
 
-class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.Callback{
+class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
     private val thread: GameThread
     private var player: PaddleBreakout
@@ -32,47 +33,57 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
     lateinit var restartButton: Button
 
-
-    private val colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks)
+    private val colorArray: TypedArray
+    private val classic = GameSettings.classicBreakout
+    var everyOther = false
     var level = 1
     var gridPosX: Float = 0f
     var gridPosY: Float = 0f
-    var gridStartX: Float = 0f
+    var gridSqueezeX: Float = 0f
     var gridStartY: Float = 120f
     var gridSpacingX: Float = 0f
     var gridSpacingY: Float = 0f
     var brickH: Float = 50f
     var brickW: Float = 0f
-    private val brickCountX: Int = 15
-    private val brickCountY: Int = (when (level) {
-        1 -> {
-            6
-        }
-        2 -> {
-            9
-        }
-        else -> {
-            0
-        }
-    })
+    private var brickCountX: Int = 15
+    private var brickCountY: Int
 
     companion object {
         var canvasBreakout = Canvas()
         var totalCountOfBricks = 0
-
-
     }
 
     init {
+        if (classic) {
+            brickCountX = 14
+            brickCountY = 8
+            gridSpacingX = 5f
+            gridSpacingY = 5f
+            brickH = 20f
+            colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks_classic)
+        } else {
+            colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks)
+            brickCountY = (when (level) {
+                1 -> {
+                    6
+                }
+                2 -> {
+                    9
+                }
+                else -> {
+                    0
+                }
+            })
+        }
         holder.addCallback(this)
 
-        gridPosX = gridStartX
+        gridPosX = gridSqueezeX
         gridPosY = gridStartY
 
         player = PaddleBreakout()
         ball = BallBreakout()
         changeColors()
-        totalCountOfBricks = brickCountX*brickCountY
+        totalCountOfBricks = brickCountX * brickCountY
         thread = GameThread(holder, this)
 
         GameSettings.gameSetUpBreakout(brickCountX, brickCountY)
@@ -84,17 +95,20 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     }
 
 
-
     private fun setup() {
         paddlePosY = GameSettings.screenHeight / 7.2f
         player.posY = paddlePosY
         ball.centerBall(player.posX, player.posY)
 
-        brickW = ((GameSettings.screenWidth - gridStartX * 2 + gridSpacingX) / brickCountX) - gridSpacingX
+        brickW =
+            ((GameSettings.screenWidth - gridSqueezeX * 2) / brickCountX) - gridSpacingX
         var colorNumber = 1
         var pointBase = brickCountY
-        if (level == 2)
+        if (level == 2 || classic)
             colorNumber = 0
+        if (classic) {
+            pointBase = 7
+        }
 
         for (i in 0 until (brickCountX * brickCountY)) {
             //set position
@@ -106,11 +120,19 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
             //change position for next brick
             gridPosX += (gridSpacingX + brickW)
-            if (gridPosX >= (gridSpacingX + brickW) * brickCountX) {
-                gridPosX = gridStartX
+            if (gridPosX >= (gridSpacingX + brickW) * brickCountX + gridSqueezeX) {
+                gridPosX = gridSqueezeX
                 gridPosY += (gridSpacingY + brickH)
                 colorNumber++
-                pointBase--
+                if (classic){
+                    everyOther = if (everyOther){
+                        pointBase -= 2
+                        false
+                    } else
+                        true
+                }
+                else
+                    pointBase--
             }
             bricks.add(newBrick)
         }
@@ -118,11 +140,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
     fun update() {
         //player.update()
-        ball.update(
-            player.posX,
-            player.posY,
-            player.width
-        )
+        ball.update(player)
         bricks.forEach {
             it.update(ball)
         }
@@ -144,10 +162,12 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     }
 
     private fun changeColors() {
-        rngColor.color = GameSettings.getRandomColorFromArray()
-        player.paint = rngColor
-        ball.paint = rngColor
-        ball.changeColor = false
+        if (!classic){
+            rngColor.color = GameSettings.getRandomColorFromArray()
+            player.paint = rngColor
+            ball.paint = rngColor
+            ball.changeColor = false
+        }
     }
 
     override fun surfaceCreated(p0: SurfaceHolder) {
@@ -174,8 +194,8 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     }
 
 
-    fun checkEndOfTheGame(){
-        if(totalCountOfBricks == 0) {
+    fun checkEndOfTheGame() {
+        if (totalCountOfBricks == 0) {
             val layout = LinearLayout(App.instance)
             layout.orientation = LinearLayout.VERTICAL
 
@@ -195,7 +215,10 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             layout.layout(0, 0, canvasBreakout.width, canvasBreakout.height)
 
 
-            canvasBreakout.translate((canvasBreakout.width/2).toFloat()-(GameOverTextView.width/2).toFloat(), (canvasBreakout.width/2).toFloat())
+            canvasBreakout.translate(
+                (canvasBreakout.width / 2).toFloat() - (GameOverTextView.width / 2).toFloat(),
+                (canvasBreakout.width / 2).toFloat()
+            )
 
 
             layout.draw(canvasBreakout)
@@ -204,7 +227,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         }
     }
 
-    fun setupButton(){
+    fun setupButton() {
         restartButton = Button(App.instance)
         restartButton.text = "Restart"
         val typeFace = ResourcesCompat.getFont(App.instance, R.font.arcade_classic)
@@ -212,9 +235,6 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         restartButton.textSize = 40f
         restartButton.setTextColor(App.instance.resources.getColor(R.color.white))
     }
-
-
-
 
 
 }

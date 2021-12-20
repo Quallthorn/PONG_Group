@@ -1,7 +1,6 @@
 package com.example.pong_group.Model
 
 import android.graphics.Paint
-import android.util.Log
 import com.example.pong_group.Model.GameViewBreakout.Companion.canvasBreakout
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSounds
@@ -10,6 +9,7 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 class Brick(w: Float, h: Float, x: Float, y: Float, s: Int) {
+    private val classic = GameSettings.classicBreakout
     var posX = 0f
     var posY = 0f
     var width = 0f
@@ -102,9 +102,12 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int) {
         GameSounds.playSound()
         broken = true
         GameViewBreakout.totalCountOfBricks -= 1
-        GameSettings.addScore(pointBase)
-        Log.d("Score", "Total Score: ${GameSettings.scoreBreakout}")
-        // add points to game += 5000
-//        GameViewBreakout.checkEndOfTheGame()
+        if (!classic){
+            GameSettings.addScore(pointBase)
+        } else {
+            GameSettings.addScoreClassic(pointBase)
+            if (!GameSettings.maxSpeedAchieved)
+                GameSettings.updateSpeedClassic(pointBase)
+        }
     }
 }

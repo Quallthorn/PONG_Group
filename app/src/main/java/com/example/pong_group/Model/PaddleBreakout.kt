@@ -10,12 +10,12 @@ class PaddleBreakout() {
 
     var posX: Float = 500f
     var posY: Float = 1f
-    var height: Float = 10f
+    var height: Float = 25f
     var width: Float = 80f
     var paint = Paint()
 
     init {
-        this.paint.color = App.instance.resources.getColor(R.color.white)
+        this.paint.color = App.instance.resources.getColor(R.color.light_blue)
     }
 
     fun update(){
@@ -29,5 +29,9 @@ class PaddleBreakout() {
             GameSettings.screenHeight - posY + height,
             paint
         )
+    }
+
+    fun halfSize(){
+        width *= 0.5f
     }
 }

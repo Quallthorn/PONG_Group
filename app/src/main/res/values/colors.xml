@@ -45,4 +45,15 @@
         <item>@color/sky_blue</item>
         <item>@color/violet</item>
     </array>
+
+    <array name="breakout_bricks_classic">
+        <item>@color/red</item>
+        <item>@color/red</item>
+        <item>@color/pale_orange</item>
+        <item>@color/pale_orange</item>
+        <item>@color/green</item>
+        <item>@color/green</item>
+        <item>@color/yellow</item>
+        <item>@color/yellow</item>
+    </array>
 </resources>
