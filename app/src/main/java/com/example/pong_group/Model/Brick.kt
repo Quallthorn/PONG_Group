@@ -1,7 +1,7 @@
 package com.example.pong_group.Model
 
 import android.graphics.Paint
-import android.util.Log
+import com.example.pong_group.Model.GameViewBreakout.Companion.breakBuffer
 import com.example.pong_group.Model.GameViewBreakout.Companion.canvasBreakout
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSounds
@@ -9,7 +9,7 @@ import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class Brick(w: Float, h: Float, x: Float, y: Float, s: Int) {
+class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
     private val classic = GameSettings.classicBreakout
     var posX = 0f
     var posY = 0f
@@ -17,6 +17,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int) {
     var height = 0f
     var paint = Paint()
     var pointBase = 0
+    var nr = 0
 
     var dT = 0f
     var dB = 0f
@@ -25,6 +26,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int) {
     var d = 0f
 
     var broken = false
+    var breakable = false
 
     init {
         posX = x
@@ -32,6 +34,9 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int) {
         width = w
         height = h
         pointBase = s
+        nr = n
+        if (s == 1)
+            breakable = true
     }
 
     fun update(ball: BallBreakout) {
@@ -43,8 +48,10 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int) {
                 || sqrt((ball.posY - posY).pow(2) + (ball.posX - posX).pow(2)) <= ball.radius
                 || sqrt((ball.posY - posY - height).pow(2) + (ball.posX - posX).pow(2)) <= ball.radius
             ) {
+                if (breakBuffer)
                 ballCollide(ball)
             }
+
         }
     }
 
@@ -62,6 +69,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int) {
 
 
     private fun ballCollide(ball: BallBreakout) {
+        breakBuffer = false
         dT = abs(ball.posY - posY)
         dB = abs(ball.posY - (posY + height))
         dR = abs(ball.posX - (posX + width))
@@ -78,7 +86,6 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int) {
         }
 
         //d = minOf(dT, dB, dR, dL)
-
         when (d) {
             dT -> {
                 ball.posY = posY - ball.radius
@@ -98,18 +105,23 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int) {
             }
         }
         breakBrick()
+        //GameViewBreakout.checkSurroundings(5)
     }
 
     private fun breakBrick() {
         GameSounds.playSound()
         broken = true
         GameViewBreakout.totalCountOfBricks -= 1
-        if (!classic){
+        if (!classic) {
             GameSettings.addScore(pointBase)
         } else {
             GameSettings.addScoreClassic(pointBase)
             if (!GameSettings.maxSpeedAchieved)
                 GameSettings.updateSpeedClassic(pointBase)
         }
+    }
+
+    fun canBreak(){
+        breakable = true
     }
 }

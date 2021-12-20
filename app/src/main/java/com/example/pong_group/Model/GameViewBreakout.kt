@@ -7,9 +7,11 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Build
+import android.util.Log
 import android.view.*
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import com.example.pong_group.Controller.App
+import android.widget.Button
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameThread
@@ -17,6 +19,7 @@ import com.example.pong_group.Services.GameThread
 import android.widget.TextView
 
 import android.widget.LinearLayout
+import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
 
 
@@ -52,6 +55,9 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         var canvasBreakout = Canvas()
         var totalCountOfBricks = 0
         var isGameFinished = false
+        var outOfLives = false
+        var lives = 1000
+        var breakBuffer = true
     }
 
     init {
@@ -114,7 +120,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
         for (i in 0 until (brickCountX * brickCountY)) {
             //set position
-            var newBrick = Brick(brickW, brickH, gridPosX, gridPosY, pointBase)
+            var newBrick = Brick(brickW, brickH, gridPosX, gridPosY, pointBase, 5)
 
             //set color
             val colorInt = colorArray.getColor(colorNumber, 0)
@@ -150,13 +156,37 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             changeColors()
     }
 
+    fun checkSurroundings(pos: Int){
+        var onEdge = checkEdge(pos, true)
+        if (!onEdge)
+            bricks[pos + 1].breakable
+        else {
+            onEdge = checkEdge(pos, false)
+            if (!onEdge)
+                bricks[pos + 1].breakable
+        }
+        bricks[pos + 15].breakable
+        bricks[pos - 15].breakable
+    }
+
+    private fun checkEdge(pos: Int, right: Boolean): Boolean{
+        for (i in 1 until brickCountX step brickCountY){
+            if (right && pos + 1 == i)
+                return true
+            else if (!right && pos - 1 == i)
+                return true
+        }
+        return false
+    }
+
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
         canvas.also {
             it.drawColor(Color.BLACK)
             player.draw()
-            ball.draw()
+            if (!outOfLives)
+                ball.draw()
             bricks.forEach { brick ->
                 brick.draw()
             }
@@ -209,6 +239,9 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             if (restartButton.btn_rect!!.contains(x!!,y!!)){
                 setup()
                 isGameFinished = false
+                outOfLives = false
+                lives = 3
+                GameSettings.scoreBreakout = 0
                 resumeThread()
             }
         }
@@ -216,9 +249,11 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.M)
     fun checkEndOfTheGame(){
         if(totalCountOfBricks == 0) {
             //game over layout
+        if(totalCountOfBricks == 0 || outOfLives) {
             val layout = LinearLayout(App.instance)
             layout.orientation = LinearLayout.VERTICAL
             layout.gravity = Gravity.CENTER

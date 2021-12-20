@@ -16,6 +16,12 @@ object GameSettings {
 
 
     //Breakout
+
+    // scores
+    var highScoreBreakout = 0f
+    var scoreBreakout = 0
+
+    //Classic
     var classicBreakout = false
     const val ballSpeedStart = 10f
     var ballSpeed = ballSpeedStart
@@ -25,9 +31,8 @@ object GameSettings {
     var redHit = false
     var upperWallHit = false
     var maxSpeedAchieved = false
-    // scores
-    var highScoreBreakout = 0f
-    var scoreBreakout = 0
+
+    //non-classic
     var brickCounts = mutableListOf<Int>()
     var lowestBrick by Delegates.notNull<Int>()
     var totalRows by Delegates.notNull<Int>()
