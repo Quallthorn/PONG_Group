@@ -3,7 +3,7 @@ package com.example.pong_group.Services
 import android.view.SurfaceHolder
 import com.example.pong_group.Model.GameViewBreakout
 import com.example.pong_group.Model.GameViewBreakout.Companion.canvasBreakout
-import com.example.pong_group.Model.GameViewBreakout.Companion.isGameFinished
+
 import java.util.*
 
 class GameThread(

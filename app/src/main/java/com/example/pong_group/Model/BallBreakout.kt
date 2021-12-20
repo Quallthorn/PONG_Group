@@ -4,7 +4,6 @@ import android.graphics.Paint
 import com.example.pong_group.Controller.App
 import com.example.pong_group.Model.GameViewBreakout.Companion.breakBuffer
 import com.example.pong_group.Model.GameViewBreakout.Companion.canvasBreakout
-import com.example.pong_group.Model.GameViewBreakout.Companion.isGameFinished
 import com.example.pong_group.Model.GameViewBreakout.Companion.lives
 import com.example.pong_group.Model.GameViewBreakout.Companion.outOfLives
 import com.example.pong_group.R
