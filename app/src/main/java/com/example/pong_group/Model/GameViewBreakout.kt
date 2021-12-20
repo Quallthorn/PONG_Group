@@ -53,6 +53,9 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         var canvasBreakout = Canvas()
         var totalCountOfBricks = 0
         var isGameFinished = false
+        var outOfLives = false
+        var lives = 1000
+        var breakBuffer = true
     }
 
     init {
@@ -115,7 +118,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
         for (i in 0 until (brickCountX * brickCountY)) {
             //set position
-            var newBrick = Brick(brickW, brickH, gridPosX, gridPosY, pointBase)
+            var newBrick = Brick(brickW, brickH, gridPosX, gridPosY, pointBase, 5)
 
             //set color
             val colorInt = colorArray.getColor(colorNumber, 0)
@@ -151,12 +154,36 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             changeColors()
     }
 
+    fun checkSurroundings(pos: Int){
+        var onEdge = checkEdge(pos, true)
+        if (!onEdge)
+            bricks[pos + 1].breakable
+        else {
+            onEdge = checkEdge(pos, false)
+            if (!onEdge)
+                bricks[pos + 1].breakable
+        }
+        bricks[pos + 15].breakable
+        bricks[pos - 15].breakable
+    }
+
+    private fun checkEdge(pos: Int, right: Boolean): Boolean{
+        for (i in 1 until brickCountX step brickCountY){
+            if (right && pos + 1 == i)
+                return true
+            else if (!right && pos - 1 == i)
+                return true
+        }
+        return false
+    }
+
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
         canvas.also {
             it.drawColor(Color.BLACK)
             player.draw()
-            ball.draw()
+            if (!outOfLives)
+                ball.draw()
             bricks.forEach { brick ->
                 brick.draw()
             }
@@ -210,6 +237,9 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             if (restartButton.btn_rect!!.contains(x!!,y!!)){
                 setup()
                 isGameFinished = false
+                outOfLives = false
+                lives = 3
+                GameSettings.scoreBreakout = 0
                 resumeThread()
             }
         }
@@ -219,7 +249,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
     @RequiresApi(Build.VERSION_CODES.M)
     fun checkEndOfTheGame(){
-        if(totalCountOfBricks == 89) {
+        if(totalCountOfBricks == 0 || outOfLives) {
             val layout = LinearLayout(App.instance)
             layout.orientation = LinearLayout.VERTICAL
             layout.gravity = Gravity.CENTER
@@ -271,6 +301,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 //private var ballA = mutableListOf<BallBreakout>()
 //val ballCount = 0
 
+// in setup()
 //        for (i in 0 until ballCount) {
 //            var newBall = BallBreakout()
 //            var s = (0..100).random() / 100f
@@ -290,7 +321,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 //            ballA.add(newBall)
 //        }
 
-// in update ()
+// in update()
 //        ballA.forEach {
 //            it.update(player.posX, player.posY, player.width, player.posXOld)
 //        }

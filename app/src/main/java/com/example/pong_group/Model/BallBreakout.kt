@@ -2,7 +2,11 @@ package com.example.pong_group.Model
 
 import android.graphics.Paint
 import com.example.pong_group.Controller.App
+import com.example.pong_group.Model.GameViewBreakout.Companion.breakBuffer
 import com.example.pong_group.Model.GameViewBreakout.Companion.canvasBreakout
+import com.example.pong_group.Model.GameViewBreakout.Companion.isGameFinished
+import com.example.pong_group.Model.GameViewBreakout.Companion.lives
+import com.example.pong_group.Model.GameViewBreakout.Companion.outOfLives
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSounds
@@ -15,7 +19,7 @@ class BallBreakout() {
     var posX = radius
     var posY = radius
     var paint = Paint()
-    private var speed = 10f
+    var speed = 10f
 
     var dirX = 0.5f
     var dirY = 0.5f
@@ -45,6 +49,7 @@ class BallBreakout() {
         if (posY >= GameSettings.screenHeight - radius) {
             centerBall(player.posX, player.posY)
             dirY = abs(dirY) * -1
+            lives -= 1
         } else if (posY <= radius) {
             GameSounds.playSound()
             dirY = abs(dirY)
@@ -52,7 +57,6 @@ class BallBreakout() {
                 player.halfSize()
                 GameSettings.upperWallHit = true
             }
-
         }
 
         if (posY >= GameSettings.screenHeight - player.posY - radius
@@ -64,6 +68,11 @@ class BallBreakout() {
         }
         posX += speed * dirX
         posY += speed * dirY
+
+        if (lives == 0){
+            outOfLives = true
+        }
+        breakBuffer = true
     }
 
     fun draw() {
