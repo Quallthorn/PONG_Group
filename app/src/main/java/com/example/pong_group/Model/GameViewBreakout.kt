@@ -56,7 +56,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         var totalCountOfBricks = 0
         var isGameFinished = false
         var outOfLives = false
-        var lives = 1000
+        var lives = 3
         var breakBuffer = true
     }
 
@@ -250,48 +250,52 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
 
     @RequiresApi(Build.VERSION_CODES.M)
-    fun checkEndOfTheGame(){
-        if(totalCountOfBricks == 0) {
+    fun checkEndOfTheGame() {
             //game over layout
-        if(totalCountOfBricks == 0 || outOfLives) {
-            val layout = LinearLayout(App.instance)
-            layout.orientation = LinearLayout.VERTICAL
-            layout.gravity = Gravity.CENTER
+            if (totalCountOfBricks == 0 || outOfLives) {
+                val layout = LinearLayout(App.instance)
+                layout.orientation = LinearLayout.VERTICAL
+                layout.gravity = Gravity.CENTER
 
-            val gameOverTextView = TextView(App.instance)
+                val gameOverTextView = TextView(App.instance)
 
-            gameOverTextView.visibility = View.VISIBLE
-            gameOverTextView.text = "GAME\nOVER"
-            gameOverTextView.textSize = 100f
-            gameOverTextView.gravity = Gravity.CENTER
-            gameOverTextView.typeface = typeFace
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                gameOverTextView.setTextColor(App.instance.resources.getColor(R.color.white, context.theme))
-            } else {
-                gameOverTextView.setTextColor(App.instance.resources.getColor(R.color.white))
+                gameOverTextView.visibility = View.VISIBLE
+                gameOverTextView.text = "GAME\nOVER"
+                gameOverTextView.textSize = 100f
+                gameOverTextView.gravity = Gravity.CENTER
+                gameOverTextView.typeface = typeFace
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    gameOverTextView.setTextColor(
+                        App.instance.resources.getColor(
+                            R.color.white,
+                            context.theme
+                        )
+                    )
+                } else {
+                    gameOverTextView.setTextColor(App.instance.resources.getColor(R.color.white))
+                }
+
+                gameOverTextView.measure(0, 0)
+                val gameTextViewHeight = gameOverTextView.measuredHeight
+
+                layout.addView(gameOverTextView)
+
+                layout.measure(canvasBreakout.width, canvasBreakout.height)
+                layout.layout(0, 0, canvasBreakout.width, canvasBreakout.height)
+                layout.draw(canvasBreakout)
+
+                //restart button layout
+                val icon = BitmapFactory.decodeResource(App.instance.resources, R.drawable.reset)
+                restartButton = SurfaceViewButton(icon)
+                val restartButtonX = (canvasBreakout.width / 2).toFloat() - restartButton.width / 2
+                val restartButtonY = (canvasBreakout.width / 2).toFloat() + gameTextViewHeight + 80f
+                restartButton.setPosition(restartButtonX, restartButtonY)
+                restartButton.draw(canvasBreakout)
+
+                isGameFinished = true
+                pauseThread()
             }
-
-            gameOverTextView.measure(0,0)
-            val gameTextViewHeight = gameOverTextView.measuredHeight
-
-            layout.addView(gameOverTextView)
-
-            layout.measure(canvasBreakout.width, canvasBreakout.height)
-            layout.layout(0, 0, canvasBreakout.width, canvasBreakout.height)
-            layout.draw(canvasBreakout)
-
-            //restart button layout
-            val icon = BitmapFactory.decodeResource(App.instance.resources, R.drawable.reset)
-            restartButton = SurfaceViewButton(icon)
-            val restartButtonX = (canvasBreakout.width/2).toFloat()- restartButton.width/2
-            val restartButtonY = (canvasBreakout.width/2).toFloat()+gameTextViewHeight + 80f
-            restartButton.setPosition(restartButtonX, restartButtonY)
-            restartButton.draw(canvasBreakout)
-
-            isGameFinished = true
-            pauseThread()
         }
-    }
 
     fun scoresAndLivesCounter() {
         val livesLayout = LinearLayout(App.instance)
@@ -302,7 +306,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
         val textParams = LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT, 1F)
         val livesText = TextView(App.instance)
-        livesText.text = "Lives: 3"
+        livesText.text = "Lives: $lives"
         livesText.textSize = 24F
         livesText.gravity = Gravity.START
         livesText.typeface = typeFace
