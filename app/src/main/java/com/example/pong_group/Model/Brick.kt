@@ -60,6 +60,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int) {
         }
     }
 
+
     private fun ballCollide(ball: BallBreakout) {
         dT = abs(ball.posY - posY)
         dB = abs(ball.posY - (posY + height))
