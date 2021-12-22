@@ -8,7 +8,7 @@ import kotlin.math.abs
 import kotlin.math.sqrt
 
 class Ball() {
-    var radius = 10f
+    var radius = 7f
     var posX = radius
     var posY = radius
     var dirX = 0.5f
@@ -30,39 +30,33 @@ class Ball() {
     }
 
     fun update(
-        pPosX: Float,
-        pPosY: Float,
-        pWidth: Float,
-        pHeight: Float,
-        pOldX: Float,
+        player: Paddle,
         cpuX: Float
     ) {
-        if (start){
+        if (start) {
             //right side
             if (posX >= GameSettings.screenWidth - radius) {
                 GameSounds.playSound()
-                if (dirY > 0){
-                    dirY += ((0..2).random())/10f
+                if (dirY > 0) {
+                    dirY += ((0..2).random()) / 10f
                     if (dirY > 1 || dirY < 0)
                         dirY = 0.5f
-                }
-                else{
-                    dirY -= ((0..2).random())/10f
+                } else {
+                    dirY -= ((0..2).random()) / 10f
                     if (dirY < -1 || dirY > 0)
                         dirY = -0.5f
                 }
                 dirX = -sqrt(1 - dirY * dirY)
 
-            //left side
+                //left side
             } else if (posX <= radius) {
                 GameSounds.playSound()
-                if (dirY > 0){
-                    dirY += ((0..2).random())/10f
+                if (dirY > 0) {
+                    dirY += ((0..2).random()) / 10f
                     if (dirY > 1 || dirY < 0)
                         dirY = 0.5f
-                }
-                else{
-                    dirY -= ((0..2).random())/10f
+                } else {
+                    dirY -= ((0..2).random()) / 10f
                     if (dirY < -1 || dirY > 0)
                         dirY = -0.5f
                 }
@@ -74,45 +68,44 @@ class Ball() {
             if (posY >= GameSettings.screenHeight - radius) {
                 dirY = -1f
                 dirX = 0f
-                p1Scored = true
-                posY = GameSettings.screenHeight - (pPosY + radius)
+                p1Scored = false
+                posY = GameSettings.screenHeight - (player.posY + radius)
                 resetBall(false)
-            //cpu side
+                //cpu side
             } else if (posY <= radius) {
                 dirY = 1f
                 dirX = 0f
-                p1Scored = false
-                posY = pPosY + pHeight + radius
+                p1Scored = true
+                posY = player.posY + player.height + radius
                 resetBall(true)
             }
 
 
             //player paddle
-            if (posY >= GameSettings.screenHeight - pPosY - radius
-                && posY <= GameSettings.screenHeight - pPosY + speed
-                && posX + radius >= pPosX - pWidth
-                && posX - radius <= pPosX + pWidth
+            if (posY + radius >= GameSettings.screenHeight - player.posY
+                && posY + radius <= GameSettings.screenHeight - player.posY + player.height + speed
+                && posX + radius >= player.posX - player.width
+                && posX - radius <= player.posX + player.width
             ) {
-                bounceP1(pPosX, pWidth, pOldX)
+                bounceP1(player)
             }
 
             //cpu paddle
-            if (posY <= pPosY + radius
-                && posY >= pPosY - speed
-                && posX >= cpuX - pWidth
-                && posX <= cpuX + pWidth
+            if (posY - radius <= player.posY + player.height
+                && posY - radius >= player.posY - speed
+                && posX >= cpuX - player.width
+                && posX <= cpuX + player.width
             ) {
-                bounceCPU(cpuX, pWidth)
+                bounceCPU(cpuX, player.width)
             }
 
             posX += speed * dirX
             posY += speed * dirY
-        }
-        else{
+        } else {
             posX = if (p1Scored)
-                pPosX
-            else{
                 cpuX
+            else {
+                player.posX
             }
         }
     }
@@ -121,36 +114,36 @@ class Ball() {
         canvas.drawCircle(posX, posY, radius, paint)
     }
 
-    private fun bounceP1(pPosX: Float, pWidth: Float, pOldX: Float) {
+    private fun bounceP1(player: Paddle) {
         when {
-            posX < pPosX - pWidth -> {
+            posX < player.posX - player.width -> {
                 dirX = -0.9f
-                if (speed < maxSpeed) {
+                if (speed < maxSpeed && abs(player.posX - player.posXOld) > GameSettings.screenWidth / 54) {
                     speed += 5f
                 }
             }
-            posX > pPosX + pWidth -> {
+            posX > player.posX + player.width -> {
                 dirX = 0.9f
-                if (speed < maxSpeed) {
+                if (speed < maxSpeed && abs(player.posX - player.posXOld) > GameSettings.screenWidth / 54) {
                     speed += 5f
                 }
             }
             else -> {
                 for (i in 1 until anglesCount) {
-                    if (posX >= pPosX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= pPosX - (pWidth / anglesCount) * (anglesCount - i))
+                    if (posX >= player.posX - (player.width / anglesCount) * (anglesCount + 1 - i) && posX <= player.posX - (player.width / anglesCount) * (anglesCount - i))
                         dirX = -(anglesCount - i) / 10f
-                    else if (posX <= pPosX + (pWidth / anglesCount) * (anglesCount + 1 - i) && posX >= pPosX + (pWidth / anglesCount) * (anglesCount - i)) {
+                    else if (posX <= player.posX + (player.width / anglesCount) * (anglesCount + 1 - i) && posX >= player.posX + (player.width / anglesCount) * (anglesCount - i)) {
                         dirX = (anglesCount - i) / 10f
                     }
                 }
                 if (speed < maxSpeed) {
-                    speed += if (abs(pPosX - pOldX) > GameSettings.screenWidth / 54)
+                    speed += if (abs(player.posX - player.posXOld) > GameSettings.screenWidth / 54)
                         5f
                     else
                         0.1f
 
                     if (speed < maxSpeed)
-                        speed == maxSpeed
+                        speed = maxSpeed
                 }
             }
         }
@@ -159,12 +152,22 @@ class Ball() {
         dirY = -sqrt(1 - dirX * dirX)
     }
 
-    private fun bounceCPU (cpuX: Float, pWidth: Float) {
-        for (i in 1 until anglesCount) {
-            if (posX >= cpuX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= cpuX - (pWidth / anglesCount) * (anglesCount - i))
-                dirX = -(anglesCount - i) / 10f
-            else if (posX <= cpuX + (pWidth / anglesCount) * (anglesCount + 1 - i) && posX >= cpuX + (pWidth / anglesCount) * (anglesCount - i)) {
-                dirX = (anglesCount - i) / 10f
+    private fun bounceCPU(cpuX: Float, pWidth: Float) {
+        when {
+            posX < cpuX - pWidth -> {
+                dirX = -0.9f
+            }
+            posX > cpuX + pWidth -> {
+                dirX = 0.9f
+            }
+            else -> {
+                for (i in 1 until anglesCount) {
+                    if (posX >= cpuX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= cpuX - (pWidth / anglesCount) * (anglesCount - i))
+                        dirX = -(anglesCount - i) / 10f
+                    else if (posX <= cpuX + (pWidth / anglesCount) * (anglesCount + 1 - i) && posX >= cpuX + (pWidth / anglesCount) * (anglesCount - i)) {
+                        dirX = (anglesCount - i) / 10f
+                    }
+                }
             }
         }
         GameSounds.playSound()
@@ -177,18 +180,18 @@ class Ball() {
     }
 
     private fun resetBall(isCpu: Boolean) {
-            if (isCpu) {
-                Paddle.cpuScore += 1
-                if (Paddle.cpuScore > Paddle.absoluteScore) {
-                    Paddle.absoluteScore = Paddle.cpuScore
-                }
-            } else {
-                Paddle.playerScore += 1
-                if (Paddle.playerScore > Paddle.absoluteScore) {
-                    Paddle.absoluteScore = Paddle.playerScore
-                }
+        if (isCpu) {
+            Paddle.cpuScore += 1
+            if (Paddle.cpuScore > Paddle.absoluteScore) {
+                Paddle.absoluteScore = Paddle.cpuScore
             }
-        if (Paddle.absoluteScore > 50) {
+        } else {
+            Paddle.playerScore += 1
+            if (Paddle.playerScore > Paddle.absoluteScore) {
+                Paddle.absoluteScore = Paddle.playerScore
+            }
+        }
+        if (Paddle.absoluteScore > 12) {
             Paddle.playerScore = 0
             Paddle.cpuScore = 0
             Paddle.absoluteScore = 0
@@ -198,9 +201,9 @@ class Ball() {
         speed = startSpeed
     }
 
-    fun centerBall(){
-        posX = GameSettings.screenWidth/2
-        posY = GameSettings.screenHeight/2
+    fun centerBall() {
+        posX = GameSettings.screenWidth / 2
+        posY = GameSettings.screenHeight / 2
     }
 
     private fun changeColor() {

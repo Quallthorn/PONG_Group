@@ -4,12 +4,10 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.*
 import android.os.Build
-import android.util.Log
 import android.view.*
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import com.example.pong_group.Controller.App
-import android.widget.Button
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameThread
@@ -17,11 +15,9 @@ import com.example.pong_group.Services.GameThread
 import android.widget.TextView
 
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
 import com.example.pong_group.Services.SharedBreakout
-import com.example.pong_group.Model.GameViewBreakout.Companion.outOfLives
 
 
 class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
@@ -37,8 +33,8 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
     private val colorArray: TypedArray
     private val classic = GameSettings.classicBreakout
-    val typeFace = ResourcesCompat.getFont(App.instance, R.font.arcade_classic)
-    var everyOther = false
+    private val typeFace = ResourcesCompat.getFont(App.instance, R.font.arcade_classic)
+    private var everyOther = false
     var level = 1
     var gridPosX: Float = 0f
     var gridPosY: Float = 0f
@@ -110,7 +106,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
         for (i in 0 until (SharedBreakout.brickCountX * SharedBreakout.brickCountY)) {
             //set position
-            var newBrick = Brick(brickW, brickH, gridPosX, gridPosY, pointBase, i)
+            val newBrick = Brick(brickW, brickH, gridPosX, gridPosY, pointBase, i)
 
             //set color
             val colorInt = colorArray.getColor(colorNumber, 0)
@@ -122,6 +118,8 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
                 gridPosX = gridSqueezeX
                 gridPosY += (gridSpacingY + brickH)
                 colorNumber++
+
+                //set score for brick
                 if (classic){
                     everyOther = if (everyOther){
                         pointBase -= 2
@@ -231,7 +229,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     @RequiresApi(Build.VERSION_CODES.M)
     fun checkEndOfTheGame() {
             //game over layout
-            if (totalCountOfBricks == 89 || outOfLives) {
+            if (totalCountOfBricks == 0 || outOfLives) {
                 val layout = LinearLayout(App.instance)
                 layout.orientation = LinearLayout.VERTICAL
                 layout.gravity = Gravity.CENTER
@@ -300,11 +298,11 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         restartButton.draw(canvasBreakout)
     }
 
-    fun scoresAndLivesCounter() {
+    private fun scoresAndLivesCounter() {
         val livesLayout = LinearLayout(App.instance)
         livesLayout.orientation = LinearLayout.HORIZONTAL
-        var params = LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-        livesLayout.layoutParams = params
+//        var params = LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+//        livesLayout.layoutParams = params
 
 
         val textParams = LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT, 1F)
@@ -316,6 +314,16 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         livesText.layoutParams = textParams
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             livesText.setTextColor(App.instance.resources.getColor(R.color.white, context.theme))
+        }
+
+        val levelText = TextView(App.instance)
+        levelText.text = "Lv: $level"
+        levelText.textSize = 24F
+        levelText.gravity = Gravity.CENTER_HORIZONTAL
+        levelText.typeface = typeFace
+        levelText.layoutParams = textParams
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            levelText.setTextColor(App.instance.resources.getColor(R.color.white, context.theme))
         }
 
         val scoresText = TextView(App.instance)
@@ -349,31 +357,34 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 //
 //        levelText.draw(canvasBreakout)
 
+        livesLayout.addView(livesText)
+        livesLayout.measure(canvasBreakout.width, canvasBreakout.height)
+        livesLayout.layout(0,0, canvasBreakout.width, canvasBreakout.height)
+        livesLayout.draw(canvasBreakout)
+
+        val levelLayout = LinearLayout(App.instance)
+        levelLayout.gravity = Gravity.CENTER_HORIZONTAL
+        levelLayout.addView(levelText)
+        levelLayout.measure(canvasBreakout.width, canvasBreakout.height)
+        levelLayout.layout(0,0, canvasBreakout.width, canvasBreakout.height)
+        levelLayout.draw(canvasBreakout)
+
         val scoresLayout = LinearLayout(App.instance)
         scoresLayout.gravity = Gravity.END
         scoresLayout.addView(scoresText)
-
-        livesLayout.addView(livesText)
-
-
-        livesLayout.measure(canvasBreakout.width, canvasBreakout.height)
-        livesLayout.layout(0,0, canvasBreakout.width, canvasBreakout.height)
-
         scoresLayout.measure(canvasBreakout.width, canvasBreakout.height)
         scoresLayout.layout(0,0, canvasBreakout.width, canvasBreakout.height)
-
-        livesLayout.draw(canvasBreakout)
         scoresLayout.draw(canvasBreakout)
     }
 
 
 
-    fun resumeThread() {
+    private fun resumeThread() {
         pause = false
         surfaceCreated(holder)
     }
 
-    fun pauseThread() {
+    private fun pauseThread() {
         pause = true
     }
 

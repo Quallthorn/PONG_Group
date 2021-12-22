@@ -56,7 +56,6 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
                 if (breakReady)
                 ballCollide(ball)
             }
-
         }
     }
 

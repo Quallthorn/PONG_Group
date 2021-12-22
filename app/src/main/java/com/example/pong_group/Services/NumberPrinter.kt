@@ -38,7 +38,7 @@ object NumberPrinter {
     }
 
     //Numbers
-    fun drawZero(startX: Float, startY: Float) {
+    private fun drawZero(startX: Float, startY: Float) {
         for (i in 0..1)
             lineHorizontal(startX, startY + numberH / 7 * i * 6)
         for (i in 0..1)
@@ -78,8 +78,8 @@ object NumberPrinter {
     fun drawSix(startX: Float, startY: Float) {
         for (i in 1..2)
             lineHorizontal(startX, startY + numberH / 7 * i * 3)
-        lineVerticalHalf(startX, startY + numberH / 7 * 3)
-        lineVerticalLong(startX + numberWL - numberW, startY)
+        lineVerticalHalf(startX + numberWL - numberW, startY + numberH / 7 * 3)
+        lineVerticalLong(startX, startY)
     }
 
     fun drawSeven(startX: Float, startY: Float) {

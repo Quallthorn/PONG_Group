@@ -15,7 +15,7 @@ object GameSettings {
     var curPaint = Paint()
 
     //Classic
-    var classicBreakout = true
+    var classicBreakout = false
 
     // scores
     var highScoreBreakout = 0f

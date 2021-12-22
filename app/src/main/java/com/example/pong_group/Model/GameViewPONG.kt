@@ -19,9 +19,10 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     private var player: Paddle
     private var cpu: Paddle
     private var paddlePosY = 0f
+    private var paddleWidth = 0f
     private var ball1: Ball
     private var ballA = mutableListOf<Ball>()
-    private val ballCount = 0
+    private val ballCount = 10
     private var mHolder: SurfaceHolder? = holder
 
     private val numberFromEdge = 100f
@@ -55,13 +56,17 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         player.posY = paddlePosY
         cpu.posY = GameSettings.screenHeight - paddlePosY
 
+        paddleWidth = GameSettings.screenWidth / 25f
+        player.width = paddleWidth
+        cpu.width = paddleWidth
+
         ball1.centerBall()
         ball1.start = true
         for (i in 0 until ballCount) {
-            var newBall = Ball()
-            var s = (0..100).random() / 100f
+            val newBall = Ball()
+            val s = (0..100).random() / 100f
             newBall.dirX = s
-            newBall.dirY = sqrt((1 - newBall.dirX * newBall.dirX).toDouble()).toFloat()
+            newBall.dirY = sqrt((1 - newBall.dirX * newBall.dirX))
             //var d = 2
             when ((0..3).random()) {
                 1 -> newBall.dirX = newBall.dirX * -1
@@ -73,6 +78,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
                 else -> {}
             }
             newBall.paint.color = GameSettings.getRandomColorFromArray()
+            newBall.start = true
             ballA.add(newBall)
         }
     }
@@ -106,30 +112,26 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
             if (cpu.posX > GameSettings.screenWidth / 2)
                 cpu.posX -= GameSettings.screenWidth / 250f
 
-            if (!ball1.p1Scored
+            if (ball1.p1Scored
                 && abs(cpu.posX - GameSettings.screenWidth / 2) <= 5f
                 && abs(ball1.posX - GameSettings.screenWidth / 2) <= 5f
             ){
                 GameSounds.playSound()
                 ball1.start = true
+                ballA.forEach {
+                    if (it.p1Scored)
+                        it.start = true
+                }
             }
         }
 
         ball1.update(
-            player.posX,
-            player.posY,
-            player.width,
-            player.height,
-            player.posXOld,
+            player,
             cpu.posX
         )
         ballA.forEach {
             it.update(
-                player.posX,
-                player.posY,
-                player.width,
-                player.height,
-                player.posXOld,
+                player,
                 cpu.posX
             )
         }
@@ -200,21 +202,17 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null) {
             player.posX = event.x
-            if (ball1.p1Scored && !ball1.start) {
+            if (!ball1.p1Scored && !ball1.start) {
                 if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL){
                     GameSounds.playSound()
                     ball1.start = true
+                    ballA.forEach {
+                        if (!it.p1Scored)
+                            it.start = true
+                    }
                 }
             }
         }
         return true
     }
 }
-
-
-//E/AndroidRuntime: FATAL EXCEPTION: Thread-3
-//Process: com.example.pong_group, PID: 15811
-//java.lang.NullPointerException: mHolder!!.lockCanvas() must not be null
-//at com.example.pong_group.Model.GameViewPONG.draw(GameViewPONG.kt:141)
-//at com.example.pong_group.Model.GameViewPONG.run(GameViewPONG.kt:195)
-//at java.lang.Thread.run(Thread.java:923)

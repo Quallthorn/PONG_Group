@@ -11,8 +11,8 @@ class Paddle(isCpu: Boolean) {
 
     var posX: Float = 500f
     var posY: Float = 1f
-    var height: Float = 10f
-    var width: Float = 80f
+    var height: Float = 20f
+    var width: Float = 40f
     var paint = Paint()
     var scorePositionXL = 0f
     var scorePositionXR = 0f
