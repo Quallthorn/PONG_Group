@@ -35,7 +35,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     private val classic = GameSettings.classicBreakout
     private val typeFace = ResourcesCompat.getFont(App.instance, R.font.arcade_classic)
     private var everyOther = false
-    var level = 1
+    var level = 2
     var gridPosX: Float = 0f
     var gridPosY: Float = 0f
     var gridSqueezeX: Float = 0f
@@ -51,7 +51,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         var totalCountOfBricks = 0
 
         var outOfLives = false
-        var lives = 3
+        var lives = 1000
         var breakReady = true
     }
 
@@ -65,7 +65,10 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks_classic)
         } else {
             colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks)
-            SharedBreakout.brickCountY = 6
+            if (level == 1)
+                SharedBreakout.brickCountY = 6
+            else
+                SharedBreakout.brickCountY = 9
         }
         holder.addCallback(this)
 
@@ -90,6 +93,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         paddlePosY = GameSettings.screenHeight / 7.2f
         player.posY = paddlePosY
         ball.centerBall(player.posX, player.posY)
+        ball.dirX = 0.9f
 
         brickW =
             ((GameSettings.screenWidth - gridSqueezeX * 2) / SharedBreakout.brickCountX) - gridSpacingX
@@ -104,9 +108,16 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         outOfLives = false
         SharedBreakout.bricks.clear()
 
+        //BRICK GRID
         for (i in 0 until (SharedBreakout.brickCountX * SharedBreakout.brickCountY)) {
             //set position
             val newBrick = Brick(brickW, brickH, gridPosX, gridPosY, pointBase, i)
+
+            //make top and bottom rows hit-able
+            if (i < SharedBreakout.brickCountX)
+                newBrick.exT = true
+            else if (i >= SharedBreakout.brickCountX * SharedBreakout.brickCountY - SharedBreakout.brickCountX)
+                newBrick.exB = true
 
             //set color
             val colorInt = colorArray.getColor(colorNumber, 0)

@@ -19,7 +19,8 @@ class BallBreakout() {
     var posX = radius
     var posY = radius
     var paint = Paint()
-    var speed = 10f
+    var speed = 50f
+    var checkCollision = false
 
     var dirX = 0.5f
     var dirY = 0.5f
@@ -38,11 +39,11 @@ class BallBreakout() {
     }
 
     fun update(player: PaddleBreakout) {
+        //screen edges
         if (posX >= GameSettings.screenWidth - radius) {
             GameSounds.playSound()
             dirX = abs(dirX) * -1
-        }
-        else if (posX <= radius){
+        } else if (posX <= radius) {
             GameSounds.playSound()
             dirX = abs(dirX)
         }
@@ -53,12 +54,15 @@ class BallBreakout() {
         } else if (posY <= radius) {
             GameSounds.playSound()
             dirY = abs(dirY)
-            if (classic && !SharedBreakout.upperWallHit){
+            if (classic && !SharedBreakout.upperWallHit) {
                 player.halfSize()
                 SharedBreakout.upperWallHit = true
             }
         }
 
+
+
+        //player paddle
         if (posY >= GameSettings.screenHeight - player.posY - radius
             && posY <= GameSettings.screenHeight - player.posY + speed
             && posX + radius >= player.posX - player.width
@@ -66,10 +70,18 @@ class BallBreakout() {
         ) {
             speedCheck(player.posX, player.width)
         }
-        posX += speed * dirX
-        posY += speed * dirY
 
-        if (lives == 0){
+        //goes "forward" if everything is normal
+        if (!checkCollision) {
+            posX += speed * dirX
+            posY += speed * dirY
+        } else // goes "backwards" if ball overshoots
+        {
+            posX -= speed * dirX * 0.25f
+            posY -= speed * dirY * 0.25f
+        }
+
+        if (lives == 0) {
             outOfLives = true
         }
         breakReady = true
@@ -80,26 +92,26 @@ class BallBreakout() {
     }
 
     private fun speedCheck(pPosX: Float, pWidth: Float) {
-            when {
-                posX < pPosX - pWidth -> {
-                    dirX = -0.9f
-                    if (speed < maxSpeed && !classic) {
-                        speed += 1f
-                    }
-                }
-                posX > pPosX + pWidth -> {
-                    dirX = 0.9f
-                    if (speed < maxSpeed && !classic) {
-                        speed += 1f
-                    }
-                }
-                else -> {
-                    bounce(pPosX, pWidth)
-                    if (speed < maxSpeed && !classic) {
-                        speed += 0.1f
-                    }
+        when {
+            posX < pPosX - pWidth -> {
+                dirX = -0.9f
+                if (speed < maxSpeed && !classic) {
+                    speed += 1f
                 }
             }
+            posX > pPosX + pWidth -> {
+                dirX = 0.9f
+                if (speed < maxSpeed && !classic) {
+                    speed += 1f
+                }
+            }
+            else -> {
+                bounce(pPosX, pWidth)
+                if (speed < maxSpeed && !classic) {
+                    speed += 0.1f
+                }
+            }
+        }
         if (classic)
             speed = SharedBreakout.ballSpeed
         dirY = -sqrt((1 - dirX * dirX).toDouble()).toFloat()
@@ -107,7 +119,7 @@ class BallBreakout() {
         changeColor()
     }
 
-    private fun bounce(pPosX: Float, pWidth: Float){
+    private fun bounce(pPosX: Float, pWidth: Float) {
         for (i in 1 until anglesCount) {
             if (posX >= pPosX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= pPosX - (pWidth / anglesCount) * (anglesCount - i))
                 dirX = -(anglesCount - i) / 10f
@@ -118,6 +130,7 @@ class BallBreakout() {
     }
 
     fun centerBall(pPosX: Float, pPosY: Float) {
+        dirY = abs(dirY) * -1
         posX = pPosX
         posY = GameSettings.screenHeight - (pPosY + radius)
     }
