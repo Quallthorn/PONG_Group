@@ -1,5 +1,6 @@
 package com.example.pong_group.Controller
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,5 +23,12 @@ class HighScore : AppCompatActivity() {
         val adapter = HighScoreAdapter(scoresList)
         listview.adapter = adapter
         listview.layoutManager = LinearLayoutManager(instance)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val i = Intent(this, MainActivity::class.java)
+        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(i)
     }
 }

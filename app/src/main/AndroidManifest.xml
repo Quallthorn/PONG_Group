@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PONG_Group">
         <activity
+            android:name=".Controller.Settings"
+            android:exported="false" />
+        <activity
             android:name=".Controller.NameInputActivity"
             android:exported="false" />
         <activity

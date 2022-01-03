@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.cardview.widget.CardView
+import com.example.pong_group.Model.ScoresRealm
 import com.example.pong_group.R
+import com.example.pong_group.Services.GameSettings
 
 class NameInputActivity : AppCompatActivity() {
 
@@ -26,8 +28,11 @@ class NameInputActivity : AppCompatActivity() {
         submitButton = findViewById(R.id.submit)
         warning = findViewById(R.id.warning)
 
+        score.text = GameSettings.scoreBreakout.toString()
+
         submitButton.setOnClickListener{
             if (nameInitials.text.length == 3){
+                ScoresRealm.addScores(GameSettings.scoreBreakout, nameInitials.text.toString(), "breakout")
                 Intent(this, HighScore::class.java).apply { startActivity(this) }
             }
             else{

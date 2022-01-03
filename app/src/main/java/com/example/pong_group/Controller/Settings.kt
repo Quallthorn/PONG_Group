@@ -1,15 +1,12 @@
 package com.example.pong_group.Controller
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.core.content.ContextCompat
-import com.example.pong_group.Model.GameViewBreakout
+import com.example.pong_group.R
 
-class GameBreakout : AppCompatActivity() {
-
+class Settings : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(GameViewBreakout(this))
+        setContentView(R.layout.activity_settings)
     }
 }

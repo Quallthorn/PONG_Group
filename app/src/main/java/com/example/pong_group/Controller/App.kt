@@ -13,7 +13,7 @@ class App : Application() {
 
         Realm.init(instance)
         val realmName: String = "PongScores"
-        var realmConfig = RealmConfiguration.Builder().name(realmName).build()
+        var realmConfig = RealmConfiguration.Builder().name(realmName).allowWritesOnUiThread(true).build()
         Realm.setDefaultConfiguration(realmConfig)
     }
 

@@ -22,6 +22,7 @@
     <color name="light_blue">#03c1bf</color>
 
     <color name="space">#0e0d2d</color>
+    <color name="back_grey">#222222</color>
 
     <array name="rainbow">
         <item>@color/pink</item>

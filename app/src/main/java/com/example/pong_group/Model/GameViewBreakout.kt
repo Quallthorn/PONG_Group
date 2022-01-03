@@ -1,6 +1,7 @@
 package com.example.pong_group.Model
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.TypedArray
 import android.graphics.*
 import android.os.Build
@@ -16,9 +17,13 @@ import android.widget.TextView
 
 import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.res.ResourcesCompat
+import com.example.pong_group.Controller.HighScore
+import com.example.pong_group.Controller.NameInputActivity
 import com.example.pong_group.Services.SharedBreakout
-
+import androidx.core.content.ContextCompat.startActivity
 
 class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
@@ -53,11 +58,15 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         var totalCountOfBricks = 0
 
         var outOfLives = false
-        var lives = 3
+        var lives = 1
         var breakReady = true
     }
 
     init {
+        lives = 1
+        GameSettings.scoreBreakout = 0
+        GameSettings.scoreBreakoutClassic = 0
+        GameSettings.highScoreBreakout = ScoresRealm.findHighestScore("breakout")
         if (classic) {
             SharedBreakout.brickCountX = 14
             SharedBreakout.brickCountY = 8
@@ -224,13 +233,13 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
                         SharedBreakout.brickCountY = 8
                     }
                 } else {
-                    lives = 3
-                    GameSettings.scoreBreakout = 0
-                    level = 1
-                    if (!classic)
-                        SharedBreakout.brickCountY = 6
-                    else
-                        SharedBreakout.brickCountY = 8
+                    context.startActivity(Intent(context, NameInputActivity::class.java))
+//                    GameSettings.scoreBreakout = 0
+//                    level = 1
+//                    if (!classic)
+//                        SharedBreakout.brickCountY = 6
+//                    else
+//                        SharedBreakout.brickCountY = 8
                 }
                 setup()
                 resumeThread()
