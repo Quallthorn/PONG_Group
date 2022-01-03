@@ -19,11 +19,11 @@ class BallBreakout() {
     var posX = radius
     var posY = radius
     var paint = Paint()
-    var speed = 50f
+    var speed = 15f
     var checkCollision = false
 
-    var dirX = 0.5f
-    var dirY = 0.5f
+    var dirX = 0f
+    var dirY = 0f
 
     private val anglesCount = 10 // max 10 possibly 10.9 but not recommended
     private val maxSpeed = 30f
@@ -51,7 +51,7 @@ class BallBreakout() {
             centerBall(player.posX, player.posY)
             dirY = abs(dirY) * -1
             lives -= 1
-        } else if (posY <= radius) {
+        } else if (posY <= radius + GameViewBreakout.ballEdgeTop) {
             GameSounds.playSound()
             dirY = abs(dirY)
             if (classic && !SharedBreakout.upperWallHit) {

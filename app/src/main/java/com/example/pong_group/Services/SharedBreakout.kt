@@ -8,6 +8,7 @@ object SharedBreakout {
     var bricks = mutableListOf<Brick>()
     var brickCountX: Int = 15
     var brickCountY: Int = 0
+    var highScoreBroken = false
 
     //Classic
     const val ballSpeedStart = 10f
@@ -85,13 +86,12 @@ object SharedBreakout {
         brickCounts[pointBase]--
         while (brickCounts[lowestBrick] == 0 && lowestBrick > 0)
             lowestBrick--
-
-        Log.d("scoreNormal", "$GameSettings.scoreBreakout")
+        GameSettings.updateScoreBreakout()
     }
 
     fun addScoreClassic(pointBase: Int) {
-        GameSettings.scoreBreakout += pointBase
-        Log.d("classic", "Points: $GameSettings.scoreBreakout")
+        GameSettings.scoreBreakoutClassic += pointBase
+        GameSettings.updateScoreBreakoutClassic()
     }
 
     fun updateSpeedClassic(brickColor: Int) {

@@ -119,6 +119,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
         //d = minOf(dT, dB, dR, dL)
 
         //checks delta according to exposed side of brick and direction of ball
+        //left & up
         d = if (ball.dirX < 0 && ball.dirY < 0) {
             if (exB && exR)
                 minOf(dB, dR)
@@ -126,6 +127,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
                 dB
             else
                 dR
+        //right & up
         } else if (ball.dirX > 0 && ball.dirY < 0) {
             if (exB && exL)
                 minOf(dB, dL)
@@ -133,6 +135,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
                 dB
             else
                 dL
+        //left & down
         } else if (ball.dirX < 0 && ball.dirY > 0) {
             if (exT && exR)
                 minOf(dT, dR)
@@ -140,6 +143,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
                 dT
             else
                 dR
+        //right & down (whatever is not already checked)
         } else {
             if (exT && exL)
                 minOf(dT, dL)
@@ -185,6 +189,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
                 SharedBreakout.updateSpeedClassic(pointBase)
         }
     }
+
 
     private fun canBreak() {
         breakable = true

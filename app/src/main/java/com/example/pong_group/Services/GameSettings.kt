@@ -18,8 +18,14 @@ object GameSettings {
     var classicBreakout = false
 
     // scores
-    var highScoreBreakout = 0f
+    var highScorePong = 0
+    var scorePong = 0
+
+    var highScoreBreakout = 0
     var scoreBreakout = 0
+
+    var highScoreBreakoutClassic = 0
+    var scoreBreakoutClassic = 0
 
 
     fun getRandomColorFromArray(): Int{
@@ -33,5 +39,24 @@ object GameSettings {
     fun setScreenDimen(width: Float, height: Float){
         screenWidth = width
         screenHeight = height
+    }
+
+    fun updateScorePong(){
+        if (scorePong > highScorePong)
+            highScorePong = scorePong
+    }
+
+    fun updateScoreBreakout(){
+        if (scoreBreakout > highScoreBreakout){
+            highScoreBreakout = scoreBreakout
+            SharedBreakout.highScoreBroken = true
+        }
+    }
+
+    fun updateScoreBreakoutClassic(){
+        if (scoreBreakoutClassic > highScoreBreakoutClassic){
+            highScoreBreakoutClassic = scoreBreakoutClassic
+            SharedBreakout.highScoreBroken = true
+        }
     }
 }

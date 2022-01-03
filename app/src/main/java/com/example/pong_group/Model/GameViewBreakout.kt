@@ -35,11 +35,11 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     private val classic = GameSettings.classicBreakout
     private val typeFace = ResourcesCompat.getFont(App.instance, R.font.arcade_classic)
     private var everyOther = false
-    var level = 2
+    var level = 1
     var gridPosX: Float = 0f
     var gridPosY: Float = 0f
     var gridSqueezeX: Float = 0f
-    var gridStartY: Float = 120f
+    var gridStartY: Float = 120f + ballEdgeTop
     var gridSpacingX: Float = 0f
     var gridSpacingY: Float = 0f
     var brickH: Float = 50f
@@ -47,11 +47,13 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     var isButtonClickable = false
 
     companion object {
+        private const val textSize = 24F
+        const val ballEdgeTop = textSize * 5f
         var canvasBreakout = Canvas()
         var totalCountOfBricks = 0
 
         var outOfLives = false
-        var lives = 1000
+        var lives = 3
         var breakReady = true
     }
 
@@ -87,6 +89,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
 
     private fun setup() {
+        SharedBreakout.highScoreBroken = false
         gridPosX = gridSqueezeX
         gridPosY = gridStartY
         totalCountOfBricks = SharedBreakout.brickCountX*SharedBreakout.brickCountY
@@ -164,7 +167,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             SharedBreakout.bricks.forEach { brick ->
                 brick.draw()
             }
-            scoresAndLivesCounter()
+            valuesCounter()
         }
     }
 
@@ -301,7 +304,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
         }
 
-    fun setupButton(icon: Bitmap, textViewHeight: Int){
+    private fun setupButton(icon: Bitmap, textViewHeight: Int){
         restartButton = SurfaceViewButton(icon)
         val restartButtonX = (canvasBreakout.width / 2).toFloat() - restartButton.width / 2
         val restartButtonY = (canvasBreakout.height / 2).toFloat() + textViewHeight/2 + 40f
@@ -309,18 +312,15 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         restartButton.draw(canvasBreakout)
     }
 
-    private fun scoresAndLivesCounter() {
-        val livesLayout = LinearLayout(App.instance)
-        livesLayout.orientation = LinearLayout.HORIZONTAL
-//        var params = LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-//        livesLayout.layoutParams = params
-
+    private fun valuesCounter() {
+        //Left Side
+        val livesLevelLayout = LinearLayout(App.instance)
+        livesLevelLayout.orientation = LinearLayout.VERTICAL
 
         val textParams = LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT, 1F)
         val livesText = TextView(App.instance)
         livesText.text = "Lives: $lives"
-        livesText.textSize = 24F
-        livesText.gravity = Gravity.START
+        livesText.textSize = textSize
         livesText.typeface = typeFace
         livesText.layoutParams = textParams
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -328,61 +328,58 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         }
 
         val levelText = TextView(App.instance)
-        levelText.text = "Lv: $level"
-        levelText.textSize = 24F
-        levelText.gravity = Gravity.CENTER_HORIZONTAL
+        levelText.text = "Level: $level"
+        levelText.textSize = textSize
         levelText.typeface = typeFace
         levelText.layoutParams = textParams
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             levelText.setTextColor(App.instance.resources.getColor(R.color.white, context.theme))
         }
 
-        val scoresText = TextView(App.instance)
-        scoresText.text = "${GameSettings.scoreBreakout}"
-        scoresText.textSize = 24F
-        scoresText.gravity = Gravity.END
-        scoresText.typeface = typeFace
+        livesLevelLayout.addView(livesText)
+        livesLevelLayout.addView(levelText)
+        livesLevelLayout.gravity = Gravity.START
+        livesLevelLayout.measure(canvasBreakout.width, canvasBreakout.height)
+        livesLevelLayout.layout(0,0, canvasBreakout.width, canvasBreakout.height)
+        livesLevelLayout.draw(canvasBreakout)
+
+
+        //Right Side
+        val scoresLayout = LinearLayout(App.instance)
+        scoresLayout.orientation = LinearLayout.VERTICAL
+
+        val highScoreText = TextView(App.instance)
+        if (!classic)
+            highScoreText.text = "High Score: ${GameSettings.highScoreBreakout}"
+        else
+            highScoreText.text = "High Score: ${GameSettings.highScoreBreakoutClassic}"
+        highScoreText.textSize = textSize
+        highScoreText.gravity = Gravity.END
+        highScoreText.typeface = typeFace
         livesText.layoutParams = textParams
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            scoresText.setTextColor(App.instance.resources.getColor(R.color.white, context.theme))
+            if (!SharedBreakout.highScoreBroken)
+                highScoreText.setTextColor(App.instance.resources.getColor(R.color.white, context.theme))
+            else
+                highScoreText.setTextColor(App.instance.resources.getColor(R.color.yellow, context.theme))
         }
 
-//        var paramsLevel =  RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
-//        paramsLevel.addRule(RelativeLayout.ALIGN_BOTTOM, RelativeLayout.TRUE)
-//
-//        val levelText = TextView(App.instance)
-//        levelText.layoutParams = paramsLevel
-//        levelText.text = "Level: $level"
-//        levelText.textSize = 36f
-//        levelText.gravity = Gravity.BOTTOM
-//        levelText.typeface = typeFace
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            levelText.setTextColor(App.instance.resources.getColor(R.color.white, context.theme))
-//        }
+        val scoreText = TextView(App.instance)
+        if (!classic)
+            scoreText.text = "Score: ${GameSettings.scoreBreakout}"
+        else
+            scoreText.text = "Score: ${GameSettings.scoreBreakoutClassic}"
+        scoreText.textSize = textSize
+        scoreText.gravity = Gravity.END
+        scoreText.typeface = typeFace
+        livesText.layoutParams = textParams
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            scoreText.setTextColor(App.instance.resources.getColor(R.color.white, context.theme))
+        }
 
-//        levelText.x = (canvasBreakout.width/2 - levelText.width/2).toFloat()
-//        levelText.y = canvasBreakout.height/2 - levelText.height -10f
-//
-//        levelText.measure(canvasBreakout.width, canvasBreakout.height)
-//        levelText.layout(0, 0, canvasBreakout.width, canvasBreakout.height)
-//
-//        levelText.draw(canvasBreakout)
-
-        livesLayout.addView(livesText)
-        livesLayout.measure(canvasBreakout.width, canvasBreakout.height)
-        livesLayout.layout(0,0, canvasBreakout.width, canvasBreakout.height)
-        livesLayout.draw(canvasBreakout)
-
-        val levelLayout = LinearLayout(App.instance)
-        levelLayout.gravity = Gravity.CENTER_HORIZONTAL
-        levelLayout.addView(levelText)
-        levelLayout.measure(canvasBreakout.width, canvasBreakout.height)
-        levelLayout.layout(0,0, canvasBreakout.width, canvasBreakout.height)
-        levelLayout.draw(canvasBreakout)
-
-        val scoresLayout = LinearLayout(App.instance)
+        scoresLayout.addView(highScoreText)
+        scoresLayout.addView(scoreText)
         scoresLayout.gravity = Gravity.END
-        scoresLayout.addView(scoresText)
         scoresLayout.measure(canvasBreakout.width, canvasBreakout.height)
         scoresLayout.layout(0,0, canvasBreakout.width, canvasBreakout.height)
         scoresLayout.draw(canvasBreakout)
