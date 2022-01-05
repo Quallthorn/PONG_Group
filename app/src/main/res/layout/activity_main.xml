@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/arcade_classic"
             android:gravity="center"
-            android:text="classic \nbreakout"
+            android:text="classic"
             android:textColor="@color/back_grey"
             android:textSize="60dp"/>
 
