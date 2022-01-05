@@ -7,8 +7,10 @@
         <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_game_breakout.xml" value="0.25" />
         <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_game_pong.xml" value="0.25" />
         <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_high_score.xml" value="0.20652173913043478" />
-        <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/activity_high_score.xml" value="0.38125" />
+        <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_name_input.xml" value="0.25" />
+        <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_settings.xml" value="0.2892416225749559" />
+        <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/game_scores_list_item.xml" value="0.9820359281437125" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2453125" />
         <entry key="app/src/main/res/layout/game_scores_list_item.xml" value="0.335" />
         <entry key="app/src/main/res/layout/linear_layout.xml" value="0.5635416666666667" />
@@ -17,7 +19,7 @@
     </option>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

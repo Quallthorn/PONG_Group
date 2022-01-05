@@ -4,13 +4,14 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
+import android.widget.TextView
 import com.example.pong_group.R
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var pong : ImageButton
     lateinit var breakout : ImageButton
-    lateinit var highscore : ImageButton
+    lateinit var highscore : TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

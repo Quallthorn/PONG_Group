@@ -8,6 +8,7 @@ object SharedBreakout {
     var bricks = mutableListOf<Brick>()
     var brickCountX: Int = 15
     var brickCountY: Int = 0
+    var highScoreBroken = false
 
     //Classic
     const val ballSpeedStart = 10f
@@ -39,7 +40,7 @@ object SharedBreakout {
         if (nr + 1 < brickCountX * brickCountY){
             onEdge = checkEdge(nr + 1, true)
             if (!onEdge) {
-                bricks[nr + 1].canBreak()
+                bricks[nr + 1].exL = true
             }
         }
 
@@ -47,27 +48,19 @@ object SharedBreakout {
         if (nr - 1 >= 0){
             onEdge = checkEdge(nr - 1, false)
             if (!onEdge) {
-                bricks[nr - 1].canBreak()
+                bricks[nr - 1].exR = true
             }
         }
 
         //above
         if (nr - brickCountX >= 0) {
-            bricks[nr - brickCountX].canBreak()
+            bricks[nr - brickCountX].exB = true
         }
 
         //below
         if (nr + brickCountX < brickCountX * brickCountY) {
-            bricks[nr + brickCountX].canBreak()
+            bricks[nr + brickCountX].exT = true
         }
-
-        if (nr < brickCountX)
-            upperRowBreakable()
-    }
-
-    private fun upperRowBreakable() {
-        for (i in 0 until brickCountX)
-            bricks[i].canBreak()
     }
 
     private fun checkEdge(nr: Int, right: Boolean): Boolean {
@@ -93,13 +86,12 @@ object SharedBreakout {
         brickCounts[pointBase]--
         while (brickCounts[lowestBrick] == 0 && lowestBrick > 0)
             lowestBrick--
-
-        Log.d("scoreNormal", "$GameSettings.scoreBreakout")
+        GameSettings.updateScoreBreakout()
     }
 
     fun addScoreClassic(pointBase: Int) {
-        GameSettings.scoreBreakout += pointBase
-        Log.d("classic", "Points: $GameSettings.scoreBreakout")
+        GameSettings.scoreBreakoutClassic += pointBase
+        GameSettings.updateScoreBreakoutClassic()
     }
 
     fun updateSpeedClassic(brickColor: Int) {

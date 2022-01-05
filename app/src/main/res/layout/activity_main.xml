@@ -4,49 +4,89 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Controller.MainActivity"
     android:background="@color/background"
+    android:gravity="center"
     android:orientation="vertical"
-    android:gravity="center">
+    tools:context=".Controller.MainActivity">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/main_menu_squeeze"
+        android:layout_marginEnd="@dimen/main_menu_squeeze"
         app:cardCornerRadius="20dp">
 
         <ImageButton
             android:id="@+id/game_2"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/button_pong"/>
+            android:background="@drawable/button_pong" />
 
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginStart="@dimen/main_menu_squeeze"
+        android:layout_marginTop="@dimen/margin_top"
+        android:layout_marginEnd="@dimen/main_menu_squeeze"
         app:cardCornerRadius="20dp">
 
         <ImageButton
             android:id="@+id/game_1"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/button_breakout"/>
+            android:background="@drawable/button_breakout" />
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/main_menu_squeeze"
+        android:layout_marginTop="@dimen/margin_top"
+        android:layout_marginEnd="@dimen/main_menu_squeeze"
+        app:cardCornerRadius="20dp">
+
+        <ImageButton
+            android:id="@+id/game_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_classic_breakout" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/arcade_classic"
+            android:gravity="center"
+            android:text="classic"
+            android:textColor="@color/back_grey"
+            android:textSize="60dp"/>
 
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        app:cardCornerRadius="20dp">
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/margin_top"
+        app:cardCornerRadius="10dp">
 
-        <ImageButton
+        <TextView
             android:id="@+id/high_score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/button_high_score"/>
+            android:background="@drawable/star_background_small"
+            android:clickable="true"
+            android:fontFamily="@font/arcade_classic"
+            android:gravity="center_horizontal"
+            android:paddingStart="@dimen/margin_top"
+            android:paddingTop="10dp"
+            android:paddingEnd="@dimen/margin_top"
+            android:paddingBottom="10dp"
+            android:text="high score"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_submit" />
 
     </androidx.cardview.widget.CardView>
 

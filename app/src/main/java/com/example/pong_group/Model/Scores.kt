@@ -4,5 +4,4 @@ data class Scores (
     val id: String,
     val name: String,
     val scores: Int,
-    val gameType: String,
-    val rank: Int)
+    val gameType: String)
