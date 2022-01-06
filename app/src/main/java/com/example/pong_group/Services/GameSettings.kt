@@ -1,5 +1,6 @@
 package com.example.pong_group.Services
 
+import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.Log
 import com.example.pong_group.Controller.App
@@ -13,9 +14,17 @@ object GameSettings {
 
     private val colorArray = App.instance.resources.obtainTypedArray(R.array.rainbow)
     var curPaint = Paint()
+    var curCanvas = Canvas()
+
+    //BallSettings
+    val ballMaxSpeed = 30f
+    val anglesCount = 10
+
+    //pongSettings
+    var ballCount = 1
 
     //Classic
-    var classicBreakout = true
+    var classicBreakout = false
 
     // scores
     var highScorePong = 0

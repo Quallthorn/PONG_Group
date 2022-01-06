@@ -2,9 +2,9 @@ package com.example.pong_group.Model
 
 import android.graphics.Paint
 import com.example.pong_group.Controller.App
-import com.example.pong_group.Model.GameViewPONG.Companion.canvas
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings
+import com.example.pong_group.Services.GameSettings.curCanvas
 import com.example.pong_group.Services.NumberPrinter
 
 class Paddle(isCpu: Boolean) {
@@ -44,7 +44,7 @@ class Paddle(isCpu: Boolean) {
     }
 
     fun draw (){
-        canvas.drawRect(
+        curCanvas.drawRect(
             posX - width,
             GameSettings.screenHeight - posY,
             posX + width,

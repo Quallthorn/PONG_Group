@@ -7,6 +7,8 @@ import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.example.pong_group.Services.GameSettings
+import com.example.pong_group.Services.GameSettings.ballCount
+import com.example.pong_group.Services.GameSettings.curCanvas
 import com.example.pong_group.Services.GameSounds
 import kotlin.math.sqrt
 import com.example.pong_group.Services.NumberPrinter
@@ -20,9 +22,8 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     private var cpu: Paddle
     private var paddlePosY = 0f
     private var paddleWidth = 0f
-    private var ball1: Ball
-    private var ballA = mutableListOf<Ball>()
-    private val ballCount = 10
+    private var ballPong: BallPong
+    private var ballA = mutableListOf<BallPong>()
     private var mHolder: SurfaceHolder? = holder
 
     private val numberFromEdge = 100f
@@ -30,7 +31,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
 
 
     companion object {
-        var canvas = Canvas()
+//        var canvas = Canvas()
     }
 
     init {
@@ -38,7 +39,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
 
         player = Paddle(false)
         cpu = Paddle(true)
-        ball1 = Ball()
+        ballPong = BallPong()
         changeColors()
     }
 
@@ -60,10 +61,10 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         player.width = paddleWidth
         cpu.width = paddleWidth
 
-        ball1.centerBall()
-        ball1.start = true
+        ballPong.centerBall()
+        ballPong.start = true
         for (i in 0 until ballCount) {
-            val newBall = Ball()
+            val newBall = BallPong()
             val s = (0..100).random() / 100f
             newBall.dirX = s
             newBall.dirY = sqrt((1 - newBall.dirX * newBall.dirX))
@@ -101,23 +102,23 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     private fun update() {
         player.update()
 
-        if (ball1.start) {
-            if (cpu.posX <= ball1.posX - cpu.width / 4)
-                cpu.posX += ball1.speed / (1..2).random()
-            else if (cpu.posX >= ball1.posX + cpu.width / 4)
-                cpu.posX -= ball1.speed / (1..2).random()
+        if (ballPong.start) {
+            if (cpu.posX <= ballPong.posX - cpu.width / 4)
+                cpu.posX += ballPong.speed / (1..2).random()
+            else if (cpu.posX >= ballPong.posX + cpu.width / 4)
+                cpu.posX -= ballPong.speed / (1..2).random()
         } else {
             if (cpu.posX < GameSettings.screenWidth / 2)
                 cpu.posX += GameSettings.screenWidth / 250f
             if (cpu.posX > GameSettings.screenWidth / 2)
                 cpu.posX -= GameSettings.screenWidth / 250f
 
-            if (ball1.p1Scored
+            if (ballPong.p1Scored
                 && abs(cpu.posX - GameSettings.screenWidth / 2) <= 5f
-                && abs(ball1.posX - GameSettings.screenWidth / 2) <= 5f
+                && abs(ballPong.posX - GameSettings.screenWidth / 2) <= 5f
             ){
                 GameSounds.playSound()
-                ball1.start = true
+                ballPong.start = true
                 ballA.forEach {
                     if (it.p1Scored)
                         it.start = true
@@ -125,7 +126,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
             }
         }
 
-        ball1.update(
+        ballPong.update(
             player,
             cpu.posX
         )
@@ -135,21 +136,21 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
                 cpu.posX
             )
         }
-        if (ball1.changeColor)
+        if (ballPong.changeColor)
             changeColors()
     }
 
     private fun draw() {
-        canvas = mHolder!!.lockCanvas()
-        canvas.drawColor(Color.BLACK)
+        curCanvas = mHolder!!.lockCanvas()
+        curCanvas.drawColor(Color.BLACK)
         drawLine()
         player.draw()
         cpu.draw()
-        ball1.draw()
+        ballPong.draw()
         ballA.forEach {
             it.draw()
         }
-        mHolder!!.unlockCanvasAndPost(canvas)
+        mHolder!!.unlockCanvasAndPost(curCanvas)
     }
 
     private fun drawLine() {
@@ -159,7 +160,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         val lineW = (GameSettings.screenWidth + lineSpacing) / amount - lineSpacing
         val thickness = 5f
         for (i in 0 until amount) {
-            canvas.drawRect(
+            curCanvas.drawRect(
                 lineX,
                 GameSettings.screenHeight / 2 - thickness,
                 lineX + lineW,
@@ -174,8 +175,8 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         GameSettings.getRandomColorFromArray()
         player.paint = GameSettings.curPaint
         cpu.paint = GameSettings.curPaint
-        ball1.paint = GameSettings.curPaint
-        ball1.changeColor = false
+        ballPong.paint = GameSettings.curPaint
+        ballPong.changeColor = false
     }
 
     override fun surfaceCreated(p0: SurfaceHolder) {
@@ -202,10 +203,10 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null) {
             player.posX = event.x
-            if (!ball1.p1Scored && !ball1.start) {
+            if (!ballPong.p1Scored && !ballPong.start) {
                 if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL){
                     GameSounds.playSound()
-                    ball1.start = true
+                    ballPong.start = true
                     ballA.forEach {
                         if (!it.p1Scored)
                             it.start = true

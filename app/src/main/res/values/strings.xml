@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">PONG_Group</string>
+    <string name="classic">CLASSIC</string>
+    <string name="modern">MODERN</string>
+    <string name="pong">PONG</string>
+    <string name="breakout">BREAKOUT</string>
+    <string name="high_score">high score</string>
+    <string name="settings">Settings</string>
+    <string name="breakout_game">Breakout game</string>
+    <string name="pong_game">Pong game</string>
 </resources>

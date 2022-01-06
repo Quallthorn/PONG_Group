@@ -1,50 +1,40 @@
 package com.example.pong_group.Model
 
+import android.graphics.Canvas
 import android.graphics.Paint
 import com.example.pong_group.Controller.App
 import com.example.pong_group.Model.GameViewBreakout.Companion.breakReady
-import com.example.pong_group.Model.GameViewBreakout.Companion.canvasBreakout
+
 import com.example.pong_group.Model.GameViewBreakout.Companion.lives
 import com.example.pong_group.Model.GameViewBreakout.Companion.outOfLives
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings
+import com.example.pong_group.Services.GameSettings.anglesCount
+import com.example.pong_group.Services.GameSettings.ballMaxSpeed
+import com.example.pong_group.Services.GameSettings.classicBreakout
 import com.example.pong_group.Services.GameSounds
+import com.example.pong_group.Services.GameSounds.playSound
 import com.example.pong_group.Services.SharedBreakout
 import kotlin.math.abs
 import kotlin.math.sqrt
 
-class BallBreakout() {
-    private val classic = GameSettings.classicBreakout
-    var radius = 7f
-    var posX = radius
-    var posY = radius
-    var paint = Paint()
-    var speed = 15f
+class BallBreakout(): BasicBall() {
     var checkCollision = false
 
-    var dirX = 0f
-    var dirY = 0f
-
-    private val anglesCount = 10 // max 10 possibly 10.9 but not recommended
-    private val maxSpeed = 30f
-
-    var changeColor = false
-
     init {
-        if (classic)
+        speed = 15f
+        if (classicBreakout)
             speed = SharedBreakout.ballSpeedStart
         paint.color = App.instance.resources.getColor(R.color.white)
-        posX = GameSettings.screenWidth * 0.5f
-        posY = GameSettings.screenHeight * 0.5f
     }
 
     fun update(player: PaddleBreakout) {
         //screen edges
         if (posX >= GameSettings.screenWidth - radius) {
-            GameSounds.playSound()
+            playSound()
             dirX = abs(dirX) * -1
         } else if (posX <= radius) {
-            GameSounds.playSound()
+            playSound()
             dirX = abs(dirX)
         }
         if (posY >= GameSettings.screenHeight - radius) {
@@ -52,15 +42,13 @@ class BallBreakout() {
             dirY = abs(dirY) * -1
             lives -= 1
         } else if (posY <= radius + GameViewBreakout.ballEdgeTop) {
-            GameSounds.playSound()
+            playSound()
             dirY = abs(dirY)
-            if (classic && !SharedBreakout.upperWallHit) {
+            if (classicBreakout && !SharedBreakout.upperWallHit) {
                 player.halfSize()
                 SharedBreakout.upperWallHit = true
             }
         }
-
-
 
         //player paddle
         if (posY >= GameSettings.screenHeight - player.posY - radius
@@ -87,35 +75,31 @@ class BallBreakout() {
         breakReady = true
     }
 
-    fun draw() {
-        canvasBreakout.drawCircle(posX, posY, radius, paint)
-    }
-
     private fun speedCheck(pPosX: Float, pWidth: Float) {
         when {
             posX < pPosX - pWidth -> {
                 dirX = -0.9f
-                if (speed < maxSpeed && !classic) {
+                if (speed < ballMaxSpeed && !classicBreakout) {
                     speed += 1f
                 }
             }
             posX > pPosX + pWidth -> {
                 dirX = 0.9f
-                if (speed < maxSpeed && !classic) {
+                if (speed < ballMaxSpeed && !classicBreakout) {
                     speed += 1f
                 }
             }
             else -> {
                 bounce(pPosX, pWidth)
-                if (speed < maxSpeed && !classic) {
+                if (speed < ballMaxSpeed && !classicBreakout) {
                     speed += 0.1f
                 }
             }
         }
-        if (classic)
+        if (classicBreakout)
             speed = SharedBreakout.ballSpeed
         dirY = -sqrt((1 - dirX * dirX).toDouble()).toFloat()
-        GameSounds.playSound()
+        playSound()
         changeColor()
     }
 
@@ -135,7 +119,4 @@ class BallBreakout() {
         posY = GameSettings.screenHeight - (pPosY + radius)
     }
 
-    private fun changeColor() {
-        changeColor = true
-    }
 }

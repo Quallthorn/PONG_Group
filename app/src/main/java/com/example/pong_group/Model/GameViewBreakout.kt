@@ -17,17 +17,15 @@ import android.widget.TextView
 
 import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.res.ResourcesCompat
-import com.example.pong_group.Controller.HighScore
 import com.example.pong_group.Controller.NameInputActivity
 import com.example.pong_group.Services.SharedBreakout
-import androidx.core.content.ContextCompat.startActivity
+import com.example.pong_group.Services.GameSettings.curCanvas
+import com.example.pong_group.views.SurfaceViewButton
 
 class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
-    private var thread: GameThread
+
     private var player: PaddleBreakout
     private var paddlePosY = 0f
     private var ball: BallBreakout
@@ -54,12 +52,13 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     companion object {
         private const val textSize = 24F
         const val ballEdgeTop = textSize * 5f
-        var canvasBreakout = Canvas()
+//        var curCanvas = GameSettings.curCanvas
         var totalCountOfBricks = 0
 
         var outOfLives = false
         var lives = 1
         var breakReady = true
+        lateinit var thread: GameThread
     }
 
     init {
@@ -67,6 +66,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         GameSettings.scoreBreakout = 0
         GameSettings.scoreBreakoutClassic = 0
         GameSettings.highScoreBreakout = ScoresRealm.findHighestScore("breakout")
+//        GameSettings.curCanvas = curCanvas
         if (classic) {
             SharedBreakout.brickCountX = 14
             SharedBreakout.brickCountY = 8
@@ -294,9 +294,9 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
                 layout.addView(gameOverTextView)
 
-                layout.measure(canvasBreakout.width, canvasBreakout.height)
-                layout.layout(0, 0, canvasBreakout.width, canvasBreakout.height)
-                layout.draw(canvasBreakout)
+                layout.measure(curCanvas.width, curCanvas.height)
+                layout.layout(0, 0, curCanvas.width, curCanvas.height)
+                layout.draw(curCanvas)
 
                 //restart button layout
 
@@ -315,10 +315,10 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
     private fun setupButton(icon: Bitmap, textViewHeight: Int){
         restartButton = SurfaceViewButton(icon)
-        val restartButtonX = (canvasBreakout.width / 2).toFloat() - restartButton.width / 2
-        val restartButtonY = (canvasBreakout.height / 2).toFloat() + textViewHeight/2 + 40f
+        val restartButtonX = (curCanvas.width / 2).toFloat() - restartButton.width / 2
+        val restartButtonY = (curCanvas.height / 2).toFloat() + textViewHeight/2 + 40f
         restartButton.setPosition(restartButtonX, restartButtonY)
-        restartButton.draw(canvasBreakout)
+        restartButton.draw(curCanvas)
     }
 
     private fun valuesCounter() {
@@ -348,9 +348,9 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         livesLevelLayout.addView(livesText)
         livesLevelLayout.addView(levelText)
         livesLevelLayout.gravity = Gravity.START
-        livesLevelLayout.measure(canvasBreakout.width, canvasBreakout.height)
-        livesLevelLayout.layout(0,0, canvasBreakout.width, canvasBreakout.height)
-        livesLevelLayout.draw(canvasBreakout)
+        livesLevelLayout.measure(curCanvas.width, curCanvas.height)
+        livesLevelLayout.layout(0,0, curCanvas.width, curCanvas.height)
+        livesLevelLayout.draw(curCanvas)
 
 
         //Right Side
@@ -389,9 +389,9 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         scoresLayout.addView(highScoreText)
         scoresLayout.addView(scoreText)
         scoresLayout.gravity = Gravity.END
-        scoresLayout.measure(canvasBreakout.width, canvasBreakout.height)
-        scoresLayout.layout(0,0, canvasBreakout.width, canvasBreakout.height)
-        scoresLayout.draw(canvasBreakout)
+        scoresLayout.measure(curCanvas.width, curCanvas.height)
+        scoresLayout.layout(0,0, curCanvas.width, curCanvas.height)
+        scoresLayout.draw(curCanvas)
     }
 
 
@@ -404,7 +404,6 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     private fun pauseThread() {
         pause = true
     }
-
 
 
 }

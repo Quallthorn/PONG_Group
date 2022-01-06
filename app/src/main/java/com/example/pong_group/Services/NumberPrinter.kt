@@ -1,6 +1,7 @@
 package com.example.pong_group.Services
 
-import com.example.pong_group.Model.GameViewPONG.Companion.canvas
+import com.example.pong_group.Services.GameSettings.curCanvas
+
 
 object NumberPrinter {
 
@@ -104,7 +105,7 @@ object NumberPrinter {
 
     //Lines
     fun lineVerticalLong(posX: Float, posY: Float) {
-        canvas.drawRect(
+        curCanvas.drawRect(
             posX,
             posY,
             posX + numberW,
@@ -114,7 +115,7 @@ object NumberPrinter {
     }
 
     fun lineVerticalHalf(posX: Float, posY: Float) {
-        canvas.drawRect(
+        curCanvas.drawRect(
             posX,
             posY,
             posX + numberW,
@@ -124,7 +125,7 @@ object NumberPrinter {
     }
 
     fun lineHorizontal(posX: Float, posY: Float) {
-        canvas.drawRect(
+        curCanvas.drawRect(
             posX,
             posY,
             posX + numberWL,

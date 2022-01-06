@@ -1,35 +1,19 @@
 package com.example.pong_group.Model
 
-import android.graphics.Paint
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSettings.anglesCount
 import com.example.pong_group.Services.GameSettings.ballMaxSpeed
-import com.example.pong_group.Services.GameSettings.curCanvas
 import com.example.pong_group.Services.GameSounds
+import com.example.pong_group.Services.GameSounds.playSound
 import kotlin.math.abs
 import kotlin.math.sqrt
 
-class Ball() {
-    var radius = 7f
-    var posX = radius
-    var posY = radius
-    var dirX = 0.5f
-    var dirY = 0.5f
-    var paint = Paint()
+class BallPong() : BasicBall() {
 
-//    private val anglesCount = 10 // max 10 possibly 10.9 but not recommended
     private val startSpeed = 10f
-    var speed = 10f
-//    private val maxSpeed = 30f
-
-    var changeColor = false
     var start = false
     var p1Scored = false
 
-    init {
-        posX = GameSettings.screenWidth * 0.5f
-        posY = GameSettings.screenHeight * 0.5f
-    }
 
     fun update(
         player: Paddle,
@@ -52,7 +36,7 @@ class Ball() {
 
                 //left side
             } else if (posX <= radius) {
-                GameSounds.playSound()
+                playSound()
                 if (dirY > 0) {
                     dirY += ((0..2).random()) / 10f
                     if (dirY > 1 || dirY < 0)
@@ -112,9 +96,6 @@ class Ball() {
         }
     }
 
-    fun draw() {
-        curCanvas.drawCircle(posX, posY, radius, paint)
-    }
 
     private fun bounceP1(player: Paddle) {
         when {
@@ -149,7 +130,7 @@ class Ball() {
                 }
             }
         }
-        GameSounds.playSound()
+        playSound()
         changeColor()
         dirY = -sqrt(1 - dirX * dirX)
     }
@@ -172,7 +153,7 @@ class Ball() {
                 }
             }
         }
-        GameSounds.playSound()
+        playSound()
         changeColor()
         dirY = sqrt(1 - dirX * dirX)
 
@@ -208,9 +189,6 @@ class Ball() {
         posY = GameSettings.screenHeight / 2
     }
 
-    private fun changeColor() {
-        changeColor = true
-    }
 }
 
 //                if (Math.abs(pPosX - pOldX) > 5f) {

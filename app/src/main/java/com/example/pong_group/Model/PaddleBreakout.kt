@@ -5,8 +5,9 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.pong_group.Controller.App
 import com.example.pong_group.R
-import com.example.pong_group.Model.GameViewBreakout.Companion.canvasBreakout
+//import com.example.pong_group.Model.GameViewBreakout.Companion.canvasBreakout
 import com.example.pong_group.Services.GameSettings
+import com.example.pong_group.Services.GameSettings.curCanvas
 
 class PaddleBreakout() {
 
@@ -24,7 +25,7 @@ class PaddleBreakout() {
     }
 
     fun draw (){
-        canvasBreakout?.drawRect(
+        curCanvas?.drawRect(
             posX - width,
             GameSettings.screenHeight - posY,
             posX + width,
