@@ -16,8 +16,6 @@ import kotlin.math.abs
 
 class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callback, Runnable {
 
-    private var thread: Thread? = null
-    private var running = false
     private var player: Paddle
     private var cpu: Paddle
     private var paddlePosY = 0f
@@ -32,6 +30,8 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
 
     companion object {
 //        var canvas = Canvas()
+        var thread: Thread? = null
+        var running = false
     }
 
     init {
@@ -190,7 +190,6 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
 
     override fun surfaceDestroyed(p0: SurfaceHolder) {
         stop()
-
     }
 
     override fun run() {

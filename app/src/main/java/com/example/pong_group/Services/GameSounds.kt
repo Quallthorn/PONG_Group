@@ -6,9 +6,13 @@ import com.example.pong_group.R
 
 object GameSounds {
 
+    var isSoundOn: Boolean = true
+
     val pongSound: MediaPlayer = MediaPlayer.create(App.instance, R.raw.pong_sound)
 
     fun playSound(){
-        pongSound.start()
+        if( isSoundOn) {
+            pongSound.start()
+        }
     }
 }
