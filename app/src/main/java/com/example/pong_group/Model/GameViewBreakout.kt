@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.TypedArray
 import android.graphics.*
+import android.os.Build
 import android.view.*
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
@@ -15,6 +16,7 @@ import com.example.pong_group.Services.GameThread
 import android.widget.TextView
 
 import android.widget.LinearLayout
+import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
 import com.example.pong_group.Controller.NameInputActivity
 import com.example.pong_group.Services.SharedBreakout
@@ -162,6 +164,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         if (ball.changeColor)
             changeColors()
     }
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
         canvas.also {
@@ -246,6 +249,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
 
 
+    @RequiresApi(Build.VERSION_CODES.M)
     fun checkEndOfTheGame() {
             //game over layout
             if (totalCountOfBricks == 0 || outOfLives) {
@@ -313,6 +317,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         restartButton.draw(curCanvas)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun valuesCounter() {
         //Left Side
         val livesLevelLayout = LinearLayout(App.instance)

@@ -33,7 +33,7 @@
     </RadioGroup>
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/soundText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -45,16 +45,50 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/classic_breakout" />
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/sound_switch"
+    <androidx.appcompat.widget.AppCompatToggleButton
+        android:id="@+id/mute_switch"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/selector_mute"
+        android:checked="false"
+        android:textOff=""
+        android:textOn=""
+        app:layout_constraintBottom_toBottomOf="@+id/soundText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/soundText" />
+
+    <TextView
+        android:id="@+id/versionText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:checked="true"
-        android:textAllCaps="false"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/arcade_classic"
+        android:text="@string/breakout"
         android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="@+id/textView3"
+        android:textSize="50sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/soundText" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/versionText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView3"/>
+        app:layout_constraintTop_toTopOf="@+id/versionText"
+        android:layout_marginEnd="20dp"
+        app:cardCornerRadius="50dp">
+
+        <androidx.appcompat.widget.AppCompatToggleButton
+            android:id="@+id/version_switch"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:checked="false"
+            android:textOff=""
+            android:textOn=""
+            android:background="@drawable/selector_breakout_version" />
+
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

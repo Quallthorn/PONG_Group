@@ -2,26 +2,26 @@ package com.example.pong_group.Controller
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.appcompat.widget.SwitchCompat
+import androidx.appcompat.widget.AppCompatToggleButton
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSounds
 
 class Settings : AppCompatActivity() {
-    lateinit var sound_switch_button: SwitchCompat
+    private lateinit var muteSwitch: AppCompatToggleButton
+    private lateinit var versionSwitch: AppCompatToggleButton
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        sound_switch_button = findViewById(R.id.sound_switch)
+        muteSwitch = findViewById(R.id.mute_switch)
 
-        sound_switch_button.isChecked = GameSounds.isSoundOn
+        muteSwitch.isChecked = GameSounds.appMuted
 
-        sound_switch_button.setOnClickListener {
-            GameSounds.isSoundOn = sound_switch_button.isChecked
+        muteSwitch.setOnClickListener {
+            GameSounds.appMuted = muteSwitch.isChecked
             GameSounds.playSound()
         }
-    }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
+        versionSwitch = findViewById(R.id.version_switch)
     }
 }
