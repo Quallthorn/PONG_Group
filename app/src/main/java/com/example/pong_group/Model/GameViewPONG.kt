@@ -1,7 +1,6 @@
 package com.example.pong_group.Model
 
 import android.content.Context
-import android.graphics.Canvas
 import android.graphics.Color
 import android.view.MotionEvent
 import android.view.SurfaceHolder
@@ -16,8 +15,8 @@ import kotlin.math.abs
 
 class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callback, Runnable {
 
-    private var player: Paddle
-    private var cpu: Paddle
+    private var player: PaddlePong
+    private var cpu: PaddlePong
     private var paddlePosY = 0f
     private var paddleWidth = 0f
     private var ballPong: BallPong
@@ -29,7 +28,6 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
 
 
     companion object {
-//        var canvas = Canvas()
         var thread: Thread? = null
         var running = false
     }
@@ -37,8 +35,8 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     init {
         mHolder?.addCallback(this)
 
-        player = Paddle(false)
-        cpu = Paddle(true)
+        player = PaddlePong(false)
+        cpu = PaddlePong(true)
         ballPong = BallPong()
         changeColors()
     }

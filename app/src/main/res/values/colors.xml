@@ -10,6 +10,8 @@
     <color name="white_fade">#80FFFFFF</color>
     <color name="background">#010513</color>
     <color name="clear">#00000000</color>
+    <color name="colorSecondary">#FFFFFFFF</color>
+    <color name="colorPrimary">#80FFFFFF</color>
 
     <color name="pink">#d35886</color>
     <color name="red">#a22b14</color>

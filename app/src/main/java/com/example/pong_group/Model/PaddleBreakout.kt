@@ -1,31 +1,22 @@
 package com.example.pong_group.Model
 
-import android.graphics.Paint
-import android.os.Build
-import androidx.annotation.RequiresApi
+
 import com.example.pong_group.Controller.App
 import com.example.pong_group.R
-//import com.example.pong_group.Model.GameViewBreakout.Companion.canvasBreakout
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSettings.curCanvas
 
-class PaddleBreakout() {
-
-    var posX: Float = 500f
-    var posY: Float = 1f
-    var height: Float = 25f
-    var width: Float = 80f
-    var paint = Paint()
+class PaddleBreakout(): BasicPaddle() {
 
     init {
-        this.paint.color = App.instance.resources.getColor(R.color.light_blue)
-    }
+        this.paint.color = App.instance.resources.getColor(R.color.light_blue, App.instance.theme)
+        width = 80f
+        height = 25f
 
-    fun update(){
     }
 
     fun draw (){
-        curCanvas?.drawRect(
+        curCanvas.drawRect(
             posX - width,
             GameSettings.screenHeight - posY,
             posX + width,

@@ -22,10 +22,10 @@ class BallBreakout(): BasicBall() {
     var checkCollision = false
 
     init {
-        speed = 15f
+        speed = 15f*GameSettings.speedCoefficient
         if (classicBreakout)
             speed = SharedBreakout.ballSpeedStart
-        paint.color = App.instance.resources.getColor(R.color.white)
+        paint.color = App.instance.resources.getColor(R.color.white, App.instance.theme)
     }
 
     fun update(player: PaddleBreakout) {

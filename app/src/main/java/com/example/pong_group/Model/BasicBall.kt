@@ -15,7 +15,6 @@ open class BasicBall() {
 
     var changeColor = false
 
-
     open fun draw() {
         GameSettings.curCanvas.drawCircle(posX, posY, radius, paint)
     }

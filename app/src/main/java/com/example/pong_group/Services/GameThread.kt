@@ -1,13 +1,11 @@
 package com.example.pong_group.Services
 
-import android.os.Build
+
+import android.util.Log
 import android.view.SurfaceHolder
-import androidx.annotation.RequiresApi
 import com.example.pong_group.Model.GameViewBreakout
 import com.example.pong_group.Services.GameSettings.curCanvas
-//import com.example.pong_group.Model.GameViewBreakout.Companion.canvasBreakout
 
-import java.util.*
 
 class GameThread(
     private val surfaceHolder: SurfaceHolder,
@@ -21,7 +19,6 @@ class GameThread(
         name = "GameThread"
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun run() {
         var startTime: Long
         val targetTime = (1000 / targetFPS).toLong()
@@ -40,18 +37,22 @@ class GameThread(
                         gameView.draw(it)
                     }
                     gameView.checkEndOfTheGame()
+
                     surfaceHolder.unlockCanvasAndPost(it)
+
                     cLocked = false
 
                 }!!
             } catch (ignored: Exception) {
+
+                Log.d("ERROR", "$ignored")
                 if (!cLocked) {
                     curCanvas = this.surfaceHolder.lockCanvas();
                     cLocked = true;
                 }
-
                 if (cLocked) {
                     surfaceHolder.unlockCanvasAndPost(curCanvas);
+
                     cLocked = false;
                 }
             }
