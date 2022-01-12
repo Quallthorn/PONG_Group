@@ -1,3 +1,12 @@
 <resources>
-        <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="top_margin">10dp</dimen>
+
+    <dimen name="pong_sign_text_size">100sp</dimen>
+    <dimen name="breakout_sign_text_size">60sp</dimen>
+    <dimen name="text_size_input_screen">60sp</dimen>
+    <dimen name="text_size_submit">40sp</dimen>
+
+    <dimen name="text_size_warning">40sp</dimen>
+    <dimen name="warning_diameter">40dp</dimen>
     </resources>

@@ -90,7 +90,7 @@ object SharedBreakout {
     }
 
     fun addScoreClassic(pointBase: Int) {
-        GameSettings.scoreBreakoutClassic += pointBase
+        GameSettings.scoreBreakout += pointBase
         GameSettings.updateScoreBreakoutClassic()
     }
 
@@ -111,7 +111,5 @@ object SharedBreakout {
             ballSpeed = ballSpeedStart + speedIncrease * 4
             maxSpeedAchieved = true
         }
-        Log.d("classic", "Hits: $hits")
-        Log.d("classic", "Speed: $ballSpeed")
     }
 }

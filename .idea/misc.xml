@@ -3,11 +3,19 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/font/audiowide.xml" value="0.221875" />
+        <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/font/pong_font.xml" value="0.15364583333333334" />
+        <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout-v26/activity_choose_breakout_game.xml" value="0.20677083333333332" />
+        <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout-v26/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_choose_breakout_game.xml" value="0.20677083333333332" />
         <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_game1_pong.xml" value="0.20652173913043478" />
         <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_game_breakout.xml" value="0.25" />
         <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_game_pong.xml" value="0.25" />
         <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_high_score.xml" value="0.20652173913043478" />
         <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_name_input.xml" value="0.33" />
+        <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_settings.xml" value="0.14427083333333332" />
+        <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/game_scores_list_item.xml" value="0.25" />
         <entry key="app/src/main/res/drawable/rounded_button.xml" value="0.3302083333333333" />
         <entry key="app/src/main/res/drawable/rounded_conor.xml" value="0.3302083333333333" />
         <entry key="app/src/main/res/layout-v26/activity_choose_breakout_game.xml" value="0.3140625" />

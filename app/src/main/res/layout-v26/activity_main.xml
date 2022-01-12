@@ -19,7 +19,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/stars_star" />
+        app:srcCompat="@drawable/star_background_black" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView7"
@@ -59,7 +59,7 @@
                 android:layout_marginEnd="15dp"
                 android:lines="1"
                 android:autoSizeTextType="uniform"
-                android:fontFamily="@font/audiowide"
+                android:fontFamily="@font/pong"
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:text="@string/pong"
@@ -108,11 +108,11 @@
                 android:layout_marginEnd="15dp"
                 android:lines="1"
                 android:autoSizeTextType="uniform"
-                android:fontFamily="@font/audiowide"
+                android:fontFamily="@font/pong"
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:text="@string/breakout"
-                android:textColor="@color/black"
+                android:textColor="@color/back_grey"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

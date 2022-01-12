@@ -18,4 +18,8 @@ class Settings : AppCompatActivity() {
             GameSounds.playSound()
         }
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+    }
 }

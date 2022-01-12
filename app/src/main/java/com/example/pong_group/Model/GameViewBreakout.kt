@@ -63,11 +63,9 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
     init {
         lives = 1
-        GameSettings.scoreBreakout = 0
-        GameSettings.scoreBreakoutClassic = 0
-        GameSettings.highScoreBreakout = ScoresRealm.findHighestScore("breakout")
 //        GameSettings.curCanvas = curCanvas
         if (classic) {
+            GameSettings.highScoreBreakoutClassic = ScoresRealm.findHighestScore("classic")
             SharedBreakout.brickCountX = 14
             SharedBreakout.brickCountY = 8
             gridSpacingX = 5f
@@ -75,6 +73,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             brickH = 20f
             colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks_classic)
         } else {
+            GameSettings.highScoreBreakout = ScoresRealm.findHighestScore("breakout")
             colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks)
             if (level == 1)
                 SharedBreakout.brickCountY = 6
@@ -374,10 +373,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         }
 
         val scoreText = TextView(App.instance)
-        if (!classic)
-            scoreText.text = "Score: ${GameSettings.scoreBreakout}"
-        else
-            scoreText.text = "Score: ${GameSettings.scoreBreakoutClassic}"
+        scoreText.text = "Score: ${GameSettings.scoreBreakout}"
         scoreText.textSize = textSize
         scoreText.gravity = Gravity.END
         scoreText.typeface = typeFace

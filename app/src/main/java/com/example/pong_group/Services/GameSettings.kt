@@ -30,12 +30,9 @@ object GameSettings {
     var highScorePong = 0
     var scorePong = 0
 
-    var highScoreBreakout = 0
     var scoreBreakout = 0
-
+    var highScoreBreakout = 0
     var highScoreBreakoutClassic = 0
-    var scoreBreakoutClassic = 0
-
 
     fun getRandomColorFromArray(): Int{
         val r = Random()
@@ -63,8 +60,8 @@ object GameSettings {
     }
 
     fun updateScoreBreakoutClassic(){
-        if (scoreBreakoutClassic > highScoreBreakoutClassic){
-            highScoreBreakoutClassic = scoreBreakoutClassic
+        if (scoreBreakout > highScoreBreakoutClassic){
+            highScoreBreakoutClassic = scoreBreakout
             SharedBreakout.highScoreBroken = true
         }
     }

@@ -12,11 +12,12 @@ import com.example.pong_group.Services.GameSettings
 
 class NameInputActivity : AppCompatActivity() {
 
-    lateinit var rank: TextView
-    lateinit var score: TextView
-    lateinit var nameInitials: EditText
-    lateinit var submitButton: TextView
-    lateinit var warning: CardView
+    private lateinit var rank: TextView
+    private lateinit var score: TextView
+    private lateinit var nameInitials: EditText
+    private lateinit var submitButton: TextView
+    private lateinit var cancelButton: TextView
+    private lateinit var warning: CardView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,13 +27,24 @@ class NameInputActivity : AppCompatActivity() {
         score = findViewById(R.id.score_output)
         nameInitials = findViewById(R.id.name_input)
         submitButton = findViewById(R.id.submit)
+        cancelButton = findViewById(R.id.cancel)
         warning = findViewById(R.id.warning)
 
         score.text = GameSettings.scoreBreakout.toString()
+        if (GameSettings.classicBreakout)
+            rank.text = ScoresRealm.findRank(GameSettings.scoreBreakout, "classic").toString()
+        else
+            rank.text = ScoresRealm.findRank(GameSettings.scoreBreakout, "breakout").toString()
 
         submitButton.setOnClickListener{
             if (nameInitials.text.length == 3){
-                ScoresRealm.addScores(GameSettings.scoreBreakout, nameInitials.text.toString(), "breakout")
+                if (GameSettings.classicBreakout){
+                    ScoresRealm.addScores(GameSettings.scoreBreakout, nameInitials.text.toString(), "classic")
+                }
+                else {
+                    ScoresRealm.addScores(GameSettings.scoreBreakout, nameInitials.text.toString(), "breakout")
+                }
+                GameSettings.scoreBreakout = 0
                 Intent(this, HighScore::class.java).apply { startActivity(this) }
             }
             else{
@@ -40,10 +52,23 @@ class NameInputActivity : AppCompatActivity() {
             }
         }
 
+        cancelButton.setOnClickListener{
+            backToMainMenu()
+        }
     }
 
     override fun onResume() {
         super.onResume()
         warning.visibility = View.INVISIBLE
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        backToMainMenu()
+    }
+
+    private fun backToMainMenu(){
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 }

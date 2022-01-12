@@ -27,8 +27,7 @@ class HighScore : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        val i = Intent(this, MainActivity::class.java)
-        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(i)
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 }
