@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.TypedArray
 import android.graphics.*
-import android.os.Build
 import android.view.*
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
@@ -16,7 +15,6 @@ import com.example.pong_group.Services.GameThread
 import android.widget.TextView
 
 import android.widget.LinearLayout
-import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
 import com.example.pong_group.Controller.NameInputActivity
 import com.example.pong_group.Services.SharedBreakout
@@ -52,7 +50,6 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     companion object {
         private const val textSize = 24F
         const val ballEdgeTop = textSize * 5f
-//        var curCanvas = GameSettings.curCanvas
         var totalCountOfBricks = 0
 
         var outOfLives = false
@@ -248,7 +245,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.M)
+
     fun checkEndOfTheGame() {
             //game over layout
             if (totalCountOfBricks == 0 || outOfLives) {
@@ -256,20 +253,20 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
                 layout.orientation = LinearLayout.VERTICAL
                 layout.gravity = Gravity.CENTER
 
-                var gameOverTextView = TextView(App.instance)
+                val gameOverTextView = TextView(App.instance)
 
                 val textParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, 1F)
 
                 gameOverTextView.visibility = View.VISIBLE
                 when {
                     outOfLives -> {
-                        gameOverTextView.text = "YOU\nLOSE"
+                        gameOverTextView.text = App.instance.getString(R.string.game_over_text,  "YOU\nLOSE")
                     }
                     level == 1 -> {
-                        gameOverTextView.text = "NEXT\nLEVEL"
+                        gameOverTextView.text = App.instance.getString(R.string.game_over_text,  "NEXT\nLEVEL")
                     }
                     else -> {
-                        gameOverTextView.text = "GAME\nOVER"
+                        gameOverTextView.text = App.instance.getString(R.string.game_over_text,  "GAME\nOVER")
                     }
                 }
                 gameOverTextView.textSize = 100f
@@ -277,16 +274,12 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
                 gameOverTextView.gravity = Gravity.CENTER
                 gameOverTextView.typeface = typeFace
                 gameOverTextView.layoutParams = textParams
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    gameOverTextView.setTextColor(
-                        App.instance.resources.getColor(
-                            R.color.white,
-                            context.theme
-                        )
+                gameOverTextView.setTextColor(
+                    App.instance.resources.getColor(
+                        R.color.white,
+                        context.theme
                     )
-                } else {
-                    gameOverTextView.setTextColor(App.instance.resources.getColor(R.color.white))
-                }
+                )
 
                 gameOverTextView.measure(0, 0)
                 val gameTextViewHeight = gameOverTextView.measuredHeight
@@ -327,22 +320,18 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
         val textParams = LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT, 1F)
         val livesText = TextView(App.instance)
-        livesText.text = "Lives: $lives"
+        livesText.text = context.getString(R.string.lives_text, lives)
         livesText.textSize = textSize
         livesText.typeface = typeFace
         livesText.layoutParams = textParams
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            livesText.setTextColor(App.instance.resources.getColor(R.color.white, context.theme))
-        }
+        livesText.setTextColor(App.instance.resources.getColor(R.color.white, context.theme))
 
         val levelText = TextView(App.instance)
-        levelText.text = "Level: $level"
+        levelText.text = context.getString(R.string.level_text, level)
         levelText.textSize = textSize
         levelText.typeface = typeFace
         levelText.layoutParams = textParams
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            levelText.setTextColor(App.instance.resources.getColor(R.color.white, context.theme))
-        }
+        levelText.setTextColor(App.instance.resources.getColor(R.color.white, context.theme))
 
         livesLevelLayout.addView(livesText)
         livesLevelLayout.addView(levelText)
@@ -358,29 +347,25 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
         val highScoreText = TextView(App.instance)
         if (!classic)
-            highScoreText.text = "High Score: ${GameSettings.highScoreBreakout}"
+            highScoreText.text = context.getString(R.string.high_scores_text, GameSettings.highScoreBreakout)
         else
-            highScoreText.text = "High Score: ${GameSettings.highScoreBreakoutClassic}"
+            highScoreText.text = context.getString(R.string.high_scores_text, GameSettings.highScoreBreakoutClassic)
         highScoreText.textSize = textSize
         highScoreText.gravity = Gravity.END
         highScoreText.typeface = typeFace
         livesText.layoutParams = textParams
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!SharedBreakout.highScoreBroken)
-                highScoreText.setTextColor(App.instance.resources.getColor(R.color.white, context.theme))
-            else
-                highScoreText.setTextColor(App.instance.resources.getColor(R.color.yellow, context.theme))
-        }
+        if (!SharedBreakout.highScoreBroken)
+            highScoreText.setTextColor(App.instance.resources.getColor(R.color.white, context.theme))
+        else
+            highScoreText.setTextColor(App.instance.resources.getColor(R.color.yellow, context.theme))
 
         val scoreText = TextView(App.instance)
-        scoreText.text = "Score: ${GameSettings.scoreBreakout}"
+        scoreText.text = context.getString(R.string.score_text,  GameSettings.scoreBreakout)
         scoreText.textSize = textSize
         scoreText.gravity = Gravity.END
         scoreText.typeface = typeFace
         livesText.layoutParams = textParams
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            scoreText.setTextColor(App.instance.resources.getColor(R.color.white, context.theme))
-        }
+        scoreText.setTextColor(App.instance.resources.getColor(R.color.white, context.theme))
 
         scoresLayout.addView(highScoreText)
         scoresLayout.addView(scoreText)

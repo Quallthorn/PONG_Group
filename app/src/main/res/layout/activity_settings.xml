@@ -39,7 +39,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/arcade_classic"
-        android:text="SOUND"
+        android:text="@string/sound"
         android:textColor="#FFFFFF"
         android:textSize="50sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +50,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
-
+        android:checked="true"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="@+id/textView3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textView3"/>

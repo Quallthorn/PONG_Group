@@ -11,17 +11,19 @@ import kotlin.properties.Delegates
 object GameSettings {
     var screenWidth: Float = 0f
     var screenHeight: Float = 0f
+    var baseHeightDimen = 1800
+    var speedCoefficient = 1f
 
     private val colorArray = App.instance.resources.obtainTypedArray(R.array.rainbow)
     var curPaint = Paint()
     var curCanvas = Canvas()
 
     //BallSettings
-    val ballMaxSpeed = 30f
+    val ballMaxSpeed = 30f * speedCoefficient
     val anglesCount = 10
 
     //pongSettings
-    var ballCount = 1
+    var ballCount = 0
 
     //Classic
     var classicBreakout = false
@@ -45,6 +47,7 @@ object GameSettings {
     fun setScreenDimen(width: Float, height: Float){
         screenWidth = width
         screenHeight = height
+        speedCoefficient = height / baseHeightDimen
     }
 
     fun updateScorePong(){

@@ -13,6 +13,9 @@
         <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_game_pong.xml" value="0.25" />
         <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_high_score.xml" value="0.20652173913043478" />
         <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="app/src/main/res/drawable/btn_segmented_center.xml" value="0.40703125" />
+        <entry key="app/src/main/res/drawable/btn_segmented_left.xml" value="0.40703125" />
+        <entry key="app/src/main/res/drawable/btn_segmented_right.xml" value="0.40703125" />
         <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_name_input.xml" value="0.33" />
         <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_settings.xml" value="0.14427083333333332" />
         <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/game_scores_list_item.xml" value="0.25" />

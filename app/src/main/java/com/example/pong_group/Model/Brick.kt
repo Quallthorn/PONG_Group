@@ -3,7 +3,6 @@ package com.example.pong_group.Model
 import android.graphics.Color
 import android.graphics.Paint
 import com.example.pong_group.Model.GameViewBreakout.Companion.breakReady
-//import com.example.pong_group.Model.GameViewBreakout.Companion.canvasBreakout
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSettings.curCanvas
 import com.example.pong_group.Services.GameSounds

@@ -1,6 +1,8 @@
 package com.example.pong_group.Controller
 
 import android.app.Application
+import android.content.res.Resources
+import android.util.Log
 import io.realm.Realm
 import io.realm.RealmConfiguration
 
@@ -12,7 +14,7 @@ class App : Application() {
         instance = this
 
         Realm.init(instance)
-        val realmName: String = "PongScores"
+        val realmName = "PongScores"
         var realmConfig = RealmConfiguration.Builder().name(realmName).allowWritesOnUiThread(true).build()
         Realm.setDefaultConfiguration(realmConfig)
     }

@@ -32,7 +32,7 @@ class Ball() {
     }
 
     fun update(
-        player: Paddle,
+        player: PaddlePong,
         cpuX: Float
     ) {
         if (start) {
@@ -116,7 +116,7 @@ class Ball() {
         curCanvas.drawCircle(posX, posY, radius, paint)
     }
 
-    private fun bounceP1(player: Paddle) {
+    private fun bounceP1(player: PaddlePong) {
         when {
             posX < player.posX - player.width -> {
                 dirX = -0.9f
@@ -183,20 +183,20 @@ class Ball() {
 
     private fun resetBall(isCpu: Boolean) {
         if (isCpu) {
-            Paddle.cpuScore += 1
-            if (Paddle.cpuScore > Paddle.absoluteScore) {
-                Paddle.absoluteScore = Paddle.cpuScore
+            PaddlePong.cpuScore += 1
+            if (PaddlePong.cpuScore > PaddlePong.absoluteScore) {
+                PaddlePong.absoluteScore = PaddlePong.cpuScore
             }
         } else {
-            Paddle.playerScore += 1
-            if (Paddle.playerScore > Paddle.absoluteScore) {
-                Paddle.absoluteScore = Paddle.playerScore
+            PaddlePong.playerScore += 1
+            if (PaddlePong.playerScore > PaddlePong.absoluteScore) {
+                PaddlePong.absoluteScore = PaddlePong.playerScore
             }
         }
-        if (Paddle.absoluteScore > 12) {
-            Paddle.playerScore = 0
-            Paddle.cpuScore = 0
-            Paddle.absoluteScore = 0
+        if (PaddlePong.absoluteScore > 12) {
+            PaddlePong.playerScore = 0
+            PaddlePong.cpuScore = 0
+            PaddlePong.absoluteScore = 0
         }
 
         start = false

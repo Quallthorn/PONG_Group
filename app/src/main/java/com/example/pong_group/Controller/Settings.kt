@@ -13,6 +13,8 @@ class Settings : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
         sound_switch_button = findViewById(R.id.sound_switch)
 
+        sound_switch_button.isChecked = GameSounds.isSoundOn
+
         sound_switch_button.setOnClickListener {
             GameSounds.isSoundOn = sound_switch_button.isChecked
             GameSounds.playSound()
