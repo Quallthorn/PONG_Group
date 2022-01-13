@@ -12,6 +12,8 @@
     <color name="clear">#00000000</color>
     <color name="colorSecondary">#FFFFFFFF</color>
     <color name="colorPrimary">#80FFFFFF</color>
+    <color name="disabled">#80BABABA</color>
+    <color name="yellow_pong">#FEC900</color>
 
     <color name="pink">#d35886</color>
     <color name="red">#a22b14</color>

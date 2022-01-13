@@ -1,14 +1,19 @@
 package com.example.pong_group.Services
 
 import com.example.pong_group.Services.GameSettings.curCanvas
+import com.example.pong_group.Services.GameSettings.screenWidth
+import com.example.pong_group.Services.GameSettings.screenHeight
 
 
 object NumberPrinter {
 
-    val numberW = 20f
-    val numberWL = 90f
-    val numberH = 180f
+    const val numberW = 20f
+    const val numberWL = 90f
+    const val numberH = 180f
     var paint = GameSettings.curPaint
+
+    private var posXWin = 0f
+    private var posYWin = 0f
 
     fun drawNumber(number: Int, startX: Float, startY: Float, startX2: Float) {
         if (number <= 9)
@@ -22,7 +27,7 @@ object NumberPrinter {
 
     }
 
-    fun draw(digit: Int, startX: Float, startY: Float){
+    fun draw(digit: Int, startX: Float, startY: Float) {
         when (digit) {
             0 -> drawZero(startX, startY)
             1 -> drawOne(startX, startY)
@@ -38,6 +43,88 @@ object NumberPrinter {
         }
     }
 
+    fun drawP1Wins() {
+        posXWin = (screenWidth - numberW) / 2 - numberWL
+        posYWin = startYWinsText()
+
+        drawP(posXWin, posYWin)
+        addWidth()
+        drawFancyOne(posXWin, posYWin)
+
+        addHeight()
+        posXWin = startXWinsText()
+
+        drawW(posXWin, posYWin)
+        addWidthLong()
+        drawI(posXWin, posYWin)
+        addWidth()
+        drawN(posXWin, posYWin)
+        addWidth()
+        drawFive(posXWin, posYWin)
+    }
+
+    fun drawP2Wins() {
+        posXWin = (screenWidth - numberW) / 2 - numberWL
+        addHeight()
+
+        drawTwo(posXWin, posYWin)
+        addWidth()
+        drawD(posXWin, posYWin)
+
+        posXWin = startXWinsText()
+        posYWin = startYWinsText()
+
+        drawFive(posXWin, posYWin)
+        addWidth()
+        drawN(posXWin, posYWin)
+        addWidth()
+        drawI(posXWin, posYWin)
+        addWidth()
+        drawM(posXWin, posYWin)
+    }
+
+    fun drawCpuWins() {
+        posXWin = (screenWidth - numberWL * 3) / 2 - numberW
+        posYWin = startYWinsText()
+
+        drawC(posXWin, posYWin)
+        addWidth()
+        drawP(posXWin, posYWin)
+        addWidth()
+        drawU(posXWin, posYWin)
+
+        addHeight()
+        posXWin = startXWinsText()
+
+        drawW(posXWin, posYWin)
+        addWidthLong()
+        drawI(posXWin, posYWin)
+        addWidth()
+        drawN(posXWin, posYWin)
+        addWidth()
+        drawFive(posXWin, posYWin)
+    }
+
+    private fun addWidth() {
+        posXWin += numberW + numberWL
+    }
+
+    private fun addWidthLong() {
+        posXWin += numberWL * 2
+    }
+
+    private fun addHeight() {
+        posYWin += numberH + numberW
+    }
+
+    private fun startXWinsText(): Float {
+        return (screenWidth - numberWL * 5 - numberW * 2) / 2
+    }
+
+    private fun startYWinsText(): Float {
+        return (screenHeight - numberW) / 2 - numberH
+    }
+
     //Numbers
     private fun drawZero(startX: Float, startY: Float) {
         for (i in 0..1)
@@ -46,65 +133,124 @@ object NumberPrinter {
             lineVerticalLong(startX + (numberWL - numberW) * i, startY)
     }
 
-    fun drawOne(startX: Float, startY: Float) {
+    private fun drawOne(startX: Float, startY: Float) {
         lineVerticalLong(startX + numberWL - numberW, startY)
     }
 
-    fun drawTwo(startX: Float, startY: Float) {
+    private fun drawTwo(startX: Float, startY: Float) {
         for (i in 0..2)
             lineHorizontal(startX, startY + numberH / 7 * i * 3)
         lineVerticalHalf(startX + numberWL - numberW, startY)
         lineVerticalHalf(startX, startY + numberH / 7 * 3)
     }
 
-    fun drawThree(startX: Float, startY: Float) {
+    private fun drawThree(startX: Float, startY: Float) {
         for (i in 0..2)
             lineHorizontal(startX, startY + numberH / 7 * i * 3)
         lineVerticalLong(startX + numberWL - numberW, startY)
     }
 
-    fun drawFour(startX: Float, startY: Float) {
+    private fun drawFour(startX: Float, startY: Float) {
         lineVerticalHalf(startX, startY)
         lineVerticalLong(startX + numberWL - numberW, startY)
         lineHorizontal(startX, startY + numberH / 7 * 3)
     }
 
-    fun drawFive(startX: Float, startY: Float) {
+    private fun drawFive(startX: Float, startY: Float) {
         for (i in 0..2)
             lineHorizontal(startX, startY + numberH / 7 * i * 3)
         lineVerticalHalf(startX + numberWL - numberW, startY + numberH / 7 * 3)
         lineVerticalHalf(startX, startY)
     }
 
-    fun drawSix(startX: Float, startY: Float) {
+    private fun drawSix(startX: Float, startY: Float) {
         for (i in 1..2)
             lineHorizontal(startX, startY + numberH / 7 * i * 3)
         lineVerticalHalf(startX + numberWL - numberW, startY + numberH / 7 * 3)
         lineVerticalLong(startX, startY)
     }
 
-    fun drawSeven(startX: Float, startY: Float) {
+    private fun drawSeven(startX: Float, startY: Float) {
         lineHorizontal(startX, startY)
         lineVerticalLong(startX + numberWL - numberW, startY)
     }
 
-    fun drawEight(startX: Float, startY: Float) {
+    private fun drawEight(startX: Float, startY: Float) {
         for (i in 0..2)
             lineHorizontal(startX, startY + numberH / 7 * i * 3)
         for (i in 0..1)
             lineVerticalLong(startX + (numberWL - numberW) * i, startY)
     }
 
-    fun drawNine(startX: Float, startY: Float) {
+    private fun drawNine(startX: Float, startY: Float) {
         for (i in 0..1)
             lineHorizontal(startX, startY + numberH / 7 * i * 3)
         lineVerticalHalf(startX, startY)
         lineVerticalLong(startX + numberWL - numberW, startY)
     }
 
+    private fun drawFancyOne(startX: Float, startY: Float) {
+        lineVerticalLong(startX + numberWL / 8 * 3, startY)
+        lineHorizontal(startX, startY + (numberH / 7 * 6))
+        lineHorizontalHalf(startX, startY)
+    }
+
+    //Letters
+    private fun drawP(startX: Float, startY: Float) {
+        for (i in 0..1)
+            lineHorizontal(startX, startY + numberH / 7 * i * 3)
+        lineVerticalLong(startX, startY)
+        lineVerticalHalf(startX + (numberWL - numberW), startY)
+    }
+
+    private fun drawD(startX: Float, startY: Float) {
+        for (i in 1..2)
+            lineHorizontal(startX, startY + numberH / 7 * i * 3)
+        lineVerticalLong(startX + (numberWL - numberW), startY)
+        lineVerticalHalf(startX, startY + numberH / 7 * 3)
+    }
+
+    private fun drawW(startX: Float, startY: Float) {
+        for (i in 0..2)
+            lineVerticalLong(startX + (numberWL - numberW) * i, startY)
+        for (i in 0..1)
+            lineHorizontal(startX + (numberWL - numberW) * i, startY + numberH / 7 * 6)
+    }
+
+    private fun drawM(startX: Float, startY: Float) {
+        for (i in 0..2)
+            lineVerticalLong(startX + (numberWL - numberW) * i, startY)
+        for (i in 0..1)
+            lineHorizontal(startX + (numberWL - numberW) * i, startY)
+    }
+
+    private fun drawI(startX: Float, startY: Float) {
+        lineVerticalLong(startX + numberWL / 8 * 3, startY)
+        for (i in 0..1)
+            lineHorizontal(startX, startY + (numberH / 7 * 6) * i)
+    }
+
+    private fun drawN(startX: Float, startY: Float) {
+        for (i in 0..1)
+            lineVerticalLong(startX + (numberWL - numberW) * i, startY)
+        dot(startX + numberW, startY + numberH / 4)
+        dot(startX + numberW + (numberWL - numberW * 2) / 2, startY + numberH / 2)
+    }
+
+    private fun drawU(startX: Float, startY: Float) {
+        for (i in 0..1)
+            lineVerticalLong(startX + (numberWL - numberW) * i, startY)
+        lineHorizontal(startX, startY + numberH / 7 * 6)
+    }
+
+    private fun drawC(startX: Float, startY: Float) {
+        lineVerticalLong(startX, startY)
+        for (i in 0..1)
+            lineHorizontal(startX, startY + (numberH / 7 * 6) * i)
+    }
 
     //Lines
-    fun lineVerticalLong(posX: Float, posY: Float) {
+    private fun lineVerticalLong(posX: Float, posY: Float) {
         curCanvas.drawRect(
             posX,
             posY,
@@ -114,7 +260,7 @@ object NumberPrinter {
         )
     }
 
-    fun lineVerticalHalf(posX: Float, posY: Float) {
+    private fun lineVerticalHalf(posX: Float, posY: Float) {
         curCanvas.drawRect(
             posX,
             posY,
@@ -124,11 +270,31 @@ object NumberPrinter {
         )
     }
 
-    fun lineHorizontal(posX: Float, posY: Float) {
+    private fun lineHorizontal(posX: Float, posY: Float) {
         curCanvas.drawRect(
             posX,
             posY,
             posX + numberWL,
+            posY + numberH / 7,
+            paint
+        )
+    }
+
+    private fun dot(posX: Float, posY: Float) {
+        curCanvas.drawRect(
+            posX,
+            posY,
+            posX + (numberWL - numberW * 2) / 2,
+            posY + numberH / 4,
+            paint
+        )
+    }
+
+    private fun lineHorizontalHalf(posX: Float, posY: Float) {
+        curCanvas.drawRect(
+            posX,
+            posY,
+            posX + numberWL / 2,
             posY + numberH / 7,
             paint
         )

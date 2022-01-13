@@ -8,7 +8,7 @@ object GameSounds {
 
     var appMuted: Boolean = false
 
-    val pongSound: MediaPlayer = MediaPlayer.create(App.instance, R.raw.pong_sound)
+    private val pongSound: MediaPlayer = MediaPlayer.create(App.instance, R.raw.pong_sound)
 
     fun playSound(){
         if(!appMuted) {

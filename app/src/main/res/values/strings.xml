@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">PONG_Group</string>
     <string name="classic">CLASSIC</string>
-    <string name="modern">MODERN</string>
+    <string name="normal">NORMAL</string>
     <string name="pong">PONG</string>
     <string name="breakout">BREAKOUT</string>
     <string name="high_score">high score</string>
@@ -14,4 +14,13 @@
     <string name="level_text">Level: %d</string>
     <string name="high_scores_text">High Scores: %d</string>
     <string name="sound">SOUND</string>
+    <string name="color">COLOR</string>
+    <string name="rainbow">RAINBOW</string>
+    <string name="version">VERSION</string>
+    <string name="opponent">OPPONENT</string>
+    <string name="cpu">CPU</string>
+    <string name="p2">P2</string>
+    <string name="best_of">BEST OF</string>
+    <string name="level">LEVEL</string>
+    <string name="infinite">INFINITE</string>
 </resources>

@@ -100,7 +100,7 @@
                 android:contentDescription="@string/breakout_game" />
 
             <TextView
-                android:id="@+id/textViewModern"
+                android:id="@+id/text_breakout"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:layout_marginStart="8dp"
@@ -198,8 +198,8 @@
 
     <ImageButton
         android:id="@+id/settings_button"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:contentDescription="@string/settings"

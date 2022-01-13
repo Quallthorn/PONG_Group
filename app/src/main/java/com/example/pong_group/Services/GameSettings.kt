@@ -1,14 +1,19 @@
 package com.example.pong_group.Services
 
+import android.app.Activity
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.util.Log
 import com.example.pong_group.Controller.App
 import com.example.pong_group.R
+import java.io.File
+import java.io.IOException
+import java.io.PrintWriter
+import java.lang.Exception
 import java.util.*
-import kotlin.properties.Delegates
 
 object GameSettings {
+    private var settingsFile: File? = null
+
     var screenWidth: Float = 0f
     var screenHeight: Float = 0f
     var baseHeightDimen = 1800
@@ -18,15 +23,22 @@ object GameSettings {
     var curPaint = Paint()
     var curCanvas = Canvas()
 
+    //ColorSettings
+    var rainbowColor = false
+
     //BallSettings
     val ballMaxSpeed = 30f * speedCoefficient
     val anglesCount = 10
 
-    //pongSettings
+    //PongSettings
     var ballCount = 0
+    var bestOf = 1
+    var opponentP2 = false
+    var gameOver = false
 
-    //Classic
+    //BreakoutSettings
     var classicBreakout = false
+    var infiniteLevel = false
 
     // scores
     var highScorePong = 0
@@ -35,8 +47,79 @@ object GameSettings {
     var scoreBreakout = 0
     var highScoreBreakout = 0
     var highScoreBreakoutClassic = 0
+    var highScoreBreakoutInfinite = 0
 
-    fun getRandomColorFromArray(): Int{
+    fun createSettingsFile(activity: Activity) {
+        settingsFile = File(activity.filesDir, "savedSettings.txt")
+    }
+
+    fun saveSettings() {
+        try {
+            val save = PrintWriter(settingsFile)
+
+            save.write(
+                if (GameSounds.appMuted)
+                    "1"
+                else
+                    "0"
+            )
+            save.write("\n")
+            save.write(
+                if (rainbowColor)
+                    "1"
+                else
+                    "0"
+            )
+            save.write("\n")
+            save.write(bestOf.toString())
+            save.write("\n")
+            save.write(
+                if (opponentP2)
+                    "1"
+                else
+                    "0"
+            )
+            save.write("\n")
+            save.write(
+                if (classicBreakout)
+                    "1"
+                else
+                    "0"
+            )
+            save.write("\n")
+            save.write(
+                if (infiniteLevel)
+                    "1"
+                else
+                    "0"
+            )
+            save.close()
+        } catch (ignored: IOException) {
+        }
+    }
+
+    fun loadSettings() {
+        var load: String
+        try {
+            val sc = Scanner(settingsFile)
+            load = sc.nextLine()
+            GameSounds.appMuted = load == "1"
+            load = sc.nextLine()
+            rainbowColor = load == "1"
+            load = sc.nextLine()
+            bestOf = load.toInt()
+            load = sc.nextLine()
+            opponentP2 = load == "1"
+            load = sc.nextLine()
+            classicBreakout = load == "1"
+            load = sc.nextLine()
+            infiniteLevel = load == "1"
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun getRandomColorFromArray(): Int {
         val r = Random()
         val randomIndex = r.nextInt(colorArray.length())
         val randomColorInt = colorArray.getColor(randomIndex, 0)
@@ -44,28 +127,23 @@ object GameSettings {
         return randomColorInt
     }
 
-    fun setScreenDimen(width: Float, height: Float){
+    fun setScreenDimen(width: Float, height: Float) {
         screenWidth = width
         screenHeight = height
         speedCoefficient = height / baseHeightDimen
     }
 
-    fun updateScorePong(){
+    fun updateScorePong() {
         if (scorePong > highScorePong)
             highScorePong = scorePong
     }
 
-    fun updateScoreBreakout(){
-        if (scoreBreakout > highScoreBreakout){
-            highScoreBreakout = scoreBreakout
+    fun updateScoreBreakout() {
+        if( scoreBreakout > when {
+            classicBreakout -> highScoreBreakoutClassic
+            infiniteLevel -> highScoreBreakoutInfinite
+            else -> highScoreBreakout
+        })
             SharedBreakout.highScoreBroken = true
-        }
-    }
-
-    fun updateScoreBreakoutClassic(){
-        if (scoreBreakout > highScoreBreakoutClassic){
-            highScoreBreakoutClassic = scoreBreakout
-            SharedBreakout.highScoreBroken = true
-        }
     }
 }

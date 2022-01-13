@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:fontFamily="@font/arcade_classic"
-            android:hint="aaa"
+            android:hint="---"
             android:inputType="text"
             android:letterSpacing="0.35"
             android:maxLength="3"

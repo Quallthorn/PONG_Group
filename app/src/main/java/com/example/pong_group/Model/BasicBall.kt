@@ -1,7 +1,5 @@
 package com.example.pong_group.Model
 
-import android.graphics.Canvas
-import android.graphics.Paint
 import com.example.pong_group.Services.GameSettings
 
 open class BasicBall() {
@@ -10,7 +8,7 @@ open class BasicBall() {
     var posY = GameSettings.screenHeight * 0.5f
     var dirX = 0.5f
     var dirY = 0.5f
-    var paint = Paint()
+    var paint = GameSettings.curPaint
     var speed = 10f
 
     var changeColor = false

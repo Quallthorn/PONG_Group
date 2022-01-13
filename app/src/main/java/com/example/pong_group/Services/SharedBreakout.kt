@@ -80,18 +80,17 @@ object SharedBreakout {
     }
 
     fun addScore(pointBase: Int) {
-        GameSettings.scoreBreakout += pointBase
-        if (pointBase + lowestBrick != totalRows)
-            GameSettings.scoreBreakout += lowestBrick * brickCounts[lowestBrick]
-        brickCounts[pointBase]--
-        while (brickCounts[lowestBrick] == 0 && lowestBrick > 0)
-            lowestBrick--
+        if (GameSettings.classicBreakout || GameSettings.infiniteLevel)
+            GameSettings.scoreBreakout += pointBase
+        else if (!GameSettings.infiniteLevel) {
+            GameSettings.scoreBreakout += pointBase
+            if (pointBase + lowestBrick != totalRows)
+                GameSettings.scoreBreakout += lowestBrick * brickCounts[lowestBrick]
+            brickCounts[pointBase]--
+            while (brickCounts[lowestBrick] == 0 && lowestBrick > 0)
+                lowestBrick--
+        }
         GameSettings.updateScoreBreakout()
-    }
-
-    fun addScoreClassic(pointBase: Int) {
-        GameSettings.scoreBreakout += pointBase
-        GameSettings.updateScoreBreakoutClassic()
     }
 
     fun updateSpeedClassic(brickColor: Int) {

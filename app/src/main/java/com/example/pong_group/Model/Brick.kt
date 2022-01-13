@@ -59,7 +59,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
             ) {
                 //make sure if the ball slips past two bricks it goes back to one of the two bricks it was supposed to hit
                 //
-                // .    = ball (direction is up-right)
+                // .    = ball (direction is up-left)
                 // [X]  = brick it hits but is not supposed to (left or top side is exposed so brick is breakable)
                 // [_]  = brick it can hit
                 //
@@ -69,16 +69,16 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
                 if (ball.dirX > 0 && ball.dirY > 0 && !exL && !exT
                     || ball.dirX > 0 && ball.dirY < 0 && !exL && !exB
                     || ball.dirX < 0 && ball.dirY < 0 && !exR && !exB
-                    || ball.dirX < 0 && ball.dirY > 0 && !exR && !exT) {
+                    || ball.dirX < 0 && ball.dirY > 0 && !exR && !exT
+                ) {
                     ball.checkCollision = true
-                }
-                else if (breakReady)
+                } else if (breakReady)
                     ballCollide(ball)
             }
         }
 
         //make sure if the ball overshoots it goes back until it hits an eligible brick
-        if (!broken && !breakable){
+        if (!broken && !breakable) {
             if (ball.posX >= posX && ball.posX <= posX + width && ball.posY + ball.radius >= posY && ball.posY + ball.radius <= posY + height //ball bottom edge
                 || ball.posX >= posX && ball.posX <= posX + width && ball.posY - ball.radius >= posY && ball.posY - ball.radius <= posY + height //ball top edge
                 || ball.posX + ball.radius >= posX && ball.posX + ball.radius <= posX + width && ball.posY >= posY && ball.posY <= posY + height //ball right edge
@@ -127,7 +127,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
                 dB
             else
                 dR
-        //right & up
+            //right & up
         } else if (ball.dirX > 0 && ball.dirY < 0) {
             if (exB && exL)
                 minOf(dB, dL)
@@ -135,7 +135,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
                 dB
             else
                 dL
-        //left & down
+            //left & down
         } else if (ball.dirX < 0 && ball.dirY > 0) {
             if (exT && exR)
                 minOf(dT, dR)
@@ -143,7 +143,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
                 dT
             else
                 dR
-        //right & down (whatever is not already checked)
+            //right & down (whatever is not already checked)
         } else {
             if (exT && exL)
                 minOf(dT, dL)
@@ -181,18 +181,14 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
         GameSounds.playSound()
         broken = true
         GameViewBreakout.totalCountOfBricks -= 1
-        if (!classic) {
-            SharedBreakout.addScore(pointBase)
-        } else {
-            SharedBreakout.addScoreClassic(pointBase)
-            if (!SharedBreakout.maxSpeedAchieved)
-                SharedBreakout.updateSpeedClassic(pointBase)
-        }
-    }
+        SharedBreakout.addScore(pointBase)
 
+        if (classic && !SharedBreakout.maxSpeedAchieved)
+            SharedBreakout.updateSpeedClassic(pointBase)
+    }
 
     private fun canBreak() {
         breakable = true
-        //paint.color = Color.WHITE
+        paint.color = Color.WHITE
     }
 }

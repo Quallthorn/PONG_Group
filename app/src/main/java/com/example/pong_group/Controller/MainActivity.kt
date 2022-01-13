@@ -1,10 +1,12 @@
 package com.example.pong_group.Controller
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
 import com.example.pong_group.R
+import com.example.pong_group.Services.GameSettings
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,6 +19,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        GameSettings.createSettingsFile(this)
+
         pong = findViewById(R.id.pong_game_button)
         breakout = findViewById(R.id.breakout_button)
         highscore = findViewById(R.id.high_score_button)
@@ -27,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         breakout.setOnClickListener{
-            Intent(this, ChooseBreakoutGame::class.java).apply { startActivity(this) }
+            Intent(this, GameBreakout::class.java).apply { startActivity(this) }
         }
 
         highscore.setOnClickListener{
@@ -37,5 +41,15 @@ class MainActivity : AppCompatActivity() {
         settings.setOnClickListener {
             Intent(this, Settings::class.java).apply { startActivity(this) }
         }
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    override fun onResume() {
+        super.onResume()
+        GameSettings.loadSettings()
+        if (GameSettings.classicBreakout)
+            breakout.background = App.instance.getDrawable(R.drawable.button_classic_breakout)
+        else
+            breakout.background = App.instance.getDrawable(R.drawable.button_breakout)
     }
 }

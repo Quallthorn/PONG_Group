@@ -3,14 +3,14 @@ package com.example.pong_group.Model
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSettings.anglesCount
 import com.example.pong_group.Services.GameSettings.ballMaxSpeed
-import com.example.pong_group.Services.GameSounds
+import com.example.pong_group.Services.GameSettings.gameOver
 import com.example.pong_group.Services.GameSounds.playSound
 import kotlin.math.abs
 import kotlin.math.sqrt
 
 class BallPong() : BasicBall() {
 
-    private val startSpeed = 10f*GameSettings.speedCoefficient
+    private val startSpeed = 10f * GameSettings.speedCoefficient
     var start = false
     var p1Scored = false
 
@@ -18,10 +18,10 @@ class BallPong() : BasicBall() {
         player: PaddlePong,
         cpuX: Float
     ) {
-        if (start) {
+        if (start && !gameOver) {
             //right side
             if (posX >= GameSettings.screenWidth - radius) {
-                GameSounds.playSound()
+                playSound()
                 if (dirY > 0) {
                     dirY += ((0..2).random()) / 10f
                     if (dirY > 1 || dirY < 0)
@@ -124,7 +124,7 @@ class BallPong() : BasicBall() {
                     else
                         0.1f
 
-                    if (speed < ballMaxSpeed)
+                    if (speed > ballMaxSpeed)
                         speed = ballMaxSpeed
                 }
             }
@@ -163,20 +163,18 @@ class BallPong() : BasicBall() {
 
     private fun resetBall(isCpu: Boolean) {
         if (isCpu) {
-            PaddlePong.cpuScore += 1
-            if (PaddlePong.cpuScore > PaddlePong.absoluteScore) {
-                PaddlePong.absoluteScore = PaddlePong.cpuScore
-            }
-        } else {
             PaddlePong.playerScore += 1
             if (PaddlePong.playerScore > PaddlePong.absoluteScore) {
                 PaddlePong.absoluteScore = PaddlePong.playerScore
             }
+        } else {
+            PaddlePong.cpuScore += 1
+            if (PaddlePong.cpuScore > PaddlePong.absoluteScore) {
+                PaddlePong.absoluteScore = PaddlePong.cpuScore
+            }
         }
-        if (PaddlePong.absoluteScore > 12) {
-            PaddlePong.playerScore = 0
-            PaddlePong.cpuScore = 0
-            PaddlePong.absoluteScore = 0
+        if (PaddlePong.absoluteScore >= GameSettings.bestOf) {
+            gameOver = true
         }
 
         start = false

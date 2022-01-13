@@ -183,19 +183,19 @@ class Ball() {
 
     private fun resetBall(isCpu: Boolean) {
         if (isCpu) {
-            PaddlePong.cpuScore += 1
-            if (PaddlePong.cpuScore > PaddlePong.absoluteScore) {
-                PaddlePong.absoluteScore = PaddlePong.cpuScore
-            }
-        } else {
             PaddlePong.playerScore += 1
             if (PaddlePong.playerScore > PaddlePong.absoluteScore) {
                 PaddlePong.absoluteScore = PaddlePong.playerScore
             }
+        } else {
+            PaddlePong.cpuScore += 1
+            if (PaddlePong.cpuScore > PaddlePong.absoluteScore) {
+                PaddlePong.absoluteScore = PaddlePong.cpuScore
+            }
         }
         if (PaddlePong.absoluteScore > 12) {
-            PaddlePong.playerScore = 0
             PaddlePong.cpuScore = 0
+            PaddlePong.playerScore = 0
             PaddlePong.absoluteScore = 0
         }
 

@@ -1,7 +1,5 @@
 package com.example.pong_group.Model
 
-import android.graphics.Canvas
-import android.graphics.Paint
 import com.example.pong_group.Controller.App
 import com.example.pong_group.Model.GameViewBreakout.Companion.breakReady
 
@@ -12,7 +10,6 @@ import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSettings.anglesCount
 import com.example.pong_group.Services.GameSettings.ballMaxSpeed
 import com.example.pong_group.Services.GameSettings.classicBreakout
-import com.example.pong_group.Services.GameSounds
 import com.example.pong_group.Services.GameSounds.playSound
 import com.example.pong_group.Services.SharedBreakout
 import kotlin.math.abs

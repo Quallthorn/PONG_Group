@@ -8,12 +8,12 @@
     android:background="@drawable/star_background">
 
     <TextView
-        android:id="@+id/game_type_hs"
+        android:id="@+id/game_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/arcade_classic"
-        android:text="BREAKOUT"
+        android:text="@string/breakout"
         android:textColor="@color/white"
         android:textSize="50sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,7 +30,7 @@
         android:background="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/game_type_hs">
+        app:layout_constraintTop_toBottomOf="@+id/game_title">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

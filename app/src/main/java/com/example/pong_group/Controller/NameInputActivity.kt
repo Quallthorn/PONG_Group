@@ -9,6 +9,7 @@ import androidx.cardview.widget.CardView
 import com.example.pong_group.Model.ScoresRealm
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings
+import com.example.pong_group.Services.SharedBreakout
 
 class NameInputActivity : AppCompatActivity() {
 
@@ -31,8 +32,12 @@ class NameInputActivity : AppCompatActivity() {
         warning = findViewById(R.id.warning)
 
         score.text = GameSettings.scoreBreakout.toString()
+        if (SharedBreakout.highScoreBroken)
+            score.setTextColor(App.instance.resources.getColor(R.color.yellow))
         if (GameSettings.classicBreakout)
             rank.text = ScoresRealm.findRank(GameSettings.scoreBreakout, "classic").toString()
+        else if (GameSettings.infiniteLevel)
+            rank.text = ScoresRealm.findRank(GameSettings.scoreBreakout, "infinite").toString()
         else
             rank.text = ScoresRealm.findRank(GameSettings.scoreBreakout, "breakout").toString()
 
@@ -41,10 +46,12 @@ class NameInputActivity : AppCompatActivity() {
                 if (GameSettings.classicBreakout){
                     ScoresRealm.addScores(GameSettings.scoreBreakout, nameInitials.text.toString(), "classic")
                 }
-                else {
-                    ScoresRealm.addScores(GameSettings.scoreBreakout, nameInitials.text.toString(), "breakout")
+                else if (GameSettings.infiniteLevel){
+                    ScoresRealm.addScores(GameSettings.scoreBreakout, nameInitials.text.toString(), "infinite")
                 }
-                GameSettings.scoreBreakout = 0
+                else
+                    ScoresRealm.addScores(GameSettings.scoreBreakout, nameInitials.text.toString(), "breakout")
+                resetScore()
                 Intent(this, HighScore::class.java).apply { startActivity(this) }
             }
             else{
@@ -54,6 +61,7 @@ class NameInputActivity : AppCompatActivity() {
 
         cancelButton.setOnClickListener{
             backToMainMenu()
+            resetScore()
         }
     }
 
@@ -70,5 +78,10 @@ class NameInputActivity : AppCompatActivity() {
     private fun backToMainMenu(){
         startActivity(Intent(this, MainActivity::class.java))
         finish()
+    }
+
+    private fun resetScore(){
+        SharedBreakout.highScoreBroken = false
+        GameSettings.scoreBreakout = 0
     }
 }

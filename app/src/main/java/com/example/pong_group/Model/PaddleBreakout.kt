@@ -9,7 +9,10 @@ import com.example.pong_group.Services.GameSettings.curCanvas
 class PaddleBreakout(): BasicPaddle() {
 
     init {
-        this.paint.color = App.instance.resources.getColor(R.color.light_blue, App.instance.theme)
+        if (GameSettings.rainbowColor)
+            this.paint = GameSettings.curPaint
+        else
+            this.paint.color = App.instance.resources.getColor(R.color.light_blue, App.instance.theme)
         width = 80f
         height = 25f
 

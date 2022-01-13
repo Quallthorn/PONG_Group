@@ -1,8 +1,5 @@
 package com.example.pong_group.Model
 
-import android.graphics.Paint
-import com.example.pong_group.Controller.App
-import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSettings.curCanvas
 import com.example.pong_group.Services.NumberPrinter
@@ -19,12 +16,12 @@ class PaddlePong(isCpu: Boolean): BasicPaddle() {
     var isCpu = isCpu
 
     init {
-        this.paint.color = App.instance.resources.getColor(R.color.white, App.instance.theme)
+        this.paint = GameSettings.curPaint
     }
 
     companion object{
-        var cpuScore = 0
         var playerScore = 0
+        var cpuScore = 0
         var absoluteScore = 0
     }
 
@@ -48,12 +45,12 @@ class PaddlePong(isCpu: Boolean): BasicPaddle() {
         )
 
         if(isCpu) {
-            NumberPrinter.drawNumber(playerScore, scorePositionXL, scorePositionY, scorePositionXR)
+            NumberPrinter.drawNumber(cpuScore, scorePositionXL, scorePositionY, scorePositionXR)
         } else {
-            if (cpuScore <= 9)
-                NumberPrinter.drawNumber(cpuScore, scorePositionXL, scorePositionY, scorePositionXR)
+            if (playerScore <= 9)
+                NumberPrinter.drawNumber(playerScore, scorePositionXL, scorePositionY, scorePositionXR)
             else
-                NumberPrinter.drawNumber(cpuScore, scorePositionXR, scorePositionY, scorePositionXL)
+                NumberPrinter.drawNumber(playerScore, scorePositionXR, scorePositionY, scorePositionXL)
         }
     }
 }
