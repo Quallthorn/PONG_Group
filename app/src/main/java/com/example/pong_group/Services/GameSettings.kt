@@ -4,6 +4,7 @@ import android.app.Activity
 import android.graphics.Canvas
 import android.graphics.Paint
 import com.example.pong_group.Controller.App
+import com.example.pong_group.Controller.prefs
 import com.example.pong_group.R
 import java.io.File
 import java.io.IOException
@@ -24,7 +25,7 @@ object GameSettings {
     var curCanvas = Canvas()
 
     //ColorSettings
-    var rainbowColor = false
+    var rainbowColor = prefs.isRainbowColor
 
     //BallSettings
     val ballMaxSpeed = 30f * speedCoefficient
@@ -32,13 +33,13 @@ object GameSettings {
 
     //PongSettings
     var ballCount = 0
-    var bestOf = 1
-    var opponentP2 = false
+    var bestOf = prefs.bestOfPongPrefs
+    var opponentP2 = prefs.isP2Human
     var gameOver = false
 
     //BreakoutSettings
-    var classicBreakout = false
-    var infiniteLevel = false
+    var classicBreakout = prefs.isClassicInterface
+    var infiniteLevel = prefs.isInfiniteLevels
 
     // scores
     var highScorePong = 0

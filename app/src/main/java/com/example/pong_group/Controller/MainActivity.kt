@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onResume() {
         super.onResume()
-        GameSettings.loadSettings()
+//        GameSettings.loadSettings()
         if (GameSettings.classicBreakout)
             breakout.background = App.instance.getDrawable(R.drawable.button_classic_breakout)
         else
