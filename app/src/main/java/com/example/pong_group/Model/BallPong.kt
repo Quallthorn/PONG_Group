@@ -1,5 +1,6 @@
 package com.example.pong_group.Model
 
+import com.example.pong_group.Controller.prefs
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSettings.anglesCount
 import com.example.pong_group.Services.GameSettings.ballMaxSpeed
@@ -11,14 +12,14 @@ import kotlin.math.sqrt
 class BallPong() : BasicBall() {
 
     private val startSpeed = 10f * GameSettings.speedCoefficient
-    var start = false
     var p1Scored = false
+    var playersReady = false
 
     fun update(
         player: PaddlePong,
         cpuX: Float
     ) {
-        if (start && !gameOver) {
+        if (letGo && !gameOver && playersReady) {
             //right side
             if (posX >= GameSettings.screenWidth - radius) {
                 playSound()
@@ -86,7 +87,7 @@ class BallPong() : BasicBall() {
 
             posX += speed * dirX
             posY += speed * dirY
-        } else {
+        } else if (playersReady) {
             posX = if (p1Scored)
                 cpuX
             else {
@@ -173,11 +174,11 @@ class BallPong() : BasicBall() {
                 PaddlePong.absoluteScore = PaddlePong.cpuScore
             }
         }
-        if (PaddlePong.absoluteScore >= GameSettings.bestOf) {
+        if (PaddlePong.absoluteScore >= prefs.bestOfPongPrefs) {
             gameOver = true
         }
 
-        start = false
+        letGo = false
         speed = startSpeed
     }
 

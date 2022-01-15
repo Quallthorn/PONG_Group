@@ -1,9 +1,8 @@
 package com.example.pong_group.Model
 
-import android.graphics.Color
 import android.graphics.Paint
+import com.example.pong_group.Controller.prefs
 import com.example.pong_group.Model.GameViewBreakout.Companion.breakReady
-import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSettings.curCanvas
 import com.example.pong_group.Services.GameSounds
 import com.example.pong_group.Services.SharedBreakout
@@ -12,7 +11,7 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
-    private val classic = GameSettings.classicBreakout
+    private val classic = prefs.isClassicInterface
     private var posX = 0f
     private var posY = 0f
     private var width = 0f
@@ -36,6 +35,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
 
     private var broken = false
     private var breakable = false
+    private var holdOn = false
 
     init {
         posX = x
@@ -66,15 +66,31 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
                 // configuration:
                 // [X][_]
                 // [_] .
-                if (ball.dirX > 0 && ball.dirY > 0 && !exL && !exT
-                    || ball.dirX > 0 && ball.dirY < 0 && !exL && !exB
-                    || ball.dirX < 0 && ball.dirY < 0 && !exR && !exB
-                    || ball.dirX < 0 && ball.dirY > 0 && !exR && !exT
-                ) {
-                    ball.checkCollision = true
-                } else if (breakReady)
+                if (ball.dirX > 0 && ball.dirY > 0 && !exL && !exT) { //right down not exposed left or top
+                    ball.dirPositiveX()
+                    ball.dirPositiveY()
+                    overshot(ball)
+                }
+                if (ball.dirX > 0 && ball.dirY < 0 && !exL && !exB) {//right up not exposed left or bottom
+                    ball.dirPositiveX()
+                    ball.dirNegativeY()
+                    overshot(ball)
+                }
+                if (ball.dirX < 0 && ball.dirY < 0 && !exR && !exB) {//left up not exposed right or bottom
+                    ball.dirNegativeX()
+                    ball.dirNegativeY()
+                    overshot(ball)
+                }
+                if (ball.dirX < 0 && ball.dirY > 0 && !exR && !exT) {//left down not exposed right or top
+                    ball.dirNegativeX()
+                    ball.dirPositiveY()
+                    overshot(ball)
+                }
+                if (breakReady && !holdOn)
                     ballCollide(ball)
             }
+            else
+                holdOn = false
         }
 
         //make sure if the ball overshoots it goes back until it hits an eligible brick
@@ -88,11 +104,26 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
             }
         }
 
+        //if the ball checks collision and overshoots again it stops checking to go "forward again" (this repeats until it hits a target)
+        if (broken) {
+            if (ball.posX >= posX && ball.posX <= posX + width && ball.posY + ball.radius >= posY && ball.posY + ball.radius <= posY + height //ball bottom edge
+                || ball.posX >= posX && ball.posX <= posX + width && ball.posY - ball.radius >= posY && ball.posY - ball.radius <= posY + height //ball top edge
+                || ball.posX + ball.radius >= posX && ball.posX + ball.radius <= posX + width && ball.posY >= posY && ball.posY <= posY + height //ball right edge
+                || ball.posX - ball.radius >= posX && ball.posX - ball.radius <= posX + width && ball.posY >= posY && ball.posY <= posY + height //ball left edge
+            )
+                ball.checkCollision = false
+        }
+
         //makes the brick breakable if any of the edges are exposed
         if (!breakable) {
             if (exT || exB || exR || exL)
                 canBreak()
         }
+    }
+
+    private fun overshot(ball: BallBreakout){
+        ball.checkCollision = true
+        holdOn = true
     }
 
     fun draw() {
@@ -106,7 +137,6 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
             )
         }
     }
-
 
     private fun ballCollide(ball: BallBreakout) {
         ball.checkCollision = false
@@ -189,6 +219,6 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
 
     private fun canBreak() {
         breakable = true
-        paint.color = Color.WHITE
+        //paint.color = Color.WHITE
     }
 }

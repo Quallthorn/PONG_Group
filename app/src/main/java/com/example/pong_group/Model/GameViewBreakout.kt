@@ -19,9 +19,12 @@ import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
 import com.example.pong_group.Controller.NameInputActivity
+import com.example.pong_group.Controller.prefs
 import com.example.pong_group.Services.SharedBreakout
 import com.example.pong_group.Services.GameSettings.curCanvas
-import com.example.pong_group.Services.GameSettings.infiniteLevel
+import com.example.pong_group.Services.GameSettings.screenHeight
+import com.example.pong_group.Services.GameSettings.screenWidth
+import com.example.pong_group.Services.GameSounds
 import com.example.pong_group.views.SurfaceViewButton
 
 class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
@@ -35,19 +38,20 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     var pause = false
 
     private val colorArray: TypedArray
-    private val classic = GameSettings.classicBreakout
+    private val classic = prefs.isClassicInterface
+    private val infinite = prefs.isInfiniteLevels
     private val typeFace = ResourcesCompat.getFont(App.instance, R.font.arcade_classic)
     private var everyOther = false
-    var level = 1
-    var gridPosX: Float = 0f
-    var gridPosY: Float = 0f
-    var gridSqueezeX: Float = 0f
-    var gridStartY: Float = 120f + ballEdgeTop
-    var gridSpacingX: Float = 0f
-    var gridSpacingY: Float = 0f
-    var brickH: Float = 50f
-    var brickW: Float = 0f
-    var isButtonClickable = false
+    private var level = 1
+    private var gridPosX: Float = 0f
+    private var gridPosY: Float = 0f
+    private var gridSqueezeX: Float = 0f
+    private var gridStartY: Float = 0f
+    private var gridSpacingX: Float = 0f
+    private var gridSpacingY: Float = 0f
+    private var brickH = 0f
+    private var brickW = 0f
+    private var isButtonClickable = false
 
     companion object {
         private const val textSize = 24F
@@ -55,7 +59,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         var totalCountOfBricks = 0
 
         var outOfLives = false
-        var lives = 3
+        var lives = 0
         var breakReady = true
         lateinit var thread: GameThread
     }
@@ -71,7 +75,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             brickH = 20f
             colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks_classic)
         } else {
-            if (infiniteLevel)
+            if (infinite)
                 GameSettings.highScoreBreakoutInfinite = ScoresRealm.findHighestScore("infinite")
             else
                 GameSettings.highScoreBreakout = ScoresRealm.findHighestScore("breakout")
@@ -79,33 +83,76 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             lives = 3
             SharedBreakout.brickCountY = 6
         }
+
         holder.addCallback(this)
+        thread = GameThread(holder, this)
 
-        gridPosX = gridSqueezeX
-        gridPosY = gridStartY
-
+        SharedBreakout.highScoreBroken = false
+        SharedBreakout.gameSetUpBreakout()
         player = PaddleBreakout()
         ball = BallBreakout()
         changeColors()
 
-        thread = GameThread(holder, this)
-
-        SharedBreakout.gameSetUpBreakout()
     }
 
-
     private fun setup() {
-        SharedBreakout.highScoreBroken = false
+        ball.letGo = false
+        SharedBreakout.bricks.clear()
+        basedOnScreenSize()
+        createBricks()
+        ball.centerBall(player.posX, player.posY)
+        outOfLives = false
+    }
+
+    fun update() {
+        //player.update()
+        ball.update(player)
+        SharedBreakout.bricks.forEach {
+            it.update(ball)
+        }
+        if (ball.changeColor)
+            changeColors()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun draw(canvas: Canvas) {
+        super.draw(canvas)
+        canvas.also {
+            it.drawColor(Color.BLACK)
+            player.draw()
+            SharedBreakout.bricks.forEach { brick ->
+                brick.draw()
+            }
+            if (!outOfLives)
+                ball.draw()
+            valuesCounter()
+        }
+    }
+
+    private fun basedOnScreenSize(){
+        gridStartY = screenHeight / 20f + ballEdgeTop
         gridPosX = gridSqueezeX
         gridPosY = gridStartY
         totalCountOfBricks = SharedBreakout.brickCountX * SharedBreakout.brickCountY
-        paddlePosY = GameSettings.screenHeight / 7.2f
+        paddlePosY = screenHeight / 7.2f
         player.posY = paddlePosY
-        ball.centerBall(player.posX, player.posY)
-        ball.dirX = 0.9f
+
+        player.width = screenWidth / 13f
+        player.height = screenHeight / 100f
+
+        ball.radius = screenHeight / 185f
+
+        if (classic){
+            brickH = screenHeight / 98f
+            gridSpacingX = screenHeight / 392f
+            gridSpacingY = screenHeight / 392f
+        } else brickH = screenHeight / 40f
 
         brickW =
-            ((GameSettings.screenWidth - gridSqueezeX * 2) / SharedBreakout.brickCountX) - gridSpacingX
+            ((screenWidth - gridSqueezeX * 2) / SharedBreakout.brickCountX) - gridSpacingX
+    }
+
+    private fun createBricks(){
         var colorNumber = 1
         var pointBase = SharedBreakout.brickCountY
         if (level > 1 || classic)
@@ -114,10 +161,6 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             pointBase = 7
         }
 
-        outOfLives = false
-        SharedBreakout.bricks.clear()
-
-        //BRICK GRID
         for (i in 0 until (SharedBreakout.brickCountX * SharedBreakout.brickCountY)) {
             //set position
             val newBrick = Brick(brickW, brickH, gridPosX, gridPosY, pointBase, i)
@@ -153,33 +196,8 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         }
     }
 
-    fun update() {
-        //player.update()
-        ball.update(player)
-        SharedBreakout.bricks.forEach {
-            it.update(ball)
-        }
-        if (ball.changeColor)
-            changeColors()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    override fun draw(canvas: Canvas) {
-        super.draw(canvas)
-        canvas.also {
-            it.drawColor(Color.BLACK)
-            player.draw()
-            if (!outOfLives)
-                ball.draw()
-            SharedBreakout.bricks.forEach { brick ->
-                brick.draw()
-            }
-            valuesCounter()
-        }
-    }
-
     private fun changeColors() {
-        if (GameSettings.rainbowColor) {
+        if (prefs.isRainbowColor) {
             GameSettings.getRandomColorFromArray()
             ball.changeColor = false
         }
@@ -212,6 +230,10 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null) {
             player.posX = event.x
+            if (event.action == MotionEvent.ACTION_UP){
+                GameSounds.playSound()
+                ball.letGo = true
+            }
         }
 
         val x = event?.x
@@ -220,7 +242,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         if (isButtonClickable) {
             if (restartButton.btn_rect!!.contains(x!!, y!!)) {
                 isButtonClickable = false
-                if (level == 1 && !outOfLives || infiniteLevel && !outOfLives) {
+                if (level == 1 && !outOfLives || infinite && !outOfLives) {
                     level += 1
                     if (!classic) {
                         SharedBreakout.brickCountY = 9
@@ -255,7 +277,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
                     gameOverTextView.text =
                         App.instance.getString(R.string.game_over_text, "YOU\nLOSE")
                 }
-                level == 1 || infiniteLevel -> {
+                level == 1 || infinite -> {
                     gameOverTextView.text =
                         App.instance.getString(R.string.game_over_text, "NEXT\nLEVEL")
                 }
@@ -287,7 +309,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
             //restart button layout
 
-            if (level == 1 && !outOfLives || infiniteLevel && !outOfLives) {
+            if (level == 1 && !outOfLives || prefs.isInfiniteLevels && !outOfLives) {
                 val icon = BitmapFactory.decodeResource(App.instance.resources, R.drawable.play)
                 setupButton(icon, gameTextViewHeight)
             } else {
@@ -362,7 +384,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             when {
                 classic -> highScoreText.text =
                     context.getString(R.string.high_scores_text, GameSettings.highScoreBreakoutClassic)
-                infiniteLevel -> highScoreText.text =
+                infinite -> highScoreText.text =
                     context.getString(R.string.high_scores_text, GameSettings.highScoreBreakoutInfinite)
                 else -> highScoreText.text =
                     context.getString(R.string.high_scores_text, GameSettings.highScoreBreakout)
@@ -398,8 +420,6 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     private fun pauseThread() {
         pause = true
     }
-
-
 }
 //for multiple balls (power up?)
 //private var ballA = mutableListOf<BallBreakout>()

@@ -34,32 +34,45 @@ class NameInputActivity : AppCompatActivity() {
         score.text = GameSettings.scoreBreakout.toString()
         if (SharedBreakout.highScoreBroken)
             score.setTextColor(App.instance.resources.getColor(R.color.yellow))
-        if (GameSettings.classicBreakout)
-            rank.text = ScoresRealm.findRank(GameSettings.scoreBreakout, "classic").toString()
-        else if (GameSettings.infiniteLevel)
-            rank.text = ScoresRealm.findRank(GameSettings.scoreBreakout, "infinite").toString()
-        else
-            rank.text = ScoresRealm.findRank(GameSettings.scoreBreakout, "breakout").toString()
+        when {
+            prefs.isClassicInterface -> rank.text =
+                ScoresRealm.findRank(GameSettings.scoreBreakout, "classic").toString()
+            prefs.isInfiniteLevels -> rank.text =
+                ScoresRealm.findRank(GameSettings.scoreBreakout, "infinite").toString()
+            else -> rank.text =
+                ScoresRealm.findRank(GameSettings.scoreBreakout, "breakout").toString()
+        }
 
-        submitButton.setOnClickListener{
-            if (nameInitials.text.length == 3){
-                if (GameSettings.classicBreakout){
-                    ScoresRealm.addScores(GameSettings.scoreBreakout, nameInitials.text.toString(), "classic")
+        submitButton.setOnClickListener {
+            if (nameInitials.text.length == 3) {
+                when {
+                    prefs.isClassicInterface ->
+                        ScoresRealm.addScores(
+                            GameSettings.scoreBreakout,
+                            nameInitials.text.toString(),
+                            "classic"
+                        )
+
+                    prefs.isInfiniteLevels ->
+                        ScoresRealm.addScores(
+                            GameSettings.scoreBreakout,
+                            nameInitials.text.toString(),
+                            "infinite"
+                        )
+
+                    else -> ScoresRealm.addScores(
+                        GameSettings.scoreBreakout,
+                        nameInitials.text.toString(),
+                        "breakout"
+                    )
                 }
-                else if (GameSettings.infiniteLevel){
-                    ScoresRealm.addScores(GameSettings.scoreBreakout, nameInitials.text.toString(), "infinite")
-                }
-                else
-                    ScoresRealm.addScores(GameSettings.scoreBreakout, nameInitials.text.toString(), "breakout")
                 resetScore()
                 Intent(this, HighScore::class.java).apply { startActivity(this) }
-            }
-            else{
+            } else {
                 warning.visibility = View.VISIBLE
             }
         }
-
-        cancelButton.setOnClickListener{
+        cancelButton.setOnClickListener {
             backToMainMenu()
             resetScore()
         }
@@ -75,12 +88,12 @@ class NameInputActivity : AppCompatActivity() {
         backToMainMenu()
     }
 
-    private fun backToMainMenu(){
+    private fun backToMainMenu() {
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
 
-    private fun resetScore(){
+    private fun resetScore() {
         SharedBreakout.highScoreBroken = false
         GameSettings.scoreBreakout = 0
     }

@@ -22,18 +22,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardView7"
+        android:id="@+id/cardViewPongButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         app:cardCornerRadius="30dp"
-        app:layout_constraintBottom_toTopOf="@+id/cardView6"
+        app:layout_constraintBottom_toTopOf="@+id/cardViewBreakoutButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/settings_button"
         app:layout_constraintVertical_chainStyle="packed">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -74,7 +74,7 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardView6"
+        android:id="@+id/cardViewBreakoutButton"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_marginStart="20dp"
@@ -82,9 +82,9 @@
         android:layout_marginBottom="20dp"
         app:cardCornerRadius="30dp"
         app:layout_constraintBottom_toTopOf="@+id/cardView8"
-        app:layout_constraintEnd_toEndOf="@+id/cardView7"
-        app:layout_constraintStart_toStartOf="@+id/cardView7"
-        app:layout_constraintTop_toBottomOf="@+id/cardView7"
+        app:layout_constraintEnd_toEndOf="@+id/cardViewPongButton"
+        app:layout_constraintStart_toStartOf="@+id/cardViewPongButton"
+        app:layout_constraintTop_toBottomOf="@+id/cardViewPongButton"
         tools:visibility="visible">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -153,10 +153,10 @@
         android:layout_marginTop="20dp"
         app:cardCornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/cardView6"
+        app:layout_constraintEnd_toEndOf="@+id/cardViewBreakoutButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/cardView6"
-        app:layout_constraintTop_toBottomOf="@+id/cardView6">
+        app:layout_constraintStart_toStartOf="@+id/cardViewBreakoutButton"
+        app:layout_constraintTop_toBottomOf="@+id/cardViewBreakoutButton">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

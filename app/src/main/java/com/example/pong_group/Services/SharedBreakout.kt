@@ -1,6 +1,7 @@
 package com.example.pong_group.Services
 
 import android.util.Log
+import com.example.pong_group.Controller.prefs
 import com.example.pong_group.Model.Brick
 import kotlin.properties.Delegates
 
@@ -37,7 +38,7 @@ object SharedBreakout {
         var onEdge: Boolean
 
         //right of
-        if (nr + 1 < brickCountX * brickCountY){
+        if (nr + 1 < brickCountX * brickCountY) {
             onEdge = checkEdge(nr + 1, true)
             if (!onEdge) {
                 bricks[nr + 1].exL = true
@@ -45,7 +46,7 @@ object SharedBreakout {
         }
 
         //left of
-        if (nr - 1 >= 0){
+        if (nr - 1 >= 0) {
             onEdge = checkEdge(nr - 1, false)
             if (!onEdge) {
                 bricks[nr - 1].exR = true
@@ -64,14 +65,13 @@ object SharedBreakout {
     }
 
     private fun checkEdge(nr: Int, right: Boolean): Boolean {
-        if (right){
-            for (i in 0..brickCountX*brickCountY step brickCountX) {
+        if (right) {
+            for (i in 0..brickCountX * brickCountY step brickCountX) {
                 if (nr == i)
                     return true
             }
-        }
-        else{
-            for (i in brickCountX - 1..brickCountX*brickCountY step brickCountX) {
+        } else {
+            for (i in brickCountX - 1..brickCountX * brickCountY step brickCountX) {
                 if (nr == i)
                     return true
             }
@@ -80,9 +80,9 @@ object SharedBreakout {
     }
 
     fun addScore(pointBase: Int) {
-        if (GameSettings.classicBreakout || GameSettings.infiniteLevel)
+        if (prefs.isClassicInterface || prefs.isInfiniteLevels)
             GameSettings.scoreBreakout += pointBase
-        else if (!GameSettings.infiniteLevel) {
+        else {
             GameSettings.scoreBreakout += pointBase
             if (pointBase + lowestBrick != totalRows)
                 GameSettings.scoreBreakout += lowestBrick * brickCounts[lowestBrick]

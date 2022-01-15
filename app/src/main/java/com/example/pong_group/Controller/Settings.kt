@@ -1,12 +1,16 @@
 package com.example.pong_group.Controller
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Gravity
+import android.view.KeyEvent
+import android.view.View
 import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatToggleButton
 import com.example.pong_group.R
-import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSounds
+
 
 class Settings : AppCompatActivity() {
     private lateinit var muteSwitch: AppCompatToggleButton
@@ -35,6 +39,20 @@ class Settings : AppCompatActivity() {
            prefs.isRainbowColor = colorSwitch.isChecked
         }
 
+        bestOfText.setOnKeyListener(object : View.OnKeyListener {
+            override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
+                if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER
+                ) {
+                    if (bestOfText.text.isNotBlank()){
+                        prefs.bestOfPongPrefs = bestOfText.text.toString().toInt()
+                    }
+                    //Toast.makeText(applicationContext, "saved", Toast.LENGTH_SHORT).show()
+                    return true
+                }
+                return false
+            }
+        })
+
         opponentSwitch.setOnClickListener {
             prefs.isP2Human = opponentSwitch.isChecked
         }
@@ -52,7 +70,6 @@ class Settings : AppCompatActivity() {
             }
             else
                 versionSwitch.isEnabled = true
-
         }
     }
 
@@ -66,19 +83,5 @@ class Settings : AppCompatActivity() {
         levelSwitch.isChecked = prefs.isInfiniteLevels
         if (levelSwitch.isChecked)
             versionSwitch.isEnabled = false
-//        muteSwitch.isChecked = GameSounds.appMuted
-//        colorSwitch.isChecked = GameSettings.rainbowColor
-//        bestOfText.setText(GameSettings.bestOf.toString())
-//        opponentSwitch.isChecked = GameSettings.opponentP2
-//        versionSwitch.isChecked = GameSettings.classicBreakout
-//        levelSwitch.isChecked = GameSettings.infiniteLevel
-//        if (levelSwitch.isChecked)
-//            versionSwitch.isEnabled = false
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        prefs.bestOfPongPrefs = bestOfText.text.toString().toInt()
-//        GameSettings.saveSettings()
     }
 }

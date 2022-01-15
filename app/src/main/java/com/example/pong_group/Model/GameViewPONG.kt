@@ -6,13 +6,14 @@ import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.example.pong_group.Controller.App
+import com.example.pong_group.Controller.prefs
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSettings.ballCount
 import com.example.pong_group.Services.GameSettings.curCanvas
 import com.example.pong_group.Services.GameSettings.gameOver
-import com.example.pong_group.Services.GameSettings.opponentP2
 import com.example.pong_group.Services.GameSettings.screenHeight
+import com.example.pong_group.Services.GameSettings.screenWidth
 import com.example.pong_group.Services.GameSounds
 import kotlin.math.sqrt
 import com.example.pong_group.Services.NumberPrinter
@@ -22,14 +23,18 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
 
     private var player: PaddlePong
     private var p2cpu: PaddlePong
-    private var paddlePosY = 0f
-    private var paddleWidth = 0f
     private var ballPong: BallPong
     private var ballA = mutableListOf<BallPong>()
     private var mHolder: SurfaceHolder? = holder
 
-    private val numberFromEdge = 100f
-    private val numberFromMiddle = 100f
+    private val twoPlayers = prefs.isP2Human
+
+    //based on screen size
+    private var numberFromEdge = 0f
+    private var numberFromMiddle = 0f
+    private var paddlePosY = 0f
+    private var paddleWidth = 0f
+    private var paddleHeight = 0f
 
     companion object {
         var thread: Thread? = null
@@ -52,44 +57,10 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     }
 
     private fun setup() {
-        player.scorePositionXL = GameSettings.screenWidth - numberFromEdge - NumberPrinter.numberWL
-        player.scorePositionXR =
-            GameSettings.screenWidth - numberFromEdge - NumberPrinter.numberWL * 2 - NumberPrinter.numberW
-        player.scorePositionY = GameSettings.screenHeight / 2 + numberFromMiddle
-        p2cpu.scorePositionXL = numberFromEdge
-        p2cpu.scorePositionXR = numberFromEdge + NumberPrinter.numberWL + NumberPrinter.numberW
-        p2cpu.scorePositionY =
-            GameSettings.screenHeight / 2 - numberFromMiddle - NumberPrinter.numberH
-
-        paddlePosY = GameSettings.screenHeight / 7.2f
-        player.posY = paddlePosY
-        p2cpu.posY = GameSettings.screenHeight - paddlePosY
-
-        paddleWidth = GameSettings.screenWidth / 25f
-        player.width = paddleWidth
-        p2cpu.width = paddleWidth
-
+        basedOnScreenSize()
         ballPong.centerBall()
-        ballPong.start = true
-        for (i in 0 until ballCount) {
-            val newBall = BallPong()
-            val s = (0..100).random() / 100f
-            newBall.dirX = s
-            newBall.dirY = sqrt((1 - newBall.dirX * newBall.dirX))
-            //var d = 2
-            when ((0..3).random()) {
-                1 -> newBall.dirX = newBall.dirX * -1
-                2 -> newBall.dirY = newBall.dirY * -1
-                3 -> {
-                    newBall.dirY = newBall.dirY * -1
-                    newBall.dirX = newBall.dirX * -1
-                }
-                else -> {}
-            }
-            newBall.paint.color = GameSettings.getRandomColorFromArray()
-            newBall.start = true
-            ballA.add(newBall)
-        }
+        ballPong.letGo = true
+//        makeBallArray()
     }
 
     private fun start() {
@@ -110,59 +81,25 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     private fun update() {
         player.update()
 
-        if (!gameOver && !opponentP2){
-            if (ballPong.start) {
-                if (p2cpu.posX <= ballPong.posX - p2cpu.width / 4)
-                    p2cpu.posX += ballPong.speed / (1..2).random()
-                else if (p2cpu.posX >= ballPong.posX + p2cpu.width / 4)
-                    p2cpu.posX -= ballPong.speed / (1..2).random()
-            } else {
-                if (p2cpu.posX < GameSettings.screenWidth / 2)
-                    p2cpu.posX += GameSettings.screenWidth / 250f
-                if (p2cpu.posX > GameSettings.screenWidth / 2)
-                    p2cpu.posX -= GameSettings.screenWidth / 250f
-
-                if (ballPong.p1Scored
-                    && abs(p2cpu.posX - GameSettings.screenWidth / 2) <= 5f
-                    && abs(ballPong.posX - GameSettings.screenWidth / 2) <= 5f
-                ){
-                    GameSounds.playSound()
-                    ballPong.start = true
-                    ballA.forEach {
-                        if (it.p1Scored)
-                            it.start = true
-                    }
-                }
-            }
-        }
+        if (!gameOver && !twoPlayers) moveCpuPaddle()
 
         ballPong.update(
             player,
             p2cpu.posX
         )
-        ballA.forEach {
-            it.update(
-                player,
-                p2cpu.posX
-            )
-        }
-        if (ballPong.changeColor)
-            changeColors()
+//        ballA.forEach {
+//            it.update(
+//                player,
+//                p2cpu.posX
+//            )
+//        }
+        if (ballPong.changeColor) changeColors()
     }
 
     private fun draw() {
         curCanvas = mHolder!!.lockCanvas()
         curCanvas.drawColor(Color.BLACK)
-        if (gameOver){
-            if (PaddlePong.playerScore < PaddlePong.cpuScore){
-                if (opponentP2)
-                    NumberPrinter.drawP2Wins()
-                else
-                    NumberPrinter.drawCpuWins()
-            }
-            else
-                NumberPrinter.drawP1Wins()
-        }
+        if (gameOver) drawWinner()
         drawLine()
         player.draw()
         p2cpu.draw()
@@ -177,24 +114,81 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         var lineX = 0f
         val amount = 20
         val lineSpacing = 30
-        val lineW = (GameSettings.screenWidth + lineSpacing) / amount - lineSpacing
+        val lineW = (screenWidth + lineSpacing) / amount - lineSpacing
         val thickness = 5f
         for (i in 0 until amount) {
             curCanvas.drawRect(
                 lineX,
-                GameSettings.screenHeight / 2 - thickness,
+                screenHeight / 2 - thickness,
                 lineX + lineW,
-                GameSettings.screenHeight / 2 + thickness,
+                screenHeight / 2 + thickness,
                 GameSettings.curPaint
             )
             lineX += (lineW + lineSpacing)
         }
     }
 
+    private fun drawWinner() {
+        if (PaddlePong.playerScore < PaddlePong.cpuScore) {
+            if (twoPlayers)
+                NumberPrinter.drawP2Wins()
+            else
+                NumberPrinter.drawCpuWins()
+        } else
+            NumberPrinter.drawP1Wins()
+    }
+
+    private fun basedOnScreenSize() {
+        numberFromEdge = screenWidth / 25f
+        numberFromMiddle = screenHeight / 25f
+        player.scorePositionXL = screenWidth - numberFromEdge - NumberPrinter.numberWL
+        player.scorePositionXR =
+            screenWidth - numberFromEdge - NumberPrinter.numberWL * 2 - NumberPrinter.numberW
+        player.scorePositionY = screenHeight / 2 + numberFromMiddle
+        p2cpu.scorePositionXL = numberFromEdge
+        p2cpu.scorePositionXR = numberFromEdge + NumberPrinter.numberWL + NumberPrinter.numberW
+        p2cpu.scorePositionY = screenHeight / 2 - numberFromMiddle - NumberPrinter.numberH
+
+        paddlePosY = screenHeight / 8f
+        player.posY = paddlePosY
+        p2cpu.posY = screenHeight - paddlePosY
+
+        paddleWidth = screenWidth / 25f
+        player.width = paddleWidth
+        p2cpu.width = paddleWidth
+
+        paddleHeight = screenHeight / 100f
+        player.height = paddleHeight
+        p2cpu.height = paddleHeight
+
+        ballPong.radius = screenHeight / 185f
+    }
+
     private fun changeColors() {
-        if (GameSettings.rainbowColor){
+        if (prefs.isRainbowColor) {
             GameSettings.getRandomColorFromArray()
             ballPong.changeColor = false
+        }
+    }
+
+    private fun makeBallArray() {
+        for (i in 0 until ballCount) {
+            val newBall = BallPong()
+            val s = (0..100).random() / 100f
+            newBall.dirX = s
+            newBall.dirY = sqrt((1 - newBall.dirX * newBall.dirX))
+            when ((0..3).random()) {
+                1 -> newBall.dirX = newBall.dirX * -1
+                2 -> newBall.dirY = newBall.dirY * -1
+                3 -> {
+                    newBall.dirY = newBall.dirY * -1
+                    newBall.dirX = newBall.dirX * -1
+                }
+                else -> {}
+            }
+            newBall.paint.color = GameSettings.getRandomColorFromArray()
+            newBall.letGo = true
+            ballA.add(newBall)
         }
     }
 
@@ -220,50 +214,61 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null && !gameOver) {
-            if (!opponentP2) {
-                player.posX = event.x
-                if (!ballPong.p1Scored && !ballPong.start) {
-                    if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL){
-                        GameSounds.playSound()
-                        ballPong.start = true
-                        ballA.forEach {
-                            if (!it.p1Scored)
-                                it.start = true
-                        }
-                    }
+            if (!twoPlayers) {
+                movePlayerPaddle(event, player)
+            } else {
+                if (event.y > screenHeight / 2) {
+                    movePlayerPaddle(event, player)
                 }
-            }
-            else{
-                if (event.y > screenHeight/2){
-                    player.posX = event.x
-
-                    if (!ballPong.p1Scored && !ballPong.start) {
-                        if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL){
-                            GameSounds.playSound()
-                            ballPong.start = true
-                            ballA.forEach {
-                                if (!it.p1Scored)
-                                    it.start = true
-                            }
-                        }
-                    }
-                }
-                else{
-                    p2cpu.posX = event.x
-
-                    if (ballPong.p1Scored && !ballPong.start) {
-                        if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL){
-                            GameSounds.playSound()
-                            ballPong.start = true
-                            ballA.forEach {
-                                if (it.p1Scored)
-                                    it.start = true
-                            }
-                        }
-                    }
+                if (event.y < screenHeight / 2) {
+                    if (!ballPong.playersReady)
+                        ballPong.dirNegativeY()
+                    movePlayerPaddle(event, p2cpu)
                 }
             }
         }
         return true
+    }
+
+
+    private fun movePlayerPaddle(event: MotionEvent?, player: PaddlePong) {
+        player.posX = event!!.x
+        ballPong.playersReady = true
+        if (!player.isCpu && !ballPong.p1Scored && !ballPong.letGo || player.isCpu && ballPong.p1Scored && !ballPong.letGo) {
+            if (event.action == MotionEvent.ACTION_UP) {
+                GameSounds.playSound()
+                ballPong.letGo = true
+//                        ballA.forEach {
+//                            if (!it.p1Scored)
+//                                it.letGo = true
+//                        }
+            }
+        }
+    }
+
+    private fun moveCpuPaddle() {
+        if (ballPong.letGo) {
+            if (p2cpu.posX <= ballPong.posX - p2cpu.width / 4) //moves right if ball is right of the paddles center (XX = center) [__XX__]
+                p2cpu.posX += ballPong.speed / (1..2).random() //the movement speed mirrors the balls speed but randomly slows down the half
+            else if (p2cpu.posX >= ballPong.posX + p2cpu.width / 4) //moves left if ball is left of the paddles center (XX = center) [__XX__]
+                p2cpu.posX -= ballPong.speed / (1..2).random()
+        } else {
+            if (p2cpu.posX < screenWidth / 2)
+                p2cpu.posX += screenWidth / 250f
+            if (p2cpu.posX > screenWidth / 2)
+                p2cpu.posX -= screenWidth / 250f
+
+            if (ballPong.p1Scored
+                && abs(p2cpu.posX - screenWidth / 2) <= 5f
+                && abs(ballPong.posX - screenWidth / 2) <= 5f
+            ) {
+                GameSounds.playSound()
+                ballPong.letGo = true
+//                ballA.forEach {
+//                    if (it.p1Scored)
+//                        it.letGo = true
+//                }
+            }
+        }
     }
 }

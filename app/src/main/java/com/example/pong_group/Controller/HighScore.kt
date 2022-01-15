@@ -10,7 +10,6 @@ import com.example.pong_group.Controller.App.Companion.instance
 import com.example.pong_group.Model.Scores
 import com.example.pong_group.Model.ScoresRealm
 import com.example.pong_group.R
-import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.adapters.HighScoreAdapter
 
 class HighScore : AppCompatActivity() {
@@ -25,14 +24,14 @@ class HighScore : AppCompatActivity() {
         titleText = findViewById(R.id.game_title)
 
         titleText.text = when{
-            GameSettings.classicBreakout -> instance.getString(R.string.classic)
-            GameSettings.infiniteLevel -> instance.getString(R.string.infinite)
+            prefs.isClassicInterface -> instance.getString(R.string.classic)
+            prefs.isInfiniteLevels -> instance.getString(R.string.infinite)
             else -> instance.getString(R.string.breakout)
         }
 
         scoresList = when {
-            GameSettings.classicBreakout -> ScoresRealm.retrieveScores("classic")
-            GameSettings.infiniteLevel -> ScoresRealm.retrieveScores("infinite")
+            prefs.isClassicInterface -> ScoresRealm.retrieveScores("classic")
+            prefs.isInfiniteLevels -> ScoresRealm.retrieveScores("infinite")
             else -> ScoresRealm.retrieveScores("breakout")
         }
         val listview = findViewById<RecyclerView>(R.id.scores_list)

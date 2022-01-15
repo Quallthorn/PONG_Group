@@ -16,12 +16,12 @@ class ChooseBreakoutGame : AppCompatActivity() {
         val classicButton: ImageButton = findViewById(R.id.classic_breakout_button)
 
         modernButton.setOnClickListener{
-            GameSettings.classicBreakout = false
+            prefs.isClassicInterface = false
             Intent(this, GameBreakout::class.java).apply { startActivity(this) }
         }
 
         classicButton.setOnClickListener{
-            GameSettings.classicBreakout = true
+            prefs.isClassicInterface = true
             Intent(this, GameBreakout::class.java).apply { startActivity(this) }
         }
     }

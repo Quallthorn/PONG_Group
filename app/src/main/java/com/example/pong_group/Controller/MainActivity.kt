@@ -19,8 +19,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        GameSettings.createSettingsFile(this)
-
         pong = findViewById(R.id.pong_game_button)
         breakout = findViewById(R.id.breakout_button)
         highscore = findViewById(R.id.high_score_button)
@@ -46,8 +44,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onResume() {
         super.onResume()
-//        GameSettings.loadSettings()
-        if (GameSettings.classicBreakout)
+        if (prefs.isClassicInterface)
             breakout.background = App.instance.getDrawable(R.drawable.button_classic_breakout)
         else
             breakout.background = App.instance.getDrawable(R.drawable.button_breakout)

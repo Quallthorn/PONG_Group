@@ -7,8 +7,6 @@ import com.example.pong_group.R
 
 object GameSounds {
 
-    var appMuted: Boolean = false
-
     private val pongSound: MediaPlayer = MediaPlayer.create(App.instance, R.raw.pong_sound)
 
     fun playSound(){
