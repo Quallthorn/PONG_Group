@@ -3,13 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout-v26/activity_main.xml" value="0.25" />
         <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_game1_pong.xml" value="0.20652173913043478" />
         <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_game_breakout.xml" value="0.25" />
         <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_game_pong.xml" value="0.25" />
         <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_high_score.xml" value="0.20652173913043478" />
         <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="..\:/Users/Oscar/AndroidStudioProjects/PONG_group/app/src/main/res/layout/activity_settings.xml" value="0.2453125" />
         <entry key="app/src/main/res/drawable/btn_segmented_center.xml" value="0.40703125" />
         <entry key="app/src/main/res/drawable/btn_segmented_left.xml" value="0.40703125" />
         <entry key="app/src/main/res/drawable/btn_segmented_right.xml" value="0.40703125" />
@@ -19,6 +17,7 @@
         <entry key="app/src/main/res/drawable/selector_breakout_version.xml" value="0.266015625" />
         <entry key="app/src/main/res/drawable/selector_mute.xml" value="0.266015625" />
         <entry key="app/src/main/res/drawable/selector_text_enabler.xml" value="0.266015625" />
+        <entry key="app/src/main/res/drawable/txt_segmented.xml" value="0.266015625" />
         <entry key="app/src/main/res/layout-v26/activity_choose_breakout_game.xml" value="0.3140625" />
         <entry key="app/src/main/res/layout-v26/activity_main.xml" value="0.5" />
         <entry key="app/src/main/res/layout/.activity_choose_breakout_game.xml.icloud" value="0.5265625" />

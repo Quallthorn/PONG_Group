@@ -67,16 +67,16 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     init {
         if (classic) {
             lives = 1
-            GameSettings.highScoreBreakoutClassic = ScoresRealm.findHighestScore("classic")
+            GameSettings.highScoreBreakoutClassic = ScoresRealm.findHighestScore(GameType.CLASSIC)
             SharedBreakout.ballSpeedStart = 10f
             SharedBreakout.brickCountX = 14
             SharedBreakout.brickCountY = 8
             colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks_classic)
         } else {
             if (infinite)
-                GameSettings.highScoreBreakoutInfinite = ScoresRealm.findHighestScore("infinite")
+                GameSettings.highScoreBreakoutInfinite = ScoresRealm.findHighestScore(GameType.INFINITE)
             else
-                GameSettings.highScoreBreakout = ScoresRealm.findHighestScore("breakout")
+                GameSettings.highScoreBreakout = ScoresRealm.findHighestScore(GameType.BREAKOUT)
             colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks)
             lives = 3
             SharedBreakout.ballSpeedStart = 15f

@@ -9,6 +9,11 @@ import io.realm.annotations.Required
 import org.bson.types.ObjectId
 import java.util.Collections.list
 
+enum class GameType(val gameType: String){
+    CLASSIC("classic"),
+    INFINITE("infinite"),
+    BREAKOUT("breakout")
+}
 
 open class ScoresRealm(
     @PrimaryKey
@@ -20,22 +25,23 @@ open class ScoresRealm(
 ) : RealmObject() {
 
     companion object {
-        fun addScores(scores: Int, name: String, type: String) {
+        fun addScores(scores: Int, name: String, type: GameType) {
             val realm = Realm.getDefaultInstance()
             realm.executeTransaction {
-                val newScores = ScoresRealm(name = name, scores = scores, gameType = type)
+                val newScores = ScoresRealm(name = name, scores = scores, gameType = type.gameType)
                 it.insert(newScores)
             }
         }
 
-        fun retrieveScores(type: String): MutableList<Scores> {
+        fun retrieveScores(type: GameType): MutableList<Scores> {
+            var gameType  = type.gameType
             val realm = Realm.getDefaultInstance()
             val scoresList = mutableListOf<Scores>()
 
             realm.executeTransaction { realmTransaction ->
                 scoresList.addAll(realmTransaction
                     .where(ScoresRealm::class.java)
-                    .equalTo("gameType", type)
+                    .equalTo("gameType", gameType)
                     .sort("scores", Sort.DESCENDING)
                     .findAll()
                     .map {
@@ -47,26 +53,26 @@ open class ScoresRealm(
             return scoresList
         }
 
-        fun findHighestScore(type: String): Int {
+        fun findHighestScore(type: GameType): Int {
             val realm = Realm.getDefaultInstance()
             var highScore = 0
 
             realm.executeTransaction { realmTransaction ->
                 val high = realmTransaction.where(ScoresRealm::class.java)
-                    .equalTo("gameType", type)
+                    .equalTo("gameType", type.gameType)
                     .max("scores")
                 highScore = high?.toInt() ?: 0
             }
             return highScore
         }
 
-        fun findRank(score: Int, type: String): Int {
+        fun findRank(score: Int, type: GameType): Int {
             val realm = Realm.getDefaultInstance()
             var rank = 1
 
             realm.executeTransaction { realmTransaction ->
                 val list = realmTransaction.where(ScoresRealm::class.java)
-                    .equalTo("gameType", type)
+                    .equalTo("gameType", type.gameType)
                     .sort("scores", Sort.DESCENDING)
 
                 for (i in 0 until list.count().toInt()) {

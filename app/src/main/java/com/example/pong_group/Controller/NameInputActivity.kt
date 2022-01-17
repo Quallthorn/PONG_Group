@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.cardview.widget.CardView
+import com.example.pong_group.Model.GameType
 import com.example.pong_group.Model.ScoresRealm
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings.savedScore
@@ -33,14 +34,14 @@ class NameInputActivity : AppCompatActivity() {
 
         score.text = savedScore.toString()
         if (SharedBreakout.highScoreBroken)
-            score.setTextColor(App.instance.resources.getColor(R.color.yellow))
+            score.setTextColor(App.instance.resources.getColor(R.color.yellow, App.instance.theme))
         when {
             prefs.isClassicInterface -> rank.text =
-                ScoresRealm.findRank(savedScore, "classic").toString()
+                ScoresRealm.findRank(savedScore, GameType.CLASSIC).toString()
             prefs.isInfiniteLevels -> rank.text =
-                ScoresRealm.findRank(savedScore, "infinite").toString()
+                ScoresRealm.findRank(savedScore, GameType.INFINITE).toString()
             else -> rank.text =
-                ScoresRealm.findRank(savedScore, "breakout").toString()
+                ScoresRealm.findRank(savedScore, GameType.BREAKOUT).toString()
         }
 
         submitButton.setOnClickListener {
@@ -50,20 +51,20 @@ class NameInputActivity : AppCompatActivity() {
                         ScoresRealm.addScores(
                             savedScore,
                             nameInitials.text.toString(),
-                            "classic"
+                            GameType.CLASSIC
                         )
 
                     prefs.isInfiniteLevels ->
                         ScoresRealm.addScores(
                             savedScore,
                             nameInitials.text.toString(),
-                            "infinite"
+                            GameType.INFINITE
                         )
 
                     else -> ScoresRealm.addScores(
                         savedScore,
                         nameInitials.text.toString(),
-                        "breakout"
+                        GameType.BREAKOUT
                     )
                 }
                 resetScore()
