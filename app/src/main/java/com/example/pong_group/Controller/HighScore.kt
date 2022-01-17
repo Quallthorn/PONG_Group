@@ -17,6 +17,7 @@ import com.example.pong_group.adapters.HighScoreAdapter
 
 class HighScore : AppCompatActivity() {
 
+    //high scores properties: Scores list, name for current game and button for control game
     var scoresList = mutableListOf<Scores>()
     private lateinit var titleText: TextView
     lateinit var scoresRadioGroup: RadioGroup
@@ -25,17 +26,19 @@ class HighScore : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_high_score)
 
+        //binding variables to activity
         titleText = findViewById(R.id.game_title)
-
         val classicRadioButton = findViewById<RadioButton>(R.id.classicRadioButton)
         val infiniteRadioButton = findViewById<RadioButton>(R.id.infiniteRadioButton)
         val breakoutRadioButton = findViewById<RadioButton>(R.id.breakoutRadioButton)
+        scoresRadioGroup = findViewById(R.id.scoresRadioGroup)
+        val listview = findViewById<RecyclerView>(R.id.scores_list)
 
-        titleText.text = when{
+        //setup title view, retrieve scores info from list and choose current button
+        titleText.text = when {
             prefs.isClassicInterface -> instance.getString(R.string.classic).also {
                 scoresList =  ScoresRealm.retrieveScores(GameType.CLASSIC)
                 classicRadioButton.isChecked = true
-
             }
             prefs.isInfiniteLevels -> instance.getString(R.string.infinite).also {
                 scoresList =  ScoresRealm.retrieveScores(GameType.INFINITE)
@@ -46,21 +49,13 @@ class HighScore : AppCompatActivity() {
                 breakoutRadioButton.isChecked = true
             }
         }
-//
-//        scoresList = when {
-//            prefs.isClassicInterface -> ScoresRealm.retrieveScores(GameType.CLASSIC)
-//            prefs.isInfiniteLevels -> ScoresRealm.retrieveScores(GameType.INFINITE)
-//            else -> ScoresRealm.retrieveScores(GameType.BREAKOUT)
-//        }
 
-
-        val listview = findViewById<RecyclerView>(R.id.scores_list)
+        //setup list adapter
         val adapter = HighScoreAdapter(scoresList)
         listview.adapter = adapter
         listview.layoutManager = LinearLayoutManager(instance)
 
-        scoresRadioGroup = findViewById(R.id.scoresRadioGroup)
-
+        // radio button control for load list from base and reload list information
         scoresRadioGroup.setOnCheckedChangeListener { radioGroup, radioButtonID ->
             val selectedRadioButton = radioGroup.findViewById<RadioButton>(radioButtonID)
             var list: MutableList<Scores>
@@ -84,6 +79,7 @@ class HighScore : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
+        //TODO: check if it properly way to go back
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }

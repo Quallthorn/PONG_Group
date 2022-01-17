@@ -9,7 +9,7 @@ import androidx.appcompat.widget.AppCompatToggleButton
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSounds
 
-
+//Controller for activity settings
 class Settings : AppCompatActivity() {
     private lateinit var muteSwitch: AppCompatToggleButton
     private lateinit var colorSwitch: AppCompatToggleButton
@@ -21,6 +21,8 @@ class Settings : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+
+        //bind view for activity
         muteSwitch = findViewById(R.id.mute_switch)
         colorSwitch = findViewById(R.id.color_text)
         bestOfText = findViewById(R.id.best_of_text)
@@ -28,15 +30,19 @@ class Settings : AppCompatActivity() {
         versionSwitch = findViewById(R.id.version_text)
         levelSwitch = findViewById(R.id.level_text)
 
+
+        //turn on/off sound
         muteSwitch.setOnClickListener {
             prefs.isGameMute = muteSwitch.isChecked
             GameSounds.playSoundWall()
         }
 
+        //change color scheme for paddle and ball
         colorSwitch.setOnClickListener {
            prefs.isRainbowColor = colorSwitch.isChecked
         }
 
+        //set max point to win  for PONG game
         bestOfText.setOnKeyListener(object : View.OnKeyListener {
             override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
                 if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER
@@ -44,21 +50,23 @@ class Settings : AppCompatActivity() {
                     if (bestOfText.text.isNotBlank()){
                         prefs.firstToPongPrefs = bestOfText.text.toString().toInt()
                     }
-                    //Toast.makeText(applicationContext, "saved", Toast.LENGTH_SHORT).show()
                     return true
                 }
                 return false
             }
         })
 
+        //change player between himan and cpu
         opponentSwitch.setOnClickListener {
             prefs.isP2Human = opponentSwitch.isChecked
         }
 
+        //switch breakout between classic interface and standart
         versionSwitch.setOnClickListener {
             prefs.isClassicInterface = versionSwitch.isChecked
         }
 
+        //switch between two levels game and infinite levels
         levelSwitch.setOnClickListener {
             prefs.isInfiniteLevels= levelSwitch.isChecked
             if (levelSwitch.isChecked){
@@ -73,6 +81,8 @@ class Settings : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
+        //setup settings preferences based on saved shared preferences
         muteSwitch.isChecked = prefs.isGameMute
         colorSwitch.isChecked = prefs.isRainbowColor
         bestOfText.setText(prefs.firstToPongPrefs.toString())

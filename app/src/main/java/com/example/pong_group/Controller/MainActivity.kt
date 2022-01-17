@@ -9,6 +9,8 @@ import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSounds.createSoundPool
 
+
+//Main activity controller for navigation between activities
 class MainActivity : AppCompatActivity() {
 
     lateinit var pong : ImageButton
@@ -21,6 +23,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         createSoundPool(this)
+
 
         pong = findViewById(R.id.pong_game_button)
         breakout = findViewById(R.id.breakout_button)
@@ -44,12 +47,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
     override fun onResume() {
         super.onResume()
+        //change button background depend on preferences
         if (prefs.isClassicInterface)
-            breakout.background = App.instance.getDrawable(R.drawable.button_classic_breakout)
+            breakout.setBackgroundResource(R.drawable.button_classic_breakout)
         else
-            breakout.background = App.instance.getDrawable(R.drawable.button_breakout)
+            breakout.setBackgroundResource(R.drawable.button_breakout)
     }
 }
