@@ -10,6 +10,8 @@ import com.example.pong_group.Controller.App.Companion.instance
 import com.example.pong_group.Model.Scores
 import com.example.pong_group.R
 
+
+// custom adapter for  manage high score list and show it properly
 class HighScoreAdapter (val highScores: List<Scores>): RecyclerView.Adapter<HighScoreAdapter.ScoresHolder>()
 {
     inner class  ScoresHolder(val itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -18,6 +20,7 @@ class HighScoreAdapter (val highScores: List<Scores>): RecyclerView.Adapter<High
         val nameTV: TextView = itemView.findViewById(R.id.list_name)
         val scoresTV: TextView = itemView.findViewById(R.id.list_scores)
 
+        //binding func for bind scores from list to table row
         fun bindScores(scores: Scores, position: Int) {
             rankTV.text  = (position+1).toString()
             nameTV.text = scores.name

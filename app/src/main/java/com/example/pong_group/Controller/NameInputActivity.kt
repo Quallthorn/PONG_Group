@@ -12,6 +12,7 @@ import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings.savedScore
 import com.example.pong_group.Services.SharedBreakout
 
+// activity for fixing result, players name and send result to database
 class NameInputActivity : AppCompatActivity() {
 
     private lateinit var rank: TextView
@@ -33,6 +34,8 @@ class NameInputActivity : AppCompatActivity() {
         warning = findViewById(R.id.warning)
 
         score.text = savedScore.toString()
+
+        //find position in table in database and show it to user
         if (SharedBreakout.highScoreBroken)
             score.setTextColor(App.instance.resources.getColor(R.color.yellow, App.instance.theme))
         when {
@@ -44,6 +47,7 @@ class NameInputActivity : AppCompatActivity() {
                 ScoresRealm.findRank(savedScore, GameType.BREAKOUT).toString()
         }
 
+        //send scores to database and transition to highscores
         submitButton.setOnClickListener {
             if (nameInitials.text.length == 3) {
                 when {
@@ -73,6 +77,8 @@ class NameInputActivity : AppCompatActivity() {
                 warning.visibility = View.VISIBLE
             }
         }
+
+        //cancel button to return back to game
         cancelButton.setOnClickListener {
             backToMainMenu()
             resetScore()
@@ -90,6 +96,7 @@ class NameInputActivity : AppCompatActivity() {
     }
 
     private fun backToMainMenu() {
+        //TODO: check if it good practice to do like that
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }

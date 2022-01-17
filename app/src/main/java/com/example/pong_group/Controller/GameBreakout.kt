@@ -1,12 +1,10 @@
 package com.example.pong_group.Controller
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.core.content.ContextCompat
 import com.example.pong_group.Model.GameViewBreakout
-import kotlin.concurrent.thread
 
+//container for displaying surface view for breakout game
 class GameBreakout : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,6 +12,7 @@ class GameBreakout : AppCompatActivity() {
         setContentView(GameViewBreakout(this))
     }
 
+    //stop running tread when back button pressed
     override fun onBackPressed() {
         super.onBackPressed()
         GameViewBreakout.thread.running = false
