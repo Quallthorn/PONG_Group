@@ -24,6 +24,14 @@ class BallBreakout : BasicBall() {
         paint.color = App.instance.resources.getColor(R.color.white, App.instance.theme)
     }
 
+    /**
+     * updates ball position
+     * if player has just lost a life ball is centered to players paddle
+     * if player is out of lives ball position movement is stopped
+     * called every frame
+     *
+     * @param player paddle for player
+     */
     fun update(player: PaddleBreakout) {
         if (letGo) {
             checkEdges(player)
@@ -34,13 +42,18 @@ class BallBreakout : BasicBall() {
                 outOfLives = true
             }
             breakReady = true
-        }
-        else{
+        } else {
             centerBall(player.posX, player.posY)
         }
     }
 
-    private fun checkEdges(player: PaddleBreakout){
+    /**
+     * sees when ball hits edges of screen
+     * used by update() function
+     *
+     * @param player paddle for player of the breakout verity
+     */
+    private fun checkEdges(player: PaddleBreakout) {
         if (posX >= GameSettings.screenWidth - radius) {
             playSoundWall()
             dirNegativeX()
@@ -63,7 +76,13 @@ class BallBreakout : BasicBall() {
         }
     }
 
-    private fun checkPaddle(player:PaddleBreakout){
+    /**
+     * sees when ball hits paddle
+     * used by update() function
+     *
+     * @param player paddle for player of the breakout verity
+     */
+    private fun checkPaddle(player: PaddleBreakout) {
         if (posY >= GameSettings.screenHeight - player.posY - radius
             && posY <= GameSettings.screenHeight - player.posY + speed
             && posX + radius >= player.posX - player.width
@@ -73,9 +92,28 @@ class BallBreakout : BasicBall() {
         }
     }
 
+    /**
+     * updates direction and speed of the ball according to where the ball hit the paddle
+     *
+     * @param pPosX center of the paddles X pos
+     * @param pWidth width of the paddle
+     */
     private fun checkSpeed(pPosX: Float, pWidth: Float) {
-        //if the ball hits one of the paddles corners it gains more speed ant the direction is more horizontal
-        //otherwise it checks where it hit the paddle and moves in a direction according to how far away from the middle the ball hit
+        checkIfCorner(pPosX, pWidth)
+        if (prefs.isClassicInterface)
+            speed = SharedBreakout.ballSpeed
+        dirY = -sqrt((1 - dirX * dirX))
+        playSoundWall()
+        changeColor()
+    }
+
+    /**
+     * if the ball hits one of the paddles corners it gains more speed and the horizontal direction is maximised
+     *
+     * @param pPosX center of the paddles X pos
+     * @param pWidth width of the paddle
+     */
+    private fun checkIfCorner(pPosX: Float, pWidth: Float) {
         when {
             posX < pPosX - pWidth -> {
                 dirX = -0.9f
@@ -90,19 +128,18 @@ class BallBreakout : BasicBall() {
                 addSpeed(0.1f)
             }
         }
-        if (prefs.isClassicInterface)
-            speed = SharedBreakout.ballSpeed
-        dirY = -sqrt((1 - dirX * dirX))
-        playSoundWall()
-        changeColor()
     }
 
-    private fun addSpeed(v: Float){
-        if (speed < ballMaxSpeed && !prefs.isClassicInterface) {
-            speed += v
-        }
-    }
-
+    /**
+     * sends ball off in a direction according to where ball hit paddle
+     * edges = more horizontal movement
+     * center = more vertical movement
+     *
+     * used by checkSpeed()
+     *
+     * @param pPosX center of the paddles X pos
+     * @param pWidth width of the paddle
+     */
     private fun bounceDir(pPosX: Float, pWidth: Float) {
         for (i in 1 until anglesCount) {
             if (posX >= pPosX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= pPosX - (pWidth / anglesCount) * (anglesCount - i))
@@ -113,18 +150,43 @@ class BallBreakout : BasicBall() {
         }
     }
 
-    private fun move(){
-        //goes "forward" if everything is normal
+    /**
+     * adds speed to ball
+     * will not add speed if balls max speed is reached
+     * used by checkIfCorner() function when adding speed
+     *
+     * @param v speed to be added
+     */
+    private fun addSpeed(v: Float) {
+        if (speed < ballMaxSpeed && !prefs.isClassicInterface) {
+            speed += v
+        }
+    }
+
+    /**
+     * moves ball a direction according to dirX and dirY
+     * the ball slows down and goes the reverse direction if it overshoots a brick
+     * until it hits the brick it overshot
+     */
+    private fun move() {
+        //"forward"
         if (!checkCollision) {
             posX += speed * dirX
             posY += speed * dirY
-        } else // goes "backwards" if ball overshoots
+        } else //"backwards"
         {
             posX -= speed * dirX * 0.25f
             posY -= speed * dirY * 0.25f
         }
     }
 
+    /**
+     * moves ball to players paddle
+     * used when a life is lost
+     *
+     * @param pPosX the X position for the player
+     * @param pPosY the Y position for the player
+     */
     fun centerBall(pPosX: Float, pPosY: Float) {
         dirNegativeY()
         posX = pPosX
