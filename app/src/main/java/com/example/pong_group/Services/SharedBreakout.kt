@@ -11,8 +11,9 @@ object SharedBreakout {
     var brickCountY: Int = 0
     var highScoreBroken = false
 
+    var ballSpeedStart = 10f
+
     //Classic
-    const val ballSpeedStart = 10f
     var ballSpeed = ballSpeedStart
     private const val speedIncrease = 4f
     var hits = 0

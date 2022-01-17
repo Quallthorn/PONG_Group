@@ -7,11 +7,18 @@ import com.example.pong_group.R
 
 object GameSounds {
 
-    private val pongSound: MediaPlayer = MediaPlayer.create(App.instance, R.raw.pong_sound)
+    private val bounce: MediaPlayer = MediaPlayer.create(App.instance, R.raw.pong_sound)
+    private val brickDestroy: MediaPlayer = MediaPlayer.create(App.instance, R.raw.crumble)
 
-    fun playSound(){
-        if(prefs.isGameSoundOn) {
-            pongSound.start()
+    fun playSoundBounce(){
+        if(!prefs.isGameMute) {
+            bounce.start()
+        }
+    }
+
+    fun playSoundBrick(){
+        if(!prefs.isGameMute) {
+            brickDestroy.start()
         }
     }
 }

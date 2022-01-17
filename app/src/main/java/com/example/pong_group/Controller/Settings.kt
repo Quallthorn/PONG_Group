@@ -1,11 +1,9 @@
 package com.example.pong_group.Controller
 
 import android.os.Bundle
-import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatToggleButton
 import com.example.pong_group.R
@@ -31,8 +29,8 @@ class Settings : AppCompatActivity() {
         levelSwitch = findViewById(R.id.level_text)
 
         muteSwitch.setOnClickListener {
-            prefs.isGameSoundOn = muteSwitch.isChecked
-            GameSounds.playSound()
+            prefs.isGameMute = muteSwitch.isChecked
+            GameSounds.playSoundBounce()
         }
 
         colorSwitch.setOnClickListener {
@@ -75,7 +73,7 @@ class Settings : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        muteSwitch.isChecked = prefs.isGameSoundOn
+        muteSwitch.isChecked = prefs.isGameMute
         colorSwitch.isChecked = prefs.isRainbowColor
         bestOfText.setText(prefs.bestOfPongPrefs.toString())
         opponentSwitch.isChecked = prefs.isP2Human

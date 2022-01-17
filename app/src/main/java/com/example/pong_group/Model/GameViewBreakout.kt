@@ -68,11 +68,9 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         if (classic) {
             lives = 1
             GameSettings.highScoreBreakoutClassic = ScoresRealm.findHighestScore("classic")
+            SharedBreakout.ballSpeedStart = 10f
             SharedBreakout.brickCountX = 14
             SharedBreakout.brickCountY = 8
-            gridSpacingX = 5f
-            gridSpacingY = 5f
-            brickH = 20f
             colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks_classic)
         } else {
             if (infinite)
@@ -81,6 +79,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
                 GameSettings.highScoreBreakout = ScoresRealm.findHighestScore("breakout")
             colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks)
             lives = 3
+            SharedBreakout.ballSpeedStart = 15f
             SharedBreakout.brickCountY = 6
         }
 
@@ -92,6 +91,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         SharedBreakout.gameSetUpBreakout()
         player = PaddleBreakout()
         ball = BallBreakout()
+        ball.speed = SharedBreakout.ballSpeedStart
         changeColors()
 
     }
@@ -232,7 +232,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         if (event != null) {
             player.posX = event.x
             if (event.action == MotionEvent.ACTION_UP){
-                GameSounds.playSound()
+                GameSounds.playSoundBounce()
                 ball.letGo = true
             }
         }

@@ -139,6 +139,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
     }
 
     private fun ballCollide(ball: BallBreakout) {
+        GameSounds.playSoundBrick()
         ball.checkCollision = false
         breakReady = false
         dT = abs(ball.posY - posY)
@@ -208,7 +209,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
     }
 
     private fun breakBrick() {
-        GameSounds.playSound()
+        //GameSounds.playSoundBrick()
         broken = true
         GameViewBreakout.totalCountOfBricks -= 1
         SharedBreakout.addScore(pointBase)

@@ -10,7 +10,7 @@ import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSettings.anglesCount
 import com.example.pong_group.Services.GameSettings.ballMaxSpeed
-import com.example.pong_group.Services.GameSounds.playSound
+import com.example.pong_group.Services.GameSounds.playSoundBounce
 import com.example.pong_group.Services.SharedBreakout
 import kotlin.math.sqrt
 
@@ -42,10 +42,10 @@ class BallBreakout : BasicBall() {
 
     private fun checkEdges(player: PaddleBreakout){
         if (posX >= GameSettings.screenWidth - radius) {
-            playSound()
+            playSoundBounce()
             dirNegativeX()
         } else if (posX <= radius) {
-            playSound()
+            playSoundBounce()
             dirPositiveX()
         }
         if (posY >= GameSettings.screenHeight - radius) {
@@ -54,7 +54,7 @@ class BallBreakout : BasicBall() {
             lives -= 1
             letGo = false
         } else if (posY <= radius + GameViewBreakout.ballEdgeTop) {
-            playSound()
+            playSoundBounce()
             dirPositiveY()
             if (prefs.isClassicInterface && !SharedBreakout.upperWallHit) {
                 player.halfSize()
@@ -93,7 +93,7 @@ class BallBreakout : BasicBall() {
         if (prefs.isClassicInterface)
             speed = SharedBreakout.ballSpeed
         dirY = -sqrt((1 - dirX * dirX))
-        playSound()
+        playSoundBounce()
         changeColor()
     }
 

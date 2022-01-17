@@ -14,7 +14,7 @@ class Prefs(context: Context) {
     private val IS_CLASSIC_INTERFACE = "isClassicInterface"
     private val IS_INFINITE_LEVELS = "isInfiniteLevel"
 
-    var isGameSoundOn: Boolean
+    var isGameMute: Boolean
         get() = preferences.getBoolean(GAME_SOUND_STATE, true)
         set(value) = preferences.edit().putBoolean(GAME_SOUND_STATE, value).apply()
 

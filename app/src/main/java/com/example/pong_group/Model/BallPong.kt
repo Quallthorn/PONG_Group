@@ -5,7 +5,7 @@ import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSettings.anglesCount
 import com.example.pong_group.Services.GameSettings.ballMaxSpeed
 import com.example.pong_group.Services.GameSettings.gameOver
-import com.example.pong_group.Services.GameSounds.playSound
+import com.example.pong_group.Services.GameSounds.playSoundBounce
 import kotlin.math.abs
 import kotlin.math.sqrt
 
@@ -22,7 +22,7 @@ class BallPong() : BasicBall() {
         if (letGo && !gameOver && playersReady) {
             //right side
             if (posX >= GameSettings.screenWidth - radius) {
-                playSound()
+                playSoundBounce()
                 if (dirY > 0) {
                     dirY += ((0..2).random()) / 10f
                     if (dirY > 1 || dirY < 0)
@@ -36,7 +36,7 @@ class BallPong() : BasicBall() {
 
                 //left side
             } else if (posX <= radius) {
-                playSound()
+                playSoundBounce()
                 if (dirY > 0) {
                     dirY += ((0..2).random()) / 10f
                     if (dirY > 1 || dirY < 0)
@@ -130,7 +130,7 @@ class BallPong() : BasicBall() {
                 }
             }
         }
-        playSound()
+        playSoundBounce()
         changeColor()
         dirY = -sqrt(1 - dirX * dirX)
     }
@@ -153,7 +153,7 @@ class BallPong() : BasicBall() {
                 }
             }
         }
-        playSound()
+        playSoundBounce()
         changeColor()
         dirY = sqrt(1 - dirX * dirX)
 
