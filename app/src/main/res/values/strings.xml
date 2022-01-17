@@ -20,7 +20,7 @@
     <string name="opponent">OPPONENT</string>
     <string name="cpu">CPU</string>
     <string name="p2">P2</string>
-    <string name="best_of">BEST OF</string>
+    <string name="first_to">FIRST TO</string>
     <string name="level">LEVEL</string>
     <string name="infinite">INFINITE</string>
 </resources>

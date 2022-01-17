@@ -30,7 +30,7 @@ class Settings : AppCompatActivity() {
 
         muteSwitch.setOnClickListener {
             prefs.isGameMute = muteSwitch.isChecked
-            GameSounds.playSoundBounce()
+            GameSounds.playSoundWall()
         }
 
         colorSwitch.setOnClickListener {
@@ -42,7 +42,7 @@ class Settings : AppCompatActivity() {
                 if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER
                 ) {
                     if (bestOfText.text.isNotBlank()){
-                        prefs.bestOfPongPrefs = bestOfText.text.toString().toInt()
+                        prefs.firstToPongPrefs = bestOfText.text.toString().toInt()
                     }
                     //Toast.makeText(applicationContext, "saved", Toast.LENGTH_SHORT).show()
                     return true
@@ -75,7 +75,7 @@ class Settings : AppCompatActivity() {
         super.onResume()
         muteSwitch.isChecked = prefs.isGameMute
         colorSwitch.isChecked = prefs.isRainbowColor
-        bestOfText.setText(prefs.bestOfPongPrefs.toString())
+        bestOfText.setText(prefs.firstToPongPrefs.toString())
         opponentSwitch.isChecked = prefs.isP2Human
         versionSwitch.isChecked = prefs.isClassicInterface
         levelSwitch.isChecked = prefs.isInfiniteLevels

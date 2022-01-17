@@ -98,7 +98,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
             android:fontFamily="@font/arcade_classic"
-            android:text="@string/best_of"
+            android:text="@string/first_to"
             android:textColor="@color/white"
             android:textSize="@dimen/text_size_settings"
             app:layout_constraintStart_toStartOf="parent"

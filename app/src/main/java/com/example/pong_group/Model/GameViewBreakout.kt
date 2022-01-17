@@ -232,7 +232,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         if (event != null) {
             player.posX = event.x
             if (event.action == MotionEvent.ACTION_UP){
-                GameSounds.playSoundBounce()
+                GameSounds.playSoundWall()
                 ball.letGo = true
             }
         }

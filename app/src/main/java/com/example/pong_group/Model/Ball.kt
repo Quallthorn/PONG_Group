@@ -38,7 +38,7 @@ class Ball() {
         if (start) {
             //right side
             if (posX >= GameSettings.screenWidth - radius) {
-                GameSounds.playSoundBounce()
+                GameSounds.playSoundWall()
                 if (dirY > 0) {
                     dirY += ((0..2).random()) / 10f
                     if (dirY > 1 || dirY < 0)
@@ -52,7 +52,7 @@ class Ball() {
 
                 //left side
             } else if (posX <= radius) {
-                GameSounds.playSoundBounce()
+                GameSounds.playSoundWall()
                 if (dirY > 0) {
                     dirY += ((0..2).random()) / 10f
                     if (dirY > 1 || dirY < 0)
@@ -149,7 +149,7 @@ class Ball() {
                 }
             }
         }
-        GameSounds.playSoundBounce()
+        GameSounds.playSoundWall()
         changeColor()
         dirY = -sqrt(1 - dirX * dirX)
     }
@@ -172,7 +172,7 @@ class Ball() {
                 }
             }
         }
-        GameSounds.playSoundBounce()
+        GameSounds.playSoundWall()
         changeColor()
         dirY = sqrt(1 - dirX * dirX)
 

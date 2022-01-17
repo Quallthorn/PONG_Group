@@ -209,7 +209,6 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
     }
 
     private fun breakBrick() {
-        //GameSounds.playSoundBrick()
         broken = true
         GameViewBreakout.totalCountOfBricks -= 1
         SharedBreakout.addScore(pointBase)

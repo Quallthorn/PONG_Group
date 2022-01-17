@@ -236,7 +236,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         ballPong.playersReady = true
         if (!player.isCpu && !ballPong.p1Scored && !ballPong.letGo || player.isCpu && ballPong.p1Scored && !ballPong.letGo) {
             if (event.action == MotionEvent.ACTION_UP) {
-                GameSounds.playSoundBounce()
+                GameSounds.playSoundWall()
                 ballPong.letGo = true
 //                        ballA.forEach {
 //                            if (!it.p1Scored)
@@ -262,7 +262,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
                 && abs(p2cpu.posX - screenWidth / 2) <= 5f
                 && abs(ballPong.posX - screenWidth / 2) <= 5f
             ) {
-                GameSounds.playSoundBounce()
+                GameSounds.playSoundWall()
                 ballPong.letGo = true
 //                ballA.forEach {
 //                    if (it.p1Scored)

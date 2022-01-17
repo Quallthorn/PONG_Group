@@ -9,7 +9,7 @@ class Prefs(context: Context) {
 
     private val GAME_SOUND_STATE = "gameSound"
     private val RAINBOW_COLOR = "rainbowColor"
-    private val BEST_OF_PONG = "bestOf"
+    private val FIRST_TO_PONG = "firstTO"
     private val P2_SELECTOR = "isP2Human"
     private val IS_CLASSIC_INTERFACE = "isClassicInterface"
     private val IS_INFINITE_LEVELS = "isInfiniteLevel"
@@ -22,9 +22,9 @@ class Prefs(context: Context) {
         get() = preferences.getBoolean(RAINBOW_COLOR, true)
         set(value) = preferences.edit().putBoolean(RAINBOW_COLOR, value).apply()
 
-    var bestOfPongPrefs: Int
-        get() = preferences.getInt(BEST_OF_PONG, 1)
-        set(value) = preferences.edit().putInt(BEST_OF_PONG, value).apply()
+    var firstToPongPrefs: Int
+        get() = preferences.getInt(FIRST_TO_PONG, 1)
+        set(value) = preferences.edit().putInt(FIRST_TO_PONG, value).apply()
 
     var isP2Human: Boolean
         get() = preferences.getBoolean(P2_SELECTOR, false)

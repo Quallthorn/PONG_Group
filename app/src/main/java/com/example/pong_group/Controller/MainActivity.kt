@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.ImageButton
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings
+import com.example.pong_group.Services.GameSounds.createSoundPool
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,6 +19,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        createSoundPool(this)
 
         pong = findViewById(R.id.pong_game_button)
         breakout = findViewById(R.id.breakout_button)

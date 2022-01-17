@@ -4,7 +4,7 @@ import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSettings.curCanvas
 import com.example.pong_group.Services.NumberPrinter
 
-class PaddlePong(isCpu: Boolean): BasicPaddle() {
+class PaddlePong(var isCpu: Boolean): BasicPaddle() {
 
     var scorePositionXL = 0f
     var scorePositionXR = 0f
@@ -13,7 +13,6 @@ class PaddlePong(isCpu: Boolean): BasicPaddle() {
     var posXOld: Float = 0f
     private val frameCheck = 2
     var currentFrame = 0
-    var isCpu = isCpu
 
     init {
         this.paint = GameSettings.curPaint

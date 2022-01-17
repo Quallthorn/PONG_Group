@@ -5,11 +5,12 @@ import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSettings.anglesCount
 import com.example.pong_group.Services.GameSettings.ballMaxSpeed
 import com.example.pong_group.Services.GameSettings.gameOver
-import com.example.pong_group.Services.GameSounds.playSoundBounce
+import com.example.pong_group.Services.GameSounds.playSoundBrick
+import com.example.pong_group.Services.GameSounds.playSoundWall
 import kotlin.math.abs
 import kotlin.math.sqrt
 
-class BallPong() : BasicBall() {
+class BallPong : BasicBall() {
 
     private val startSpeed = 10f * GameSettings.speedCoefficient
     var p1Scored = false
@@ -22,7 +23,7 @@ class BallPong() : BasicBall() {
         if (letGo && !gameOver && playersReady) {
             //right side
             if (posX >= GameSettings.screenWidth - radius) {
-                playSoundBounce()
+                playSoundWall()
                 if (dirY > 0) {
                     dirY += ((0..2).random()) / 10f
                     if (dirY > 1 || dirY < 0)
@@ -36,7 +37,7 @@ class BallPong() : BasicBall() {
 
                 //left side
             } else if (posX <= radius) {
-                playSoundBounce()
+                playSoundWall()
                 if (dirY > 0) {
                     dirY += ((0..2).random()) / 10f
                     if (dirY > 1 || dirY < 0)
@@ -57,6 +58,7 @@ class BallPong() : BasicBall() {
                 p1Scored = false
                 posY = GameSettings.screenHeight - (player.posY + radius)
                 resetBall(false)
+                playSoundBrick()
                 //cpu side
             } else if (posY <= radius) {
                 dirY = 1f
@@ -64,6 +66,7 @@ class BallPong() : BasicBall() {
                 p1Scored = true
                 posY = player.posY + player.height + radius
                 resetBall(true)
+                playSoundBrick()
             }
 
 
@@ -130,7 +133,7 @@ class BallPong() : BasicBall() {
                 }
             }
         }
-        playSoundBounce()
+        playSoundWall()
         changeColor()
         dirY = -sqrt(1 - dirX * dirX)
     }
@@ -153,7 +156,7 @@ class BallPong() : BasicBall() {
                 }
             }
         }
-        playSoundBounce()
+        playSoundWall()
         changeColor()
         dirY = sqrt(1 - dirX * dirX)
 
@@ -174,7 +177,7 @@ class BallPong() : BasicBall() {
                 PaddlePong.absoluteScore = PaddlePong.cpuScore
             }
         }
-        if (PaddlePong.absoluteScore >= prefs.bestOfPongPrefs) {
+        if (PaddlePong.absoluteScore >= prefs.firstToPongPrefs) {
             gameOver = true
         }
 
