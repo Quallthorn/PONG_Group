@@ -8,7 +8,7 @@ import android.widget.*
 import androidx.cardview.widget.CardView
 import com.example.pong_group.Model.ScoresRealm
 import com.example.pong_group.R
-import com.example.pong_group.Services.GameSettings
+import com.example.pong_group.Services.GameSettings.savedScore
 import com.example.pong_group.Services.SharedBreakout
 
 class NameInputActivity : AppCompatActivity() {
@@ -31,16 +31,16 @@ class NameInputActivity : AppCompatActivity() {
         cancelButton = findViewById(R.id.cancel)
         warning = findViewById(R.id.warning)
 
-        score.text = GameSettings.scoreBreakout.toString()
+        score.text = savedScore.toString()
         if (SharedBreakout.highScoreBroken)
             score.setTextColor(App.instance.resources.getColor(R.color.yellow))
         when {
             prefs.isClassicInterface -> rank.text =
-                ScoresRealm.findRank(GameSettings.scoreBreakout, "classic").toString()
+                ScoresRealm.findRank(savedScore, "classic").toString()
             prefs.isInfiniteLevels -> rank.text =
-                ScoresRealm.findRank(GameSettings.scoreBreakout, "infinite").toString()
+                ScoresRealm.findRank(savedScore, "infinite").toString()
             else -> rank.text =
-                ScoresRealm.findRank(GameSettings.scoreBreakout, "breakout").toString()
+                ScoresRealm.findRank(savedScore, "breakout").toString()
         }
 
         submitButton.setOnClickListener {
@@ -48,20 +48,20 @@ class NameInputActivity : AppCompatActivity() {
                 when {
                     prefs.isClassicInterface ->
                         ScoresRealm.addScores(
-                            GameSettings.scoreBreakout,
+                            savedScore,
                             nameInitials.text.toString(),
                             "classic"
                         )
 
                     prefs.isInfiniteLevels ->
                         ScoresRealm.addScores(
-                            GameSettings.scoreBreakout,
+                            savedScore,
                             nameInitials.text.toString(),
                             "infinite"
                         )
 
                     else -> ScoresRealm.addScores(
-                        GameSettings.scoreBreakout,
+                        savedScore,
                         nameInitials.text.toString(),
                         "breakout"
                     )
@@ -95,6 +95,6 @@ class NameInputActivity : AppCompatActivity() {
 
     private fun resetScore() {
         SharedBreakout.highScoreBroken = false
-        GameSettings.scoreBreakout = 0
+        savedScore = 0
     }
 }

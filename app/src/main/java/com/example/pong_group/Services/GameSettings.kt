@@ -27,6 +27,7 @@ object GameSettings {
 
     //Scores
     var scoreBreakout = 0
+    var savedScore = 0
     var highScoreBreakout = 0
     var highScoreBreakoutClassic = 0
     var highScoreBreakoutInfinite = 0

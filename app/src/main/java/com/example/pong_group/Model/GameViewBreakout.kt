@@ -87,6 +87,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         holder.addCallback(this)
         thread = GameThread(holder, this)
 
+        GameSettings.scoreBreakout = 0
         SharedBreakout.highScoreBroken = false
         SharedBreakout.gameSetUpBreakout()
         player = PaddleBreakout()
@@ -250,6 +251,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
                         SharedBreakout.brickCountY = 8
                     }
                 } else {
+                    GameSettings.savedScore = GameSettings.scoreBreakout
                     context.startActivity(Intent(context, NameInputActivity::class.java))
                 }
                 setup()
