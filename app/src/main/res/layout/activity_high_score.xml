@@ -12,6 +12,7 @@
         android:id="@+id/scoresRadioGroup"
         android:layout_width="match_parent"
         android:layout_height="45dp"
+        android:layout_marginTop="10dp"
         android:gravity="center"
         android:orientation="horizontal"
         android:paddingStart="5dp"
@@ -31,7 +32,7 @@
             android:background="@drawable/btn_segmented_left"
             android:button="@android:color/transparent"
             android:gravity="center"
-            android:text= "CLASSIC"
+            android:text="CLASSIC"
             android:textColor="@drawable/txt_segmented" />
 
         <RadioButton
