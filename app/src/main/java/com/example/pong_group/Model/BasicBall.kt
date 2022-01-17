@@ -16,26 +16,46 @@ open class BasicBall {
     var letGo = false
     var changeColor = false
 
+    /**
+     * draws ball on canvas
+     * canvas is determined in GameSettings
+     * position is determined by ball
+     */
     open fun draw() {
         GameSettings.curCanvas.drawCircle(posX, posY, radius, paint)
     }
 
-     fun changeColor() {
+    /**
+     * tells ball to change color every time it hits something if "prefs.isRainbowColor" is true
+     */
+    fun changeColor() {
         changeColor = true
     }
 
+    /**
+     * makes horizontal movement positive (right)
+     */
     fun dirPositiveX(){
         dirX = abs(dirX)
     }
 
+    /**
+     * makes horizontal movement negative (left)
+     */
     fun dirNegativeX(){
         dirX = abs(dirX) * -1
     }
 
+    /**
+     * makes vertical movement positive (down)
+     */
     fun dirPositiveY(){
         dirY = abs(dirY)
     }
 
+    /**
+     * makes vertical movement negative (up)
+     */
     fun dirNegativeY(){
         dirY = abs(dirY) * -1
     }

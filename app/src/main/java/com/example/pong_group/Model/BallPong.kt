@@ -5,7 +5,7 @@ import com.example.pong_group.Services.GameSettings
 import com.example.pong_group.Services.GameSettings.anglesCount
 import com.example.pong_group.Services.GameSettings.ballMaxSpeed
 import com.example.pong_group.Services.GameSettings.gameOver
-import com.example.pong_group.Services.GameSounds.playSoundBrick
+import com.example.pong_group.Services.GameSounds
 import com.example.pong_group.Services.GameSounds.playSoundWall
 import kotlin.math.abs
 import kotlin.math.sqrt
@@ -16,91 +16,143 @@ class BallPong : BasicBall() {
     var p1Scored = false
     var playersReady = false
 
+    /**
+     * updates ball position
+     * bounces of walls or players paddle
+     * if ball reaches top or bottom edge a point is scored to opposing player
+     * and ball is reset to middle of screen and stops until player who did not score a point is ready
+     *
+     * called every frame
+     *
+     * @param player paddle for player 1
+     * @param cpuP2 paddle for cpu / player 2
+     */
     fun update(
         player: PaddlePong,
-        cpuX: Float
+        cpuP2: PaddlePong
     ) {
         if (letGo && !gameOver && playersReady) {
-            //right side
-            if (posX >= GameSettings.screenWidth - radius) {
-                playSoundWall()
-                if (dirY > 0) {
-                    dirY += ((0..2).random()) / 10f
-                    if (dirY > 1 || dirY < 0)
-                        dirY = 0.5f
-                } else {
-                    dirY -= ((0..2).random()) / 10f
-                    if (dirY < -1 || dirY > 0)
-                        dirY = -0.5f
-                }
-                dirX = -sqrt(1 - dirY * dirY)
+            checkWalls()
+            checkPoint(player)
+            checkPaddle(player, cpuP2)
+            move()
 
-                //left side
-            } else if (posX <= radius) {
-                playSoundWall()
-                if (dirY > 0) {
-                    dirY += ((0..2).random()) / 10f
-                    if (dirY > 1 || dirY < 0)
-                        dirY = 0.5f
-                } else {
-                    dirY -= ((0..2).random()) / 10f
-                    if (dirY < -1 || dirY > 0)
-                        dirY = -0.5f
-                }
-                dirX = sqrt(1 - dirY * dirY)
-            }
-
-
-            //player side
-            if (posY >= GameSettings.screenHeight - radius) {
-                dirY = -1f
-                dirX = 0f
-                p1Scored = false
-                posY = GameSettings.screenHeight - (player.posY + radius)
-                resetBall(false)
-                playSoundBrick()
-                //cpu side
-            } else if (posY <= radius) {
-                dirY = 1f
-                dirX = 0f
-                p1Scored = true
-                posY = player.posY + player.height + radius
-                resetBall(true)
-                playSoundBrick()
-            }
-
-
-            //player paddle
-            if (posY + radius >= GameSettings.screenHeight - player.posY
-                && posY + radius <= GameSettings.screenHeight - player.posY + player.height + speed
-                && posX + radius >= player.posX - player.width
-                && posX - radius <= player.posX + player.width
-            ) {
-                bounceP1(player)
-            }
-
-            //cpu paddle
-            if (posY - radius <= player.posY + player.height
-                && posY - radius >= player.posY - speed
-                && posX >= cpuX - player.width
-                && posX <= cpuX + player.width
-            ) {
-                bounceCPU(cpuX, player.width)
-            }
-
-            posX += speed * dirX
-            posY += speed * dirY
         } else if (playersReady) {
             posX = if (p1Scored)
-                cpuX
+                cpuP2.posX
             else {
                 player.posX
             }
         }
     }
 
+    /**
+     * checks if the ball has hit right or left edge
+     *
+     * called by update()
+     */
+    private fun checkWalls(){
+        if (posX >= GameSettings.screenWidth - radius) {
+            playSoundWall()
+            if (dirY > 0) {
+                dirY += ((0..2).random()) / 10f
+                if (dirY > 1 || dirY < 0)
+                    dirY = 0.5f
+            } else {
+                dirY -= ((0..2).random()) / 10f
+                if (dirY < -1 || dirY > 0)
+                    dirY = -0.5f
+            }
+            dirX = -sqrt(1 - dirY * dirY)
+        } else if (posX <= radius) {
+            playSoundWall()
+            if (dirY > 0) {
+                dirY += ((0..2).random()) / 10f
+                if (dirY > 1 || dirY < 0)
+                    dirY = 0.5f
+            } else {
+                dirY -= ((0..2).random()) / 10f
+                if (dirY < -1 || dirY > 0)
+                    dirY = -0.5f
+            }
+            dirX = sqrt(1 - dirY * dirY)
+        }
+    }
 
-    private fun bounceP1(player: PaddlePong) {
+    /**
+     * checks if ball hits a player
+     *
+     * called by update()
+     *
+     * @param player paddle for player 1
+     * @param cpuP2 paddle for cpu / player 2
+     */
+    private fun checkPaddle(player: PaddlePong, cpuP2: PaddlePong){
+        if (posY + radius >= GameSettings.screenHeight - player.posY
+            && posY + radius <= GameSettings.screenHeight - player.posY + player.height + speed
+            && posX + radius >= player.posX - player.width
+            && posX - radius <= player.posX + player.width
+        ) {
+            bouncePlayer(player)
+        }
+
+        if (posY - radius <= player.posY + player.height
+            && posY - radius >= player.posY - speed
+            && posX >= cpuP2.posX - player.width
+            && posX <= cpuP2.posX + player.width
+        ) {
+            if (prefs.isP2Human)
+                bouncePlayer(cpuP2)
+            else
+                bounceCPU(cpuP2.posX, cpuP2.width)
+        }
+    }
+
+    /**
+     * checks if ball hits upper or lower edge
+     *
+     * called by update()
+     *
+     * @param player paddle for player 1 (player 2 position can be figured out by player 1 values)
+     */
+    private fun checkPoint(player: PaddlePong){
+        if (posY >= GameSettings.screenHeight - radius) {
+            dirY = -1f
+            dirX = 0f
+            p1Scored = false
+            posY = GameSettings.screenHeight - (player.posY + radius)
+            resetBall(false)
+            GameSounds.playSoundBrick()
+        } else if (posY <= radius) {
+            dirY = 1f
+            dirX = 0f
+            p1Scored = true
+            posY = player.posY + player.height + radius
+            resetBall(true)
+            GameSounds.playSoundBrick()
+        }
+    }
+
+    /**
+     * moves ball a direction according to dirX and dirY
+     *
+     * called by update()
+     */
+    private fun move() {
+        posX += speed * dirX
+        posY += speed * dirY
+    }
+
+    /**
+     * sends ball off in a direction according to where ball hit paddle
+     * edges = more horizontal movement
+     * center = more vertical movement
+     *
+     * called by checkPaddle()
+     *
+     * @param player paddle for player (1 or 2)
+     */
+    private fun bouncePlayer(player: PaddlePong) {
         when {
             posX < player.posX - player.width -> {
                 dirX = -0.9f
@@ -138,19 +190,31 @@ class BallPong : BasicBall() {
         dirY = -sqrt(1 - dirX * dirX)
     }
 
-    private fun bounceCPU(cpuX: Float, pWidth: Float) {
+
+    /**
+     * sends ball off in a direction according to where ball hit paddle
+     * edges = more horizontal movement
+     * center = more vertical movement
+     * unlike bouncePlayer(), ball does not gain speed if it hits the paddles corner
+     *
+     * called by checkPaddle()
+     *
+     * @param cpuX horizontal position of cpu
+     * @param cpuW width of cpu
+     */
+    private fun bounceCPU(cpuX: Float, cpuW: Float) {
         when {
-            posX < cpuX - pWidth -> {
+            posX < cpuX - cpuW -> {
                 dirX = -0.9f
             }
-            posX > cpuX + pWidth -> {
+            posX > cpuX + cpuW -> {
                 dirX = 0.9f
             }
             else -> {
                 for (i in 1 until anglesCount) {
-                    if (posX >= cpuX - (pWidth / anglesCount) * (anglesCount + 1 - i) && posX <= cpuX - (pWidth / anglesCount) * (anglesCount - i))
+                    if (posX >= cpuX - (cpuW / anglesCount) * (anglesCount + 1 - i) && posX <= cpuX - (cpuW / anglesCount) * (anglesCount - i))
                         dirX = -(anglesCount - i) / 10f
-                    else if (posX <= cpuX + (pWidth / anglesCount) * (anglesCount + 1 - i) && posX >= cpuX + (pWidth / anglesCount) * (anglesCount - i)) {
+                    else if (posX <= cpuX + (cpuW / anglesCount) * (anglesCount + 1 - i) && posX >= cpuX + (cpuW / anglesCount) * (anglesCount - i)) {
                         dirX = (anglesCount - i) / 10f
                     }
                 }
@@ -165,6 +229,13 @@ class BallPong : BasicBall() {
         }
     }
 
+    /**
+     * adds score to player or cpu depending on who scored
+     *
+     * called by checkPoint()
+     *
+     * @param isCpu did player 1 or cpu / player 2 score?
+     */
     private fun resetBall(isCpu: Boolean) {
         if (isCpu) {
             PaddlePong.playerScore += 1
@@ -185,6 +256,11 @@ class BallPong : BasicBall() {
         speed = startSpeed
     }
 
+    /**
+     * centers ball to middle of court
+     *
+     * called by GameViewPONG setUp()
+     */
     fun centerBall() {
         posX = GameSettings.screenWidth / 2
         posY = GameSettings.screenHeight / 2

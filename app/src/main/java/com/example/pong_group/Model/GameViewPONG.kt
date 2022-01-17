@@ -85,7 +85,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
 
         ballPong.update(
             player,
-            p2cpu.posX
+            p2cpu
         )
 //        ballA.forEach {
 //            it.update(

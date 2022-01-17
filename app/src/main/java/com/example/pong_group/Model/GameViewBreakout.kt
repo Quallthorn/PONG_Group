@@ -96,6 +96,9 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
     }
 
+    /**
+     * sets up the game for each level
+     */
     private fun setup() {
         ball.letGo = false
         SharedBreakout.bricks.clear()
@@ -105,6 +108,9 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         outOfLives = false
     }
 
+    /**
+     * updates all object in play
+     */
     fun update() {
         //player.update()
         ball.update(player)
@@ -115,6 +121,11 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             changeColors()
     }
 
+    /**
+     * draws all objects in play
+     *
+     * @param canvas canvas everything is to be drawn on
+     */
     @RequiresApi(Build.VERSION_CODES.M)
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
@@ -130,6 +141,9 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         }
     }
 
+    /**
+     * determines values for object dimensions according to size of screen
+     */
     private fun basedOnScreenSize(){
         gridStartY = screenHeight / 20f + ballEdgeTop
         gridPosX = gridSqueezeX
@@ -153,6 +167,10 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             ((screenWidth - gridSqueezeX * 2) / SharedBreakout.brickCountX) - gridSpacingX
     }
 
+    /**
+     * creates an array of bricks
+     * the point of the game will be to destroy these bricks
+     */
     private fun createBricks(){
         var colorNumber = 1
         var pointBase = SharedBreakout.brickCountY
@@ -197,6 +215,9 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         }
     }
 
+    /**
+     * changes color of paddle and ball if "prefs.isRainbowColor" is true
+     */
     private fun changeColors() {
         if (prefs.isRainbowColor) {
             GameSettings.getRandomColorFromArray()
