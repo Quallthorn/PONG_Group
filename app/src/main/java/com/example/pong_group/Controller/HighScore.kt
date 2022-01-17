@@ -27,17 +27,31 @@ class HighScore : AppCompatActivity() {
 
         titleText = findViewById(R.id.game_title)
 
-        titleText.text = when{
-            prefs.isClassicInterface -> instance.getString(R.string.classic)
-            prefs.isInfiniteLevels -> instance.getString(R.string.infinite)
-            else -> instance.getString(R.string.breakout)
-        }
+        val classicRadioButton = findViewById<RadioButton>(R.id.classicRadioButton)
+        val infiniteRadioButton = findViewById<RadioButton>(R.id.infiniteRadioButton)
+        val breakoutRadioButton = findViewById<RadioButton>(R.id.breakoutRadioButton)
 
-        scoresList = when {
-            prefs.isClassicInterface -> ScoresRealm.retrieveScores(GameType.CLASSIC)
-            prefs.isInfiniteLevels -> ScoresRealm.retrieveScores(GameType.INFINITE)
-            else -> ScoresRealm.retrieveScores(GameType.BREAKOUT)
+        titleText.text = when{
+            prefs.isClassicInterface -> instance.getString(R.string.classic).also {
+                scoresList =  ScoresRealm.retrieveScores(GameType.CLASSIC)
+                classicRadioButton.isChecked = true
+
+            }
+            prefs.isInfiniteLevels -> instance.getString(R.string.infinite).also {
+                scoresList =  ScoresRealm.retrieveScores(GameType.INFINITE)
+                infiniteRadioButton.isChecked = true
+            }
+            else -> instance.getString(R.string.breakout).also {
+                scoresList =  ScoresRealm.retrieveScores(GameType.BREAKOUT)
+                breakoutRadioButton.isChecked = true
+            }
         }
+//
+//        scoresList = when {
+//            prefs.isClassicInterface -> ScoresRealm.retrieveScores(GameType.CLASSIC)
+//            prefs.isInfiniteLevels -> ScoresRealm.retrieveScores(GameType.INFINITE)
+//            else -> ScoresRealm.retrieveScores(GameType.BREAKOUT)
+//        }
 
 
         val listview = findViewById<RecyclerView>(R.id.scores_list)
@@ -49,11 +63,21 @@ class HighScore : AppCompatActivity() {
 
         scoresRadioGroup.setOnCheckedChangeListener { radioGroup, radioButtonID ->
             val selectedRadioButton = radioGroup.findViewById<RadioButton>(radioButtonID)
-           scoresList = when (selectedRadioButton.text) {
-                "CLASSIC" -> ScoresRealm.retrieveScores(GameType.CLASSIC)
-                "INFINITE" -> ScoresRealm.retrieveScores(GameType.INFINITE)
-                else -> ScoresRealm.retrieveScores(GameType.BREAKOUT)
+            var list: MutableList<Scores> = mutableListOf()
+            when (selectedRadioButton.text) {
+                "CLASSIC" -> ScoresRealm.retrieveScores(GameType.CLASSIC).also {
+                    list = it
+                    titleText.text = "CLASSIC"}
+                "INFINITE" -> ScoresRealm.retrieveScores(GameType.INFINITE).also {
+                    list = it
+                    titleText.text = "INFINITE"}
+                else -> ScoresRealm.retrieveScores(GameType.BREAKOUT).also {
+                    list = it
+                    titleText.text = "BREAKOUT"}
             }
+            scoresList
+            scoresList.clear()
+            scoresList.addAll(list)
             adapter.notifyDataSetChanged()
         }
     }

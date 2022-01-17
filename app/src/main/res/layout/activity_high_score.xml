@@ -31,9 +31,8 @@
             android:background="@drawable/btn_segmented_left"
             android:button="@android:color/transparent"
             android:gravity="center"
-            android:text= "CLASSIC"
-            android:textColor="@drawable/txt_segmented"
-            android:fontFamily="@font/pong"/>
+            android:text="CLASSIC"
+            android:textColor="@drawable/txt_segmented" />
 
         <RadioButton
             android:id="@+id/infiniteRadioButton"
@@ -44,8 +43,7 @@
             android:button="@android:color/transparent"
             android:gravity="center"
             android:text="INFINITE"
-            android:textColor="@drawable/txt_segmented"
-            android:fontFamily="@font/pong"/>
+            android:textColor="@drawable/txt_segmented" />
 
 
         <RadioButton
@@ -58,8 +56,7 @@
             android:gravity="center"
             android:padding="2dp"
             android:text="BREAKOUT"
-            android:textColor="@drawable/txt_segmented"
-            android:fontFamily="@font/pong"/>
+            android:textColor="@drawable/txt_segmented" />
     </RadioGroup>
 
     <TextView
