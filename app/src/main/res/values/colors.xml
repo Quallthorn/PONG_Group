@@ -14,6 +14,7 @@
     <color name="colorPrimary">#80FFFFFF</color>
     <color name="disabled">#80BABABA</color>
     <color name="yellow_pong">#FEC900</color>
+    <color name="yellow_pong_shadow">#987900</color>
 
     <color name="pink">#d35886</color>
     <color name="red">#a22b14</color>

@@ -63,17 +63,17 @@ class HighScore : AppCompatActivity() {
 
         scoresRadioGroup.setOnCheckedChangeListener { radioGroup, radioButtonID ->
             val selectedRadioButton = radioGroup.findViewById<RadioButton>(radioButtonID)
-            var list: MutableList<Scores> = mutableListOf()
+            var list: MutableList<Scores>
             when (selectedRadioButton.text) {
                 "CLASSIC" -> ScoresRealm.retrieveScores(GameType.CLASSIC).also {
                     list = it
-                    titleText.text = "CLASSIC"}
+                    titleText.text = resources.getString(R.string.classic)}
                 "INFINITE" -> ScoresRealm.retrieveScores(GameType.INFINITE).also {
                     list = it
-                    titleText.text = "INFINITE"}
+                    titleText.text = resources.getString(R.string.infinite)}
                 else -> ScoresRealm.retrieveScores(GameType.BREAKOUT).also {
                     list = it
-                    titleText.text = "BREAKOUT"}
+                    titleText.text = resources.getString(R.string.breakout)}
             }
             scoresList
             scoresList.clear()

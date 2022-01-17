@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Controller.HighScore"
-    android:background="@drawable/star_background">
+    android:background="@drawable/star_background"
+    tools:context=".Controller.HighScore">
 
 
     <RadioGroup
@@ -24,15 +24,18 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <RadioButton
-            android:id="@+id/classicRadioButton"
+            android:id="@+id/breakoutRadioButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/btn_segmented_left"
-            android:button="@android:color/transparent"
+            android:button="@color/yellow_pong_shadow"
+            android:fontFamily="@font/pong"
             android:gravity="center"
-            android:text="CLASSIC"
-            android:textColor="@drawable/txt_segmented" />
+            android:padding="2dp"
+            android:text="@string/breakout"
+            android:textColor="@drawable/txt_segmented"
+            android:textSize="@dimen/text_size_high_score_choice" />
 
         <RadioButton
             android:id="@+id/infiniteRadioButton"
@@ -41,22 +44,25 @@
             android:layout_weight="1"
             android:background="@drawable/btn_segmented_center"
             android:button="@android:color/transparent"
+            android:fontFamily="@font/pong"
             android:gravity="center"
-            android:text="INFINITE"
-            android:textColor="@drawable/txt_segmented" />
-
+            android:text="@string/infinite"
+            android:textColor="@drawable/txt_segmented"
+            android:textSize="@dimen/text_size_high_score_choice" />
 
         <RadioButton
-            android:id="@+id/breakoutRadioButton"
+            android:id="@+id/classicRadioButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/btn_segmented_right"
             android:button="@android:color/transparent"
+            android:fontFamily="@font/pong"
             android:gravity="center"
-            android:padding="2dp"
-            android:text="BREAKOUT"
-            android:textColor="@drawable/txt_segmented" />
+            android:text="@string/classic"
+            android:textColor="@drawable/txt_segmented"
+            android:textSize="@dimen/text_size_high_score_choice" />
+
     </RadioGroup>
 
     <TextView
@@ -64,9 +70,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:fontFamily="@font/arcade_classic"
+        android:fontFamily="@font/pong"
         android:text="@string/breakout"
-        android:textColor="@color/white"
+        android:textColor="@color/pale_orange"
         android:textSize="50sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -103,7 +109,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
                 android:fontFamily="@font/arcade_classic"
-                android:text="NAME"
+                android:text="@string/name"
                 android:textColor="@color/white"
                 android:textSize="40sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -122,7 +128,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/arcade_classic"
-                android:text="SCORE"
+                android:text="@string/score_view"
                 android:textColor="@color/white"
                 android:textSize="40sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -134,7 +140,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/arcade_classic"
-                android:text="RANK"
+                android:text="@string/rank"
                 android:textColor="@color/white"
                 android:textSize="35sp"
                 app:layout_constraintBottom_toBottomOf="parent"

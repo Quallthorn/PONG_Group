@@ -5,10 +5,11 @@
     <dimen name="pong_sign_text_size">100sp</dimen>
     <dimen name="breakout_sign_text_size">60sp</dimen>
     <dimen name="text_size_input_screen">60sp</dimen>
-    <dimen name="text_size_submit">40sp</dimen>
+    <dimen name="text_size_submit">30sp</dimen>
     <dimen name="text_size_choice">26sp</dimen>
     <dimen name="text_size_choice_number">35sp</dimen>
     <dimen name="text_size_settings">50sp</dimen>
+    <dimen name="text_size_high_score_choice">18sp</dimen>
 
     <dimen name="text_size_warning">40sp</dimen>
     <dimen name="warning_diameter">40dp</dimen>

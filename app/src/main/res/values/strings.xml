@@ -23,4 +23,11 @@
     <string name="first_to">FIRST TO</string>
     <string name="level">LEVEL</string>
     <string name="infinite">INFINITE</string>
+    <string name="rank">RANK</string>
+    <string name="name">NAME</string>
+    <string name="name_hint">---</string>
+    <string name="warning">!</string>
+    <string name="score_view">SCORE</string>
+    <string name="cancel">CANCEL</string>
+    <string name="submit">SUBMIT</string>
 </resources>
