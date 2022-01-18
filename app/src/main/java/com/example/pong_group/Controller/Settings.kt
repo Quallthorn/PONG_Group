@@ -1,5 +1,6 @@
 package com.example.pong_group.Controller
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
@@ -8,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatToggleButton
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSounds
+import com.example.pong_group.Services.GameSounds.playClick
 
 //Controller for activity settings
 class Settings : AppCompatActivity() {
@@ -34,13 +36,13 @@ class Settings : AppCompatActivity() {
         //turn on/off sound
         muteSwitch.setOnClickListener {
             prefs.isGameMute = muteSwitch.isChecked
-            GameSounds.playClick()
+            playClick()
         }
 
         //change color scheme for paddle and ball
         colorSwitch.setOnClickListener {
             prefs.isRainbowColor = colorSwitch.isChecked
-            GameSounds.playClick()
+            playClick()
         }
 
         //set max point to win for PONG game
@@ -48,8 +50,8 @@ class Settings : AppCompatActivity() {
             override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
                 if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER
                 ) {
-                    GameSounds.playClick()
-                    if (bestOfText.text.isNotBlank()) {
+                    playClick()
+                    if (bestOfText.text.isNotBlank() && bestOfText.text.toString().toInt() > 0) {
                         prefs.firstToPongPrefs = bestOfText.text.toString().toInt()
                     }
                     return true
@@ -61,19 +63,19 @@ class Settings : AppCompatActivity() {
         //change player between human and cpu
         opponentSwitch.setOnClickListener {
             prefs.isP2Human = opponentSwitch.isChecked
-            GameSounds.playClick()
+            playClick()
         }
 
         //switch breakout between classic interface and standard
         versionSwitch.setOnClickListener {
             prefs.isClassicInterface = versionSwitch.isChecked
-            GameSounds.playClick()
+            playClick()
         }
 
         //switch between two levels game and infinite levels
         levelSwitch.setOnClickListener {
             prefs.isInfiniteLevels = levelSwitch.isChecked
-            GameSounds.playClick()
+            playClick()
             if (levelSwitch.isChecked) {
                 versionSwitch.isEnabled = false
                 prefs.isClassicInterface = !levelSwitch.isChecked
@@ -95,5 +97,10 @@ class Settings : AppCompatActivity() {
         levelSwitch.isChecked = prefs.isInfiniteLevels
         if (levelSwitch.isChecked)
             versionSwitch.isEnabled = false
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        playClick()
     }
 }

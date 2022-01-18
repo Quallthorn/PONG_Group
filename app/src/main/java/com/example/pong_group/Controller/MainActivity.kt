@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.ImageButton
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings
+import com.example.pong_group.Services.GameSounds
 import com.example.pong_group.Services.GameSounds.createSoundPool
 
 
@@ -31,18 +32,22 @@ class MainActivity : AppCompatActivity() {
         settings = findViewById(R.id.settings_button)
 
         pong.setOnClickListener{
+            GameSounds.playClick()
             Intent(this, GamePong::class.java).apply { startActivity(this) }
         }
 
         breakout.setOnClickListener{
+            GameSounds.playClick()
             Intent(this, GameBreakout::class.java).apply { startActivity(this) }
         }
 
         highscore.setOnClickListener{
+            GameSounds.playClick()
             Intent(this, HighScore::class.java).apply { startActivity(this) }
         }
 
         settings.setOnClickListener {
+            GameSounds.playClick()
             Intent(this, Settings::class.java).apply { startActivity(this) }
         }
     }
@@ -54,5 +59,10 @@ class MainActivity : AppCompatActivity() {
             breakout.setBackgroundResource(R.drawable.button_classic_breakout)
         else
             breakout.setBackgroundResource(R.drawable.button_breakout)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        GameSounds.playClick()
     }
 }

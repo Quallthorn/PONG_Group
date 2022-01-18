@@ -37,7 +37,7 @@ object GameSounds {
         pong_bop = soundPool?.load(context, R.raw.pong_sound, 1) ?: 0
         brick = soundPool?.load(context, R.raw.brick_break, 1) ?: 0
         lost = soundPool?.load(context, R.raw.crumble, 1) ?: 0
-        click = soundPool?.load(context, R.raw.click, 1) ?: 0
+        click = soundPool?.load(context, R.raw.click_on, 1) ?: 0
     }
 
     fun playWall() {

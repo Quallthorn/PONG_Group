@@ -10,6 +10,7 @@ import com.example.pong_group.Model.GameType
 import com.example.pong_group.Model.ScoresRealm
 import com.example.pong_group.R
 import com.example.pong_group.Services.GameSettings.savedScore
+import com.example.pong_group.Services.GameSounds.playClick
 import com.example.pong_group.Services.SharedBreakout
 
 // activity for fixing result, players name and send result to database
@@ -50,6 +51,7 @@ class NameInputActivity : AppCompatActivity() {
         //send scores to database and transition to highscores
         submitButton.setOnClickListener {
             if (nameInitials.text.length == 3) {
+                playClick()
                 when {
                     prefs.isClassicInterface ->
                         ScoresRealm.addScores(
@@ -80,6 +82,7 @@ class NameInputActivity : AppCompatActivity() {
 
         //cancel button to return back to game
         cancelButton.setOnClickListener {
+            playClick()
             backToMainMenu()
             resetScore()
         }

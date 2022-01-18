@@ -80,7 +80,7 @@ class BallPong : BasicBall() {
      */
     private fun addRandomDirYPositive(){
         dirY += ((0..2).random()) / 10f
-        if (dirY > 1 || dirY < 0)
+        if (dirY > 0.9f || dirY < 0.1f)
             dirY = 0.5f
     }
 
@@ -91,7 +91,7 @@ class BallPong : BasicBall() {
      */
     private fun addRandomDirYNegative(){
         dirY -= ((0..2).random()) / 10f
-        if (dirY < -1 || dirY > 0)
+        if (dirY < -0.9f || dirY > -0.1f)
             dirY = -0.5f
     }
 

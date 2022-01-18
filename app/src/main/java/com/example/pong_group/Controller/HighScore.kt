@@ -13,6 +13,7 @@ import com.example.pong_group.Model.GameType
 import com.example.pong_group.Model.Scores
 import com.example.pong_group.Model.ScoresRealm
 import com.example.pong_group.R
+import com.example.pong_group.Services.GameSounds
 import com.example.pong_group.adapters.HighScoreAdapter
 
 class HighScore : AppCompatActivity() {
@@ -59,6 +60,7 @@ class HighScore : AppCompatActivity() {
         scoresRadioGroup.setOnCheckedChangeListener { radioGroup, radioButtonID ->
             val selectedRadioButton = radioGroup.findViewById<RadioButton>(radioButtonID)
             var list: MutableList<Scores>
+            GameSounds.playClick()
             when (selectedRadioButton.text) {
                 "CLASSIC" -> ScoresRealm.retrieveScores(GameType.CLASSIC).also {
                     list = it
@@ -80,6 +82,7 @@ class HighScore : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         //TODO: check if it properly way to go back
+        GameSounds.playClick()
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
