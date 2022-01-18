@@ -56,6 +56,9 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         changeColors()
     }
 
+    /**
+     * sets up the game
+     */
     private fun setup() {
         basedOnScreenSize()
         ballPong.centerBall()
@@ -63,12 +66,18 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
 //        makeBallArray()
     }
 
+    /**
+     * creates a thread the game will be run in
+     */
     private fun start() {
         running = true
         thread = Thread(this)
         thread?.start()
     }
 
+    /**
+     * stops thread when game view is exited
+     */
     private fun stop() {
         running = false
         try {
@@ -78,6 +87,11 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         }
     }
 
+    /**
+     * updates all object in play:
+     * player movement, winner text and ball movement
+     *
+     */
     private fun update() {
         player.update()
 
@@ -96,6 +110,11 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         if (ballPong.changeColor) changeColors()
     }
 
+    /**
+     * draws all objects in play
+     *
+     * @param canvas canvas everything is to be drawn on
+     */
     private fun draw() {
         curCanvas = mHolder!!.lockCanvas()
         curCanvas.drawColor(Color.BLACK)
@@ -110,6 +129,9 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         mHolder!!.unlockCanvasAndPost(curCanvas)
     }
 
+    /**
+     * draws line in middle of screen
+     */
     private fun drawLine() {
         var lineX = 0f
         val amount = 20
@@ -128,6 +150,9 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         }
     }
 
+    /**
+     * draws winner text depending on who won
+     */
     private fun drawWinner() {
         if (PaddlePong.playerScore < PaddlePong.cpuScore) {
             if (twoPlayers)
@@ -138,6 +163,9 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
             NumberPrinter.drawP1Wins()
     }
 
+    /**
+     * determines values for object dimensions according to size of screen
+     */
     private fun basedOnScreenSize() {
         numberFromEdge = screenWidth / 25f
         numberFromMiddle = screenHeight / 25f
@@ -164,6 +192,9 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         ballPong.radius = screenHeight / 185f
     }
 
+    /**
+     * changes color of paddle and ball if "prefs.isRainbowColor" is true
+     */
     private fun changeColors() {
         if (prefs.isRainbowColor) {
             GameSettings.getRandomColorFromArray()
@@ -171,6 +202,11 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         }
     }
 
+    /**
+     * currently not used
+     * makes an array of balls if player wants to play with multiple balls at once
+     * not recommended when playing against cpu
+     */
     private fun makeBallArray() {
         for (i in 0 until ballCount) {
             val newBall = BallPong()
@@ -192,19 +228,31 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         }
     }
 
+    /**
+     * creates a thread the game will be run in
+     */
     override fun surfaceCreated(p0: SurfaceHolder) {
         start()
     }
 
+    /**
+     * measures screen dimensions and calls setup()
+     */
     override fun surfaceChanged(p0: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
         GameSettings.setScreenDimen(p2.toFloat(), p3.toFloat())
         setup()
     }
 
+    /**
+     * closes thread when game is exited
+     */
     override fun surfaceDestroyed(p0: SurfaceHolder) {
         stop()
     }
 
+    /**
+     * calls update() and draw() while thread is active
+     */
     override fun run() {
         while (running) {
             update()
@@ -212,6 +260,9 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         }
     }
 
+    /**
+     * keeps track of finger inputs from users
+     */
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null && !gameOver) {
             if (!twoPlayers) {
@@ -231,12 +282,20 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     }
 
 
+    /**
+     * moves a player to fingers horizontal position
+     *
+     * if opposing player or cpu scored a point ball will be "held" by paddle until player releases finger from screen
+     *
+     * @param event MotionEvent movement will be based on
+     * @param player the player that will be moved
+     */
     private fun movePlayerPaddle(event: MotionEvent?, player: PaddlePong) {
         player.posX = event!!.x
         ballPong.playersReady = true
         if (!player.isCpu && !ballPong.p1Scored && !ballPong.letGo || player.isCpu && ballPong.p1Scored && !ballPong.letGo) {
             if (event.action == MotionEvent.ACTION_UP) {
-                GameSounds.playSoundWall()
+                GameSounds.playWall()
                 ballPong.letGo = true
 //                        ballA.forEach {
 //                            if (!it.p1Scored)
@@ -246,10 +305,15 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         }
     }
 
+    /**
+     * moves cpu towards balls horizontal position
+     *
+     * if player scored a point paddle will "hold" ball and move to middle of screen before releasing ball
+     */
     private fun moveCpuPaddle() {
         if (ballPong.letGo) {
             if (p2cpu.posX <= ballPong.posX - p2cpu.width / 4) //moves right if ball is right of the paddles center (XX = center) [__XX__]
-                p2cpu.posX += ballPong.speed / (1..2).random() //the movement speed mirrors the balls speed but randomly slows down the half
+                p2cpu.posX += ballPong.speed / (1..2).random() //the movement speed mirrors the balls speed but randomly slows down to half
             else if (p2cpu.posX >= ballPong.posX + p2cpu.width / 4) //moves left if ball is left of the paddles center (XX = center) [__XX__]
                 p2cpu.posX -= ballPong.speed / (1..2).random()
         } else {
@@ -262,7 +326,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
                 && abs(p2cpu.posX - screenWidth / 2) <= 5f
                 && abs(ballPong.posX - screenWidth / 2) <= 5f
             ) {
-                GameSounds.playSoundWall()
+                GameSounds.playWall()
                 ballPong.letGo = true
 //                ballA.forEach {
 //                    if (it.p1Scored)

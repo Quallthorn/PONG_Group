@@ -24,7 +24,11 @@ class PaddlePong(var isCpu: Boolean): BasicPaddle() {
         var absoluteScore = 0
     }
 
-
+    /**
+     * checks position of paddle periodically based on frameCheck int
+     *
+     * used when checking player movement speed
+     */
     fun update(){
         if (currentFrame == frameCheck){
             posXOld = posX
@@ -34,6 +38,9 @@ class PaddlePong(var isCpu: Boolean): BasicPaddle() {
             currentFrame++
     }
 
+    /**
+     * draws paddle to canvas declared in GameSettings
+     */
     fun draw (){
         curCanvas.drawRect(
             posX - width,

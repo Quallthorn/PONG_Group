@@ -68,9 +68,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
                 || sqrt((ball.posY - posY).pow(2) + (ball.posX - posX).pow(2)) <= ball.radius
                 || sqrt((ball.posY - posY - height).pow(2) + (ball.posX - posX).pow(2)) <= ball.radius
             ) {
-                if (!ball.checkCollision) {
-                    snuckPassed(ball)
-                }
+                snuckPassed(ball)
                 if (breakReady && !holdOn)
                     ballCollide(ball)
             } else
@@ -177,7 +175,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
      * @param ball ball in play
      */
     private fun ballCollide(ball: BallBreakout) {
-        GameSounds.playSoundBrick()
+        GameSounds.playBrick()
         ball.checkCollision = false
         breakReady = false
         dT = abs(ball.posY - posY)

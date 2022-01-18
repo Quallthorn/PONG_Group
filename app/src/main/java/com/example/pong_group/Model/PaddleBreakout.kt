@@ -17,6 +17,9 @@ class PaddleBreakout: BasicPaddle() {
         height = 25f
     }
 
+    /**
+     * draws paddle to canvas declared in GameSettings
+     */
     fun draw (){
         curCanvas.drawRect(
             posX - width,
@@ -27,6 +30,11 @@ class PaddleBreakout: BasicPaddle() {
         )
     }
 
+    /**
+     * halves the size of the paddle
+     *
+     * used only in classic mode
+     */
     fun halfSize(){
         width *= 0.5f
     }

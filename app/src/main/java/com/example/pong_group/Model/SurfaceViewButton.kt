@@ -3,30 +3,36 @@ package com.example.pong_group.views
 import android.graphics.RectF
 
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Matrix
+import com.example.pong_group.Services.GameSettings.curCanvas
 
 
-class SurfaceViewButton(val bg: Bitmap) {
+class SurfaceViewButton(private val bg: Bitmap) {
 
-    var btn_matrix: Matrix = Matrix()
+    var btnMatrix: Matrix = Matrix()
 
-    var btn_rect: RectF? = null
+    var btnRect: RectF? = null
     var width = 0f
 
     init {
-        btn_rect = RectF(0f, 0f, bg.width.toFloat(), bg.height.toFloat())
+        btnRect = RectF(0f, 0f, bg.width.toFloat(), bg.height.toFloat())
         width = bg.width.toFloat()
     }
 
+    /**
+     * declares positioning for button
+     */
     fun setPosition(x: Float, y: Float) {
         val drawableRect = RectF(0f,0f, bg.width.toFloat(), bg.height.toFloat())
-        btn_matrix.setRectToRect(drawableRect, btn_rect, Matrix.ScaleToFit.FILL)
-        btn_matrix.setTranslate(x, y)
-        btn_matrix.mapRect(btn_rect)
+        btnMatrix.setRectToRect(drawableRect, btnRect, Matrix.ScaleToFit.FILL)
+        btnMatrix.setTranslate(x, y)
+        btnMatrix.mapRect(btnRect)
     }
 
-    fun draw(canvas: Canvas) {
-       canvas.drawBitmap(bg, btn_matrix, null)
+    /**
+     * draws paddle to canvas declared in GameSettings
+     */
+    fun draw() {
+        curCanvas.drawBitmap(bg, btnMatrix, null)
     }
 }

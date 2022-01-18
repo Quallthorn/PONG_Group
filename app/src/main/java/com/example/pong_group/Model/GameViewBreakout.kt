@@ -1,5 +1,6 @@
 package com.example.pong_group.Model
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.TypedArray
@@ -225,19 +226,29 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         }
     }
 
+    /**
+     * creates a thread the game will be run in
+     */
     override fun surfaceCreated(p0: SurfaceHolder) {
         if (thread.state == Thread.State.TERMINATED) {
             thread = GameThread(holder, this)
         }
         thread.running = true
         thread.start()
+        GameSettings.scoreBreakout = 0
     }
 
+    /**
+     * measures screen dimensions and calls setup()
+     */
     override fun surfaceChanged(p0: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
         GameSettings.setScreenDimen(p2.toFloat(), p3.toFloat())
         setup()
     }
 
+    /**
+     * closes thread when game is exited
+     */
     override fun surfaceDestroyed(p0: SurfaceHolder) {
         while (thread.isAlive) {
             try {
@@ -249,11 +260,17 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         }
     }
 
+    /**
+     * keeps track of finger inputs from user
+     *
+     * if player lost a life ball will be "held" by paddle until player releases finger from screen
+     */
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null) {
             player.posX = event.x
             if (event.action == MotionEvent.ACTION_UP){
-                GameSounds.playSoundWall()
+                GameSounds.playWall()
                 ball.letGo = true
             }
         }
@@ -262,7 +279,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         val y = event?.y
 
         if (isButtonClickable) {
-            if (restartButton.btn_rect!!.contains(x!!, y!!)) {
+            if (restartButton.btnRect!!.contains(x!!, y!!)) {
                 isButtonClickable = false
                 if (level == 1 && !outOfLives || infinite && !outOfLives) {
                     level += 1
@@ -282,6 +299,9 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         return true
     }
 
+    /**
+     * checks if user completed the game, lost or advanced to the next level
+     */
     @RequiresApi(Build.VERSION_CODES.M)
     fun checkEndOfTheGame() {
         //game over layout
@@ -345,14 +365,21 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
     }
 
+    /**
+     * creates a button on canvas
+     */
     private fun setupButton(icon: Bitmap, textViewHeight: Int) {
         restartButton = SurfaceViewButton(icon)
         val restartButtonX = (curCanvas.width / 2).toFloat() - restartButton.width / 2
         val restartButtonY = (curCanvas.height / 2).toFloat() + textViewHeight / 2 + 40f
         restartButton.setPosition(restartButtonX, restartButtonY)
-        restartButton.draw(curCanvas)
+        restartButton.draw()
     }
 
+    /**
+     * creates text on canvas displaying:
+     * lives, level, score and high score
+     */
     @RequiresApi(Build.VERSION_CODES.M)
     private fun valuesCounter() {
         //Left Side
@@ -435,11 +462,17 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     }
 
 
+    /**
+     * currently not used but sets pause bool to false when returning to thread
+     */
     private fun resumeThread() {
         pause = false
         surfaceCreated(holder)
     }
 
+    /**
+     * currently not used but sets pause bool to true when thread is paused
+     */
     private fun pauseThread() {
         pause = true
     }

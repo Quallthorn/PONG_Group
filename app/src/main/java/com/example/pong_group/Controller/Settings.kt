@@ -34,20 +34,22 @@ class Settings : AppCompatActivity() {
         //turn on/off sound
         muteSwitch.setOnClickListener {
             prefs.isGameMute = muteSwitch.isChecked
-            GameSounds.playSoundWall()
+            GameSounds.playClick()
         }
 
         //change color scheme for paddle and ball
         colorSwitch.setOnClickListener {
-           prefs.isRainbowColor = colorSwitch.isChecked
+            prefs.isRainbowColor = colorSwitch.isChecked
+            GameSounds.playClick()
         }
 
-        //set max point to win  for PONG game
+        //set max point to win for PONG game
         bestOfText.setOnKeyListener(object : View.OnKeyListener {
             override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
                 if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER
                 ) {
-                    if (bestOfText.text.isNotBlank()){
+                    GameSounds.playClick()
+                    if (bestOfText.text.isNotBlank()) {
                         prefs.firstToPongPrefs = bestOfText.text.toString().toInt()
                     }
                     return true
@@ -56,25 +58,27 @@ class Settings : AppCompatActivity() {
             }
         })
 
-        //change player between himan and cpu
+        //change player between human and cpu
         opponentSwitch.setOnClickListener {
             prefs.isP2Human = opponentSwitch.isChecked
+            GameSounds.playClick()
         }
 
-        //switch breakout between classic interface and standart
+        //switch breakout between classic interface and standard
         versionSwitch.setOnClickListener {
             prefs.isClassicInterface = versionSwitch.isChecked
+            GameSounds.playClick()
         }
 
         //switch between two levels game and infinite levels
         levelSwitch.setOnClickListener {
-            prefs.isInfiniteLevels= levelSwitch.isChecked
-            if (levelSwitch.isChecked){
+            prefs.isInfiniteLevels = levelSwitch.isChecked
+            GameSounds.playClick()
+            if (levelSwitch.isChecked) {
                 versionSwitch.isEnabled = false
                 prefs.isClassicInterface = !levelSwitch.isChecked
                 versionSwitch.isChecked = !levelSwitch.isChecked
-            }
-            else
+            } else
                 versionSwitch.isEnabled = true
         }
     }

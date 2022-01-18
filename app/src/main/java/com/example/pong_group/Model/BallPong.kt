@@ -6,7 +6,7 @@ import com.example.pong_group.Services.GameSettings.anglesCount
 import com.example.pong_group.Services.GameSettings.ballMaxSpeed
 import com.example.pong_group.Services.GameSettings.gameOver
 import com.example.pong_group.Services.GameSounds
-import com.example.pong_group.Services.GameSounds.playSoundWall
+import com.example.pong_group.Services.GameSounds.playWall
 import kotlin.math.abs
 import kotlin.math.sqrt
 
@@ -53,29 +53,70 @@ class BallPong : BasicBall() {
      */
     private fun checkWalls(){
         if (posX >= GameSettings.screenWidth - radius) {
-            playSoundWall()
+            playWall()
+            posX = GameSettings.screenWidth - radius - 1f
             if (dirY > 0) {
-                dirY += ((0..2).random()) / 10f
-                if (dirY > 1 || dirY < 0)
-                    dirY = 0.5f
+                addRandomDirYPositive()
             } else {
-                dirY -= ((0..2).random()) / 10f
-                if (dirY < -1 || dirY > 0)
-                    dirY = -0.5f
+                addRandomDirYNegative()
             }
             dirX = -sqrt(1 - dirY * dirY)
         } else if (posX <= radius) {
-            playSoundWall()
+            posX = radius + 1f
+            playWall()
             if (dirY > 0) {
-                dirY += ((0..2).random()) / 10f
-                if (dirY > 1 || dirY < 0)
-                    dirY = 0.5f
+                addRandomDirYPositive()
             } else {
-                dirY -= ((0..2).random()) / 10f
-                if (dirY < -1 || dirY > 0)
-                    dirY = -0.5f
+                addRandomDirYNegative()
             }
             dirX = sqrt(1 - dirY * dirY)
+        }
+    }
+
+    /**
+     * adds a random vertical direction when hitting wall
+     *
+     * called by checkWalls()
+     */
+    private fun addRandomDirYPositive(){
+        dirY += ((0..2).random()) / 10f
+        if (dirY > 1 || dirY < 0)
+            dirY = 0.5f
+    }
+
+    /**
+     * subtracts a random vertical direction when hitting wall
+     *
+     * called by checkWalls()
+     */
+    private fun addRandomDirYNegative(){
+        dirY -= ((0..2).random()) / 10f
+        if (dirY < -1 || dirY > 0)
+            dirY = -0.5f
+    }
+
+    /**
+     * checks if ball hits upper or lower edge
+     *
+     * called by update()
+     *
+     * @param player paddle for player 1 (player 2 position can be figured out by player 1 values)
+     */
+    private fun checkPoint(player: PaddlePong){
+        if (posY >= GameSettings.screenHeight - radius) {
+            dirY = -1f
+            dirX = 0f
+            p1Scored = false
+            posY = GameSettings.screenHeight - (player.posY + radius)
+            resetBall(false)
+            GameSounds.playBrick()
+        } else if (posY <= radius) {
+            dirY = 1f
+            dirX = 0f
+            p1Scored = true
+            posY = player.posY + player.height + radius
+            resetBall(true)
+            GameSounds.playBrick()
         }
     }
 
@@ -93,6 +134,7 @@ class BallPong : BasicBall() {
             && posX + radius >= player.posX - player.width
             && posX - radius <= player.posX + player.width
         ) {
+            posY = GameSettings.screenHeight - player.posY - radius - 1f
             bouncePlayer(player)
         }
 
@@ -101,35 +143,11 @@ class BallPong : BasicBall() {
             && posX >= cpuP2.posX - player.width
             && posX <= cpuP2.posX + player.width
         ) {
+            posY = player.posY + player.height + radius + 1f
             if (prefs.isP2Human)
                 bouncePlayer(cpuP2)
             else
                 bounceCPU(cpuP2.posX, cpuP2.width)
-        }
-    }
-
-    /**
-     * checks if ball hits upper or lower edge
-     *
-     * called by update()
-     *
-     * @param player paddle for player 1 (player 2 position can be figured out by player 1 values)
-     */
-    private fun checkPoint(player: PaddlePong){
-        if (posY >= GameSettings.screenHeight - radius) {
-            dirY = -1f
-            dirX = 0f
-            p1Scored = false
-            posY = GameSettings.screenHeight - (player.posY + radius)
-            resetBall(false)
-            GameSounds.playSoundBrick()
-        } else if (posY <= radius) {
-            dirY = 1f
-            dirX = 0f
-            p1Scored = true
-            posY = player.posY + player.height + radius
-            resetBall(true)
-            GameSounds.playSoundBrick()
         }
     }
 
@@ -147,6 +165,8 @@ class BallPong : BasicBall() {
      * sends ball off in a direction according to where ball hit paddle
      * edges = more horizontal movement
      * center = more vertical movement
+     *
+     * adds extra speed if hits corner and paddle moves fast
      *
      * called by checkPaddle()
      *
@@ -185,7 +205,7 @@ class BallPong : BasicBall() {
                 }
             }
         }
-        playSoundWall()
+        playWall()
         changeColor()
         dirY = -sqrt(1 - dirX * dirX)
     }
@@ -196,6 +216,7 @@ class BallPong : BasicBall() {
      * edges = more horizontal movement
      * center = more vertical movement
      * unlike bouncePlayer(), ball does not gain speed if it hits the paddles corner
+     * because cpu is always moving
      *
      * called by checkPaddle()
      *
@@ -220,7 +241,7 @@ class BallPong : BasicBall() {
                 }
             }
         }
-        playSoundWall()
+        playWall()
         changeColor()
         dirY = sqrt(1 - dirX * dirX)
 
