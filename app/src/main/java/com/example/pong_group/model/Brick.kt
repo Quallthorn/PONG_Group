@@ -1,11 +1,12 @@
-package com.example.pong_group.Model
+package com.example.pong_group.model
 
 import android.graphics.Paint
-import com.example.pong_group.Controller.prefs
-import com.example.pong_group.Model.GameViewBreakout.Companion.breakReady
-import com.example.pong_group.Services.GameSettings.curCanvas
-import com.example.pong_group.Services.GameSounds
-import com.example.pong_group.Services.SharedBreakout
+import com.example.pong_group.controller.prefs
+import com.example.pong_group.model.GameViewBreakout.Companion.breakReady
+import com.example.pong_group.services.GameSettings.curCanvas
+import com.example.pong_group.services.GameSounds.playSound
+import com.example.pong_group.services.SharedBreakout
+import com.example.pong_group.services.Sounds.*
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -175,7 +176,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
      * @param ball ball in play
      */
     private fun ballCollide(ball: BallBreakout) {
-        GameSounds.playBrick()
+        playSound(BRICK)
         ball.checkCollision = false
         breakReady = false
         dT = abs(ball.posY - posY)

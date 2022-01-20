@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/star_background_black"
-        tools:context=".Controller.Settings">
+        tools:context=".controller.Settings">
 
         <View
             android:id="@+id/guideline"
@@ -111,7 +111,7 @@
             android:layout_marginTop="11dp"
             android:background="@color/clear"
             android:fontFamily="@font/pong"
-            android:hint="0"
+            android:hint="@string/_0"
             android:inputType="number"
             android:maxLength="2"
             android:maxLines="1"
@@ -120,7 +120,8 @@
             app:layout_constraintBottom_toBottomOf="@+id/bestOfText"
             app:layout_constraintEnd_toEndOf="@id/guideline"
             app:layout_constraintStart_toStartOf="@id/guideline"
-            app:layout_constraintTop_toTopOf="@+id/bestOfText" />
+            app:layout_constraintTop_toTopOf="@+id/bestOfText"
+            android:autofillHints="_0" />
 
         <TextView
             android:id="@+id/opponentText"

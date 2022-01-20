@@ -4,7 +4,7 @@ import android.graphics.RectF
 
 import android.graphics.Bitmap
 import android.graphics.Matrix
-import com.example.pong_group.Services.GameSettings.curCanvas
+import com.example.pong_group.services.GameSettings.curCanvas
 
 
 class SurfaceViewButton(private val bg: Bitmap) {

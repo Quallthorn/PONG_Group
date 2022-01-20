@@ -1,8 +1,8 @@
-package com.example.pong_group.Model
+package com.example.pong_group.model
 
-import com.example.pong_group.Services.GameSettings
-import com.example.pong_group.Services.GameSettings.curCanvas
-import com.example.pong_group.Services.NumberPrinter
+import com.example.pong_group.services.GameSettings
+import com.example.pong_group.services.GameSettings.curCanvas
+import com.example.pong_group.services.NumberPrinter
 
 class PaddlePong(var isCpu: Boolean): BasicPaddle() {
 

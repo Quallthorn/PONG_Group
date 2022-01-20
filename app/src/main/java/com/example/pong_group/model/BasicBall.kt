@@ -1,6 +1,6 @@
-package com.example.pong_group.Model
+package com.example.pong_group.model
 
-import com.example.pong_group.Services.GameSettings
+import com.example.pong_group.services.GameSettings
 import kotlin.math.abs
 import kotlin.math.sqrt
 

@@ -1,9 +1,9 @@
-package com.example.pong_group.Services
+package com.example.pong_group.services
 
 import android.graphics.Canvas
 import android.graphics.Paint
-import com.example.pong_group.Controller.App
-import com.example.pong_group.Controller.prefs
+import com.example.pong_group.controller.App
+import com.example.pong_group.controller.prefs
 import com.example.pong_group.R
 import java.util.*
 
@@ -36,7 +36,7 @@ object GameSettings {
     var highScoreBreakoutClassic = 0
     var highScoreBreakoutInfinite = 0
 
-    //func for getting rundom color from color array
+    //func for getting random color from color array
     fun getRandomColorFromArray(): Int {
         val r = Random()
         val randomIndex = r.nextInt(colorArray.length())
@@ -52,7 +52,7 @@ object GameSettings {
         speedCoefficient = height / baseHeightDimen
     }
 
-    //keep high scroes based on game type
+    //keep high scores based on game type
     //todo: can we trim this func?
     fun updateScoreBreakout() {
         if (scoreBreakout > when {

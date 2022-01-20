@@ -1,14 +1,13 @@
-package com.example.pong_group.Controller
+package com.example.pong_group.controller
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
 import com.example.pong_group.R
-import com.example.pong_group.Services.GameSettings
-import com.example.pong_group.Services.GameSounds
-import com.example.pong_group.Services.GameSounds.createSoundPool
+import com.example.pong_group.services.GameSounds.createSoundPool
+import com.example.pong_group.services.GameSounds.playSound
+import com.example.pong_group.services.Sounds.*
 
 
 //Main activity controller for navigation between activities
@@ -32,22 +31,22 @@ class MainActivity : AppCompatActivity() {
         settings = findViewById(R.id.settings_button)
 
         pong.setOnClickListener{
-            GameSounds.playClick()
+            playSound(CLICK)
             Intent(this, GamePong::class.java).apply { startActivity(this) }
         }
 
         breakout.setOnClickListener{
-            GameSounds.playClick()
+            playSound(CLICK)
             Intent(this, GameBreakout::class.java).apply { startActivity(this) }
         }
 
         highscore.setOnClickListener{
-            GameSounds.playClick()
+            playSound(CLICK)
             Intent(this, HighScore::class.java).apply { startActivity(this) }
         }
 
         settings.setOnClickListener {
-            GameSounds.playClick()
+            playSound(CLICK)
             Intent(this, Settings::class.java).apply { startActivity(this) }
         }
     }
@@ -63,6 +62,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        GameSounds.playClick()
+        playSound(CLICK)
     }
 }

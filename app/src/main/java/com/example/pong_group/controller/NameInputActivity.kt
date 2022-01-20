@@ -1,4 +1,4 @@
-package com.example.pong_group.Controller
+package com.example.pong_group.controller
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -6,12 +6,13 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.cardview.widget.CardView
-import com.example.pong_group.Model.GameType
-import com.example.pong_group.Model.ScoresRealm
+import com.example.pong_group.model.GameType
+import com.example.pong_group.model.ScoresRealm
 import com.example.pong_group.R
-import com.example.pong_group.Services.GameSettings.savedScore
-import com.example.pong_group.Services.GameSounds.playClick
-import com.example.pong_group.Services.SharedBreakout
+import com.example.pong_group.services.GameSettings.savedScore
+import com.example.pong_group.services.GameSounds.playSound
+import com.example.pong_group.services.SharedBreakout
+import com.example.pong_group.services.Sounds.*
 
 // activity for fixing result, players name and send result to database
 class NameInputActivity : AppCompatActivity() {
@@ -51,7 +52,7 @@ class NameInputActivity : AppCompatActivity() {
         //send scores to database and transition to highscores
         submitButton.setOnClickListener {
             if (nameInitials.text.length == 3) {
-                playClick()
+                playSound(CLICK)
                 when {
                     prefs.isClassicInterface ->
                         ScoresRealm.addScores(
@@ -82,7 +83,7 @@ class NameInputActivity : AppCompatActivity() {
 
         //cancel button to return back to game
         cancelButton.setOnClickListener {
-            playClick()
+            playSound(CLICK)
             backToMainMenu()
             resetScore()
         }

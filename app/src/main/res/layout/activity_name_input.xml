@@ -7,7 +7,7 @@
     android:background="@color/space"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    tools:context=".Controller.NameInputActivity">
+    tools:context=".controller.NameInputActivity">
 
     <TextView
         android:layout_width="match_parent"

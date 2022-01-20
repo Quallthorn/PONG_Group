@@ -1,12 +1,13 @@
-package com.example.pong_group.Services
+package com.example.pong_group.services
 
-import com.example.pong_group.Services.GameSettings.curCanvas
-import com.example.pong_group.Services.GameSettings.screenWidth
-import com.example.pong_group.Services.GameSettings.screenHeight
+import com.example.pong_group.services.GameSettings.curCanvas
+import com.example.pong_group.services.GameSettings.screenWidth
+import com.example.pong_group.services.GameSettings.screenHeight
 
-
+//Special singleton class for drawing numbers and signs inside of pong game  direct to canvas
 object NumberPrinter {
 
+    //numbers setting of weight and height
     const val numberW = 20f
     const val numberWL = 90f
     const val numberH = 180f
@@ -27,7 +28,7 @@ object NumberPrinter {
 
     }
 
-    fun draw(digit: Int, startX: Float, startY: Float) {
+    private fun draw(digit: Int, startX: Float, startY: Float) {
         when (digit) {
             0 -> drawZero(startX, startY)
             1 -> drawOne(startX, startY)
@@ -43,6 +44,8 @@ object NumberPrinter {
         }
     }
 
+
+    //draw notations if someone of players win
     fun drawP1Wins() {
         posXWin = (screenWidth - numberW) / 2 - numberWL
         posYWin = startYWinsText()

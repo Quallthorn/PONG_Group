@@ -1,9 +1,10 @@
-package com.example.pong_group.Controller
+package com.example.pong_group.controller
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.pong_group.Model.GameViewBreakout
-import com.example.pong_group.Services.GameSounds
+import com.example.pong_group.model.GameViewBreakout
+import com.example.pong_group.services.GameSounds.playSound
+import com.example.pong_group.services.Sounds.*
 
 //container for displaying surface view for breakout game
 class GameBreakout : AppCompatActivity() {
@@ -16,7 +17,7 @@ class GameBreakout : AppCompatActivity() {
     //stop running tread when back button pressed
     override fun onBackPressed() {
         super.onBackPressed()
-        GameSounds.playClick()
+        playSound(CLICK)
         GameViewBreakout.thread.running = false
         GameViewBreakout.thread.join()
     }

@@ -1,18 +1,18 @@
-package com.example.pong_group.Model
+package com.example.pong_group.model
 
-import com.example.pong_group.Controller.App
-import com.example.pong_group.Controller.prefs
-import com.example.pong_group.Model.GameViewBreakout.Companion.breakReady
+import com.example.pong_group.controller.App
+import com.example.pong_group.controller.prefs
+import com.example.pong_group.model.GameViewBreakout.Companion.breakReady
 
-import com.example.pong_group.Model.GameViewBreakout.Companion.lives
-import com.example.pong_group.Model.GameViewBreakout.Companion.outOfLives
+import com.example.pong_group.model.GameViewBreakout.Companion.lives
+import com.example.pong_group.model.GameViewBreakout.Companion.outOfLives
 import com.example.pong_group.R
-import com.example.pong_group.Services.GameSettings
-import com.example.pong_group.Services.GameSettings.anglesCount
-import com.example.pong_group.Services.GameSettings.ballMaxSpeed
-import com.example.pong_group.Services.GameSounds.playLifeLost
-import com.example.pong_group.Services.GameSounds.playWall
-import com.example.pong_group.Services.SharedBreakout
+import com.example.pong_group.services.GameSettings
+import com.example.pong_group.services.GameSettings.anglesCount
+import com.example.pong_group.services.GameSettings.ballMaxSpeed
+import com.example.pong_group.services.GameSounds.playSound
+import com.example.pong_group.services.SharedBreakout
+import com.example.pong_group.services.Sounds.*
 import kotlin.math.sqrt
 
 class BallBreakout : BasicBall() {
@@ -56,20 +56,20 @@ class BallBreakout : BasicBall() {
      */
     private fun checkEdges(player: PaddleBreakout) {
         if (posX >= GameSettings.screenWidth - radius) {
-            playWall()
+            playSound(WALL)
             dirNegativeX()
         } else if (posX <= radius) {
-            playWall()
+            playSound(WALL)
             dirPositiveX()
         }
         if (posY >= GameSettings.screenHeight - radius) {
             centerBall(player.posX, player.posY)
             dirNegativeY()
-            playLifeLost()
+            playSound(LIFE)
             lives -= 1
             letGo = false
         } else if (posY <= radius + GameViewBreakout.ballEdgeTop) {
-            playWall()
+            playSound(WALL)
             dirPositiveY()
             if (prefs.isClassicInterface && !SharedBreakout.upperWallHit) {
                 player.halfSize()
@@ -105,7 +105,7 @@ class BallBreakout : BasicBall() {
         if (prefs.isClassicInterface)
             speed = SharedBreakout.ballSpeed
         dirY = -sqrt((1 - dirX * dirX))
-        playWall()
+        playSound(WALL)
         changeColor()
     }
 
