@@ -30,4 +30,6 @@
     <string name="score_view">SCORE</string>
     <string name="cancel">CANCEL</string>
     <string name="submit">SUBMIT</string>
+    <string name="backgroundImage">Background image</string>
+    <string name="_0">0</string>
 </resources>
