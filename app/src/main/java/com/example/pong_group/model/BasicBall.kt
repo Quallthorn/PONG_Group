@@ -8,7 +8,7 @@ open class BasicBall {
     var radius = 7f
     var posX = GameSettings.screenWidth * 0.5f
     var posY = GameSettings.screenHeight * 0.5f
-    var dirX = (-100..100).random() / 100f
+    var dirX = (-50..50).random() / 100f
     var dirY = sqrt((1 - dirX * dirX))
     var paint = GameSettings.curPaint
     var speed = 10f

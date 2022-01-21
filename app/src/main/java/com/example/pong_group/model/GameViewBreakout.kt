@@ -56,7 +56,6 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         private const val textSize = 24F
         const val ballEdgeTop = textSize * 5f
         var totalCountOfBricks = 0
-
         var outOfLives = false
         var lives = 0
         var breakReady = true
@@ -73,7 +72,8 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks_classic)
         } else {
             if (infinite)
-                GameSettings.highScoreBreakoutInfinite = ScoresRealm.findHighestScore(GameType.INFINITE)
+                GameSettings.highScoreBreakoutInfinite =
+                    ScoresRealm.findHighestScore(GameType.INFINITE)
             else
                 GameSettings.highScoreBreakout = ScoresRealm.findHighestScore(GameType.BREAKOUT)
             colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks)
@@ -82,9 +82,11 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             SharedBreakout.brickCountY = 6
         }
 
+        valuesCounter()
         holder.addCallback(this)
         thread = GameThread(holder, this)
 
+        GameSounds.alternate = false
         GameSettings.scoreBreakout = 0
         SharedBreakout.highScoreBroken = false
         SharedBreakout.gameSetUpBreakout()
@@ -92,7 +94,6 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         ball = BallBreakout()
         ball.speed = SharedBreakout.ballSpeedStart
         changeColors()
-
     }
 
     /**
@@ -100,9 +101,13 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
      */
     private fun setup() {
         ball.letGo = false
-        SharedBreakout.bricks.clear()
         basedOnScreenSize()
-        createBricks()
+        if (level == 1 || level == 2 && !classic){
+            SharedBreakout.bricks.clear()
+            createBricks()
+        }
+        else
+            resetBricks()
         ball.centerBall(player.posX, player.posY)
         outOfLives = false
     }
@@ -143,7 +148,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     /**
      * determines values for object dimensions according to size of screen
      */
-    private fun basedOnScreenSize(){
+    private fun basedOnScreenSize() {
         gridStartY = screenHeight / 20f + ballEdgeTop
         gridPosX = gridSqueezeX
         gridPosY = gridStartY
@@ -156,7 +161,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
 
         ball.radius = screenHeight / 185f
 
-        if (classic){
+        if (classic) {
             brickH = screenHeight / 98f
             gridSpacingX = screenHeight / 392f
             gridSpacingY = screenHeight / 392f
@@ -170,7 +175,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
      * creates an array of bricks
      * the point of the game will be to destroy these bricks
      */
-    private fun createBricks(){
+    private fun createBricks() {
         var colorNumber = 1
         var pointBase = SharedBreakout.brickCountY
         if (level > 1 || classic)
@@ -183,15 +188,9 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             //set position
             val newBrick = Brick(brickW, brickH, gridPosX, gridPosY, pointBase, i)
 
-            //make top and bottom rows hit-able
-            if (i < SharedBreakout.brickCountX)
-                newBrick.exT = true
-            else if (i >= SharedBreakout.brickCountX * SharedBreakout.brickCountY - SharedBreakout.brickCountX)
-                newBrick.exB = true
-
             //set color
             val colorInt = colorArray.getColor(colorNumber, 0)
-            newBrick.paint.color = colorInt
+            newBrick.setColor(colorInt)
 
             //change position for next brick
             gridPosX += (gridSpacingX + brickW)
@@ -211,6 +210,29 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
                     pointBase--
             }
             SharedBreakout.bricks.add(newBrick)
+        }
+        breakableTopAndBottom()
+    }
+
+    /**
+     * resets bricks fore a new level
+     */
+    private fun resetBricks() {
+        for (i in 0 until (SharedBreakout.brickCountX * SharedBreakout.brickCountY)){
+            SharedBreakout.bricks[i].reset()
+        }
+        breakableTopAndBottom()
+    }
+
+    /**
+     * makes top and bottom rows of bricks hit-able
+     */
+    private fun breakableTopAndBottom() {
+        for (i in 0 until (SharedBreakout.brickCountX * SharedBreakout.brickCountY)) {
+            if (i < SharedBreakout.brickCountX)
+                SharedBreakout.bricks[i].exT = true
+            else if (i >= SharedBreakout.brickCountX * SharedBreakout.brickCountY - SharedBreakout.brickCountX)
+                SharedBreakout.bricks[i].exB = true
         }
     }
 
@@ -233,7 +255,6 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         }
         thread.running = true
         thread.start()
-        GameSettings.scoreBreakout = 0
     }
 
     /**
@@ -267,7 +288,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null) {
             player.posX = event.x
-            if (event.action == MotionEvent.ACTION_UP){
+            if (event.action == MotionEvent.ACTION_UP) {
                 playSound(Sounds.WALL)
                 ball.letGo = true
             }
@@ -377,6 +398,8 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     /**
      * creates text on canvas displaying:
      * lives, level, score and high score
+     *
+     * called by draw()
      */
     @RequiresApi(Build.VERSION_CODES.M)
     private fun valuesCounter() {
@@ -406,13 +429,12 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         livesLevelLayout.layout(0, 0, curCanvas.width, curCanvas.height)
         livesLevelLayout.draw(curCanvas)
 
-
         //Right Side
         val scoresLayout = LinearLayout(App.instance)
         scoresLayout.orientation = LinearLayout.VERTICAL
 
         val highScoreText = TextView(App.instance)
-        if (SharedBreakout.highScoreBroken){
+        if (SharedBreakout.highScoreBroken) {
             highScoreText.setTextColor(
                 App.instance.resources.getColor(
                     R.color.yellow,
@@ -421,8 +443,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             )
             highScoreText.text =
                 context.getString(R.string.high_scores_text, GameSettings.scoreBreakout)
-        }
-        else{
+        } else {
             highScoreText.setTextColor(
                 App.instance.resources.getColor(
                     R.color.white,
@@ -431,9 +452,15 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
             )
             when {
                 classic -> highScoreText.text =
-                    context.getString(R.string.high_scores_text, GameSettings.highScoreBreakoutClassic)
+                    context.getString(
+                        R.string.high_scores_text,
+                        GameSettings.highScoreBreakoutClassic
+                    )
                 infinite -> highScoreText.text =
-                    context.getString(R.string.high_scores_text, GameSettings.highScoreBreakoutInfinite)
+                    context.getString(
+                        R.string.high_scores_text,
+                        GameSettings.highScoreBreakoutInfinite
+                    )
                 else -> highScoreText.text =
                     context.getString(R.string.high_scores_text, GameSettings.highScoreBreakout)
             }

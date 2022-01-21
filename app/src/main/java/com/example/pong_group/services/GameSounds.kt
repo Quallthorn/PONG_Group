@@ -23,9 +23,9 @@ object GameSounds {
     private var lost: Int = 0
     private var click: Int = 0
 
-    private var alternate = true
+    var alternate = false
 
-    //Creating sound pool for can run multiply sounds  simultaneously
+    //Creating sound pool for can run multiply sounds simultaneously
     fun createSoundPool(context: Context) {
             val audioAttributes = AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)

@@ -2,7 +2,6 @@ package com.example.pong_group.model
 
 import android.content.Context
 import android.graphics.Color
-import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
@@ -15,6 +14,7 @@ import com.example.pong_group.services.GameSettings.curCanvas
 import com.example.pong_group.services.GameSettings.gameOver
 import com.example.pong_group.services.GameSettings.screenHeight
 import com.example.pong_group.services.GameSettings.screenWidth
+import com.example.pong_group.services.GameSounds
 import com.example.pong_group.services.GameSounds.playSound
 import kotlin.math.sqrt
 import com.example.pong_group.services.NumberPrinter
@@ -48,6 +48,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         PaddlePong.cpuScore = 0
         PaddlePong.playerScore = 0
         PaddlePong.absoluteScore = 0
+        GameSounds.alternate = false
 
         mHolder?.addCallback(this)
 

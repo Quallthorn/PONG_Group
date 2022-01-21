@@ -15,6 +15,7 @@ class BallPong : BasicBall() {
     private val startSpeed = 10f * GameSettings.speedCoefficient
     var p1Scored = false
     var playersReady = false
+    private val speedIncrease = 0.7f
 
     /**
      * updates ball position
@@ -100,7 +101,7 @@ class BallPong : BasicBall() {
      *
      * called by update()
      *
-     * @param player paddle for player 1 (player 2 position can be figured out by player 1 values)
+     * @param player paddle for player 1 (player 2 position can be figured out with player 1 values)
      */
     private fun checkPoint(player: PaddlePong){
         if (posY >= GameSettings.screenHeight - radius) {
@@ -135,7 +136,7 @@ class BallPong : BasicBall() {
             && posX - radius <= player.posX + player.width
         ) {
             posY = GameSettings.screenHeight - player.posY - radius - 1f
-            bouncePlayer(player)
+            bouncePlayer(player, isP1 = true)
         }
 
         if (posY - radius <= player.posY + player.height
@@ -145,7 +146,7 @@ class BallPong : BasicBall() {
         ) {
             posY = player.posY + player.height + radius + 1f
             if (prefs.isP2Human)
-                bouncePlayer(cpuP2)
+                bouncePlayer(cpuP2, isP1 = false)
             else
                 bounceCPU(cpuP2.posX, cpuP2.width)
         }
@@ -172,18 +173,18 @@ class BallPong : BasicBall() {
      *
      * @param player paddle for player (1 or 2)
      */
-    private fun bouncePlayer(player: PaddlePong) {
+    private fun bouncePlayer(player: PaddlePong, isP1: Boolean) {
         when {
             posX < player.posX - player.width -> {
                 dirX = -0.9f
                 if (speed < ballMaxSpeed && abs(player.posX - player.posXOld) > GameSettings.screenWidth / 54) {
-                    speed += 5f
+                    speed += speedIncrease * 5f
                 }
             }
             posX > player.posX + player.width -> {
                 dirX = 0.9f
                 if (speed < ballMaxSpeed && abs(player.posX - player.posXOld) > GameSettings.screenWidth / 54) {
-                    speed += 5f
+                    speed += speedIncrease * 5f
                 }
             }
             else -> {
@@ -196,9 +197,9 @@ class BallPong : BasicBall() {
                 }
                 if (speed < ballMaxSpeed) {
                     speed += if (abs(player.posX - player.posXOld) > GameSettings.screenWidth / 54)
-                        5f
+                        speedIncrease * 5f
                     else
-                        0.1f
+                        speedIncrease
 
                     if (speed > ballMaxSpeed)
                         speed = ballMaxSpeed
@@ -207,7 +208,10 @@ class BallPong : BasicBall() {
         }
         playSound(WALL)
         changeColor()
-        dirY = -sqrt(1 - dirX * dirX)
+        dirY = if (isP1)
+            -sqrt(1 - dirX * dirX)
+        else
+            sqrt(1 - dirX * dirX)
     }
 
 

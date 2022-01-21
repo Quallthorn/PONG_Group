@@ -19,7 +19,8 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
     private var height = 0f
     private var pointBase = 0
     private var nr = 0
-    var paint = Paint()
+    private var paint = Paint()
+    private var resetPaint = Paint()
 
     //d -> delta/difference
     private var dT = 0f
@@ -47,6 +48,11 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
         nr = n
     }
 
+    fun setColor(color: Int){
+        paint.color = color
+        resetPaint.color = color
+    }
+
     /**
      * checks if ball hits brick
      *
@@ -69,7 +75,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
                 || sqrt((ball.posY - posY).pow(2) + (ball.posX - posX).pow(2)) <= ball.radius
                 || sqrt((ball.posY - posY - height).pow(2) + (ball.posX - posX).pow(2)) <= ball.radius
             ) {
-                snuckPassed(ball)
+                checkSnuckPassed(ball)
                 if (breakReady && !holdOn)
                     ballCollide(ball)
             } else
@@ -96,27 +102,54 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
      *
      * @param ball ball in play
      */
-    private fun snuckPassed(ball: BallBreakout) {
+    private fun checkSnuckPassed(ball: BallBreakout) {
+        calculateDelta(ball)
         if (ball.dirX > 0 && ball.dirY > 0 && !exL && !exT) { //right down not exposed left or top
             ball.dirPositiveX()
             ball.dirPositiveY()
-            overshot(ball)
+            fixSnuckPassed(ball, dL, dT, exLeft = true, exTop = true)
         }
         if (ball.dirX > 0 && ball.dirY < 0 && !exL && !exB) {//right up not exposed left or bottom
             ball.dirPositiveX()
             ball.dirNegativeY()
-            overshot(ball)
+            fixSnuckPassed(ball, dL, dB, exLeft = true, exTop = false)
         }
         if (ball.dirX < 0 && ball.dirY < 0 && !exR && !exB) {//left up not exposed right or bottom
             ball.dirNegativeX()
             ball.dirNegativeY()
-            overshot(ball)
+            fixSnuckPassed(ball, dR, dB, exLeft = false, exTop = false)
         }
         if (ball.dirX < 0 && ball.dirY > 0 && !exR && !exT) {//left down not exposed right or top
             ball.dirNegativeX()
             ball.dirPositiveY()
-            overshot(ball)
+            fixSnuckPassed(ball, dR, dT, exLeft = false, exTop = true)
         }
+    }
+
+    /**
+     * fixes if ball sneaks past two bricks
+     * called by checkSnuckPassed
+     *
+     * @param ball ball in play
+     * @param dLR float for dL or dR
+     * @param dTB float for dT or dB
+     * @param exLeft boolean for if Left or right side is exposed. true = left, false = right
+     * @param exTop boolean for if Top or Bottom side is exposed. true = top, false = bottom
+     */
+    private fun fixSnuckPassed(ball: BallBreakout, dLR: Float, dTB: Float, exLeft: Boolean, exTop: Boolean){
+        holdOn = true
+        d = minOf(dLR, dTB)
+        if (d == dLR){
+            ball.posX = if (exLeft)
+                 posX
+            else
+                posX + width
+        }
+        else
+            ball.posY = if (exTop)
+                posY
+            else
+                posY + height
     }
 
     /**
@@ -168,6 +201,18 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
     }
 
     /**
+     * calculates delta for all sides on brick
+     *
+     * @param ball ball in play
+     */
+    private fun calculateDelta(ball: BallBreakout){
+        dT = abs(ball.posY - posY)
+        dB = abs(ball.posY - (posY + height))
+        dR = abs(ball.posX - (posX + width))
+        dL = abs(ball.posX - posX)
+    }
+
+    /**
      * checks delta according to exposed side of brick and direction of ball
      *
      * sends ball of in direction according to where it hit the brick
@@ -179,65 +224,67 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
         playSound(BRICK)
         ball.checkCollision = false
         breakReady = false
-        dT = abs(ball.posY - posY)
-        dB = abs(ball.posY - (posY + height))
-        dR = abs(ball.posX - (posX + width))
-        dL = abs(ball.posX - posX)
+        calculateDelta(ball)
 
-        //left & up
-        d = if (ball.dirX < 0 && ball.dirY < 0) {
-            if (exB && exR)
-                minOf(dB, dR)
-            else if (exB && !exR)
-                dB
-            else
-                dR
-            //right & up
-        } else if (ball.dirX > 0 && ball.dirY < 0) {
-            if (exB && exL)
-                minOf(dB, dL)
-            else if (exB && !exL)
-                dB
-            else
-                dL
-            //left & down
-        } else if (ball.dirX < 0 && ball.dirY > 0) {
-            if (exT && exR)
-                minOf(dT, dR)
-            else if (exT && !exR)
-                dT
-            else
-                dR
-            //right & down (whatever is not already checked)
-        } else {
-            if (exT && exL)
-                minOf(dT, dL)
-            else if (exT && !exL)
-                dT
-            else
-                dL
+        d = if (ball.dirX < 0 && ball.dirY < 0) { //hit-able faces: right & bottom
+            bounceDir(exLeft = false, exTop = false)
+        } else if (ball.dirX > 0 && ball.dirY < 0) { //hit-able faces: left & bottom
+            bounceDir(exLeft = true, exTop = false)
+        } else if (ball.dirX < 0 && ball.dirY > 0) { //hit-able faces: right & top
+            bounceDir(exLeft = false, exTop = true)
+        } else { //hit-able faces: left & top
+            bounceDir(exLeft = true, exTop = true)
         }
 
         when (d) {
             dT -> {
                 ball.posY = posY - ball.radius
-                ball.dirY = abs(ball.dirY) * -1
+                ball.dirNegativeY()
             }
             dB -> {
                 ball.posY = posY + height + ball.radius
-                ball.dirY = abs(ball.dirY)
+                ball.dirPositiveY()
             }
             dR -> {
                 ball.posX = posX + width + ball.radius
-                ball.dirX = abs(ball.dirX)
+                ball.dirPositiveX()
             }
             else -> {
                 ball.posX = posX - ball.radius
-                ball.dirX = abs(ball.dirX) * -1
+                ball.dirNegativeX()
             }
         }
         SharedBreakout.checkSurroundings(nr)
         breakBrick()
+    }
+
+    private fun bounceDir(exLeft: Boolean, exTop: Boolean) : Float {
+        val exLR: Boolean
+        val dLR: Float
+        val exTB: Boolean
+        val dTB: Float
+        if (exLeft){
+            exLR = exL
+            dLR = dL
+        }
+        else{
+            exLR = exR
+            dLR = dR
+        }
+        if (exTop){
+            exTB = exT
+            dTB = dT
+        }
+        else{
+            exTB = exB
+            dTB = dB
+        }
+        return if (exLR && exTB)
+            minOf(dB, dR)
+        else if (exLR && !exTB)
+            dLR
+        else
+            dTB
     }
 
     /**
@@ -251,6 +298,20 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
 
         if (classic && !SharedBreakout.maxSpeedAchieved)
             SharedBreakout.updateSpeedClassic(pointBase)
+    }
+
+    /**
+     * resets brick
+     */
+    fun reset() {
+        broken = false
+        breakable = false
+        holdOn = false
+        exT = false
+        exB = false
+        exR = false
+        exL = false
+        paint.color = resetPaint.color
     }
 
     /**

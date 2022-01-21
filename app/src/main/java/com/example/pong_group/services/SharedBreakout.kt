@@ -31,9 +31,12 @@ object SharedBreakout {
 
     //setting up bricks for the game depend on settings
     fun gameSetUpBreakout() {
-        brickCounts.clear()
+        //brickCounts.clear()
         for (i in 0 until brickCountY)
-            brickCounts.add(brickCountX)
+            if (i < brickCounts.size)
+                brickCounts[i] = brickCountX
+            else
+                brickCounts.add(brickCountX)
         lowestBrick = brickCountY - 1
         totalRows = brickCountY
     }

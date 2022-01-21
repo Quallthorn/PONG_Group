@@ -61,7 +61,6 @@ class GameThread(
                 }
                 if (cLocked) {
                     surfaceHolder.unlockCanvasAndPost(curCanvas)
-
                     cLocked = false
                 }
             }
