@@ -1,8 +1,9 @@
-package com.example.pong_group.Services
+package com.example.pong_group.services
 
 import android.content.Context
 import android.content.SharedPreferences
 
+//preferences class for keeping all games preference with help of shared preferences and load settings from memory
 class Prefs(context: Context) {
 
     private val preferences: SharedPreferences = context.getSharedPreferences("prefs", Context.MODE_PRIVATE)

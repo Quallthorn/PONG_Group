@@ -1,13 +1,11 @@
-package com.example.pong_group.Model
+package com.example.pong_group.model
 
 import io.realm.Realm
 import io.realm.RealmObject
-import io.realm.RealmQuery
 import io.realm.Sort
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.Required
 import org.bson.types.ObjectId
-import java.util.Collections.list
 
 enum class GameType(val gameType: String){
     CLASSIC("classic"),
@@ -34,7 +32,7 @@ open class ScoresRealm(
         }
 
         fun retrieveScores(type: GameType): MutableList<Scores> {
-            var gameType  = type.gameType
+            val gameType  = type.gameType
             val realm = Realm.getDefaultInstance()
             val scoresList = mutableListOf<Scores>()
 

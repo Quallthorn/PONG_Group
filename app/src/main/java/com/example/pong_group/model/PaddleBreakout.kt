@@ -1,10 +1,10 @@
-package com.example.pong_group.Model
+package com.example.pong_group.model
 
-import com.example.pong_group.Controller.App
-import com.example.pong_group.Controller.prefs
+import com.example.pong_group.controller.App
+import com.example.pong_group.controller.prefs
 import com.example.pong_group.R
-import com.example.pong_group.Services.GameSettings
-import com.example.pong_group.Services.GameSettings.curCanvas
+import com.example.pong_group.services.GameSettings
+import com.example.pong_group.services.GameSettings.curCanvas
 
 class PaddleBreakout: BasicPaddle() {
 

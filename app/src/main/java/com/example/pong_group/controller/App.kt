@@ -1,9 +1,7 @@
-package com.example.pong_group.Controller
+package com.example.pong_group.controller
 
 import android.app.Application
-import android.content.res.Resources
-import android.util.Log
-import com.example.pong_group.Services.Prefs
+import com.example.pong_group.services.Prefs
 import io.realm.Realm
 import io.realm.RealmConfiguration
 

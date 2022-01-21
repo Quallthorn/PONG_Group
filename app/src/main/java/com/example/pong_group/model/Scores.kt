@@ -1,4 +1,4 @@
-package com.example.pong_group.Model
+package com.example.pong_group.model
 
 data class Scores (
     val id: String,

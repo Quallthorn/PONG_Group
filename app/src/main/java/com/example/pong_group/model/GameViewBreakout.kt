@@ -1,4 +1,4 @@
-package com.example.pong_group.Model
+package com.example.pong_group.model
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -9,23 +9,21 @@ import android.os.Build
 import android.view.*
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import com.example.pong_group.Controller.App
+import com.example.pong_group.controller.App
 import com.example.pong_group.R
-import com.example.pong_group.Services.GameSettings
-import com.example.pong_group.Services.GameThread
 
 import android.widget.TextView
 
 import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
-import com.example.pong_group.Controller.NameInputActivity
-import com.example.pong_group.Controller.prefs
-import com.example.pong_group.Services.SharedBreakout
-import com.example.pong_group.Services.GameSettings.curCanvas
-import com.example.pong_group.Services.GameSettings.screenHeight
-import com.example.pong_group.Services.GameSettings.screenWidth
-import com.example.pong_group.Services.GameSounds
+import com.example.pong_group.controller.NameInputActivity
+import com.example.pong_group.controller.prefs
+import com.example.pong_group.services.*
+import com.example.pong_group.services.GameSettings.curCanvas
+import com.example.pong_group.services.GameSettings.screenHeight
+import com.example.pong_group.services.GameSettings.screenWidth
+import com.example.pong_group.services.GameSounds.playSound
 import com.example.pong_group.views.SurfaceViewButton
 
 class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
@@ -270,7 +268,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
         if (event != null) {
             player.posX = event.x
             if (event.action == MotionEvent.ACTION_UP){
-                GameSounds.playWall()
+                playSound(Sounds.WALL)
                 ball.letGo = true
             }
         }

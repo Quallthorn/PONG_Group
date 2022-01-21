@@ -1,22 +1,24 @@
-package com.example.pong_group.Model
+package com.example.pong_group.model
 
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import com.example.pong_group.Controller.App
-import com.example.pong_group.Controller.prefs
+import com.example.pong_group.controller.App
+import com.example.pong_group.controller.prefs
 import com.example.pong_group.R
-import com.example.pong_group.Services.GameSettings
-import com.example.pong_group.Services.GameSettings.ballCount
-import com.example.pong_group.Services.GameSettings.curCanvas
-import com.example.pong_group.Services.GameSettings.gameOver
-import com.example.pong_group.Services.GameSettings.screenHeight
-import com.example.pong_group.Services.GameSettings.screenWidth
-import com.example.pong_group.Services.GameSounds
+import com.example.pong_group.services.GameSettings
+import com.example.pong_group.services.GameSettings.ballCount
+import com.example.pong_group.services.GameSettings.curCanvas
+import com.example.pong_group.services.GameSettings.gameOver
+import com.example.pong_group.services.GameSettings.screenHeight
+import com.example.pong_group.services.GameSettings.screenWidth
+import com.example.pong_group.services.GameSounds.playSound
 import kotlin.math.sqrt
-import com.example.pong_group.Services.NumberPrinter
+import com.example.pong_group.services.NumberPrinter
+import com.example.pong_group.services.Sounds.*
 import kotlin.math.abs
 
 class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callback, Runnable {
@@ -52,7 +54,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         player = PaddlePong(false)
         p2cpu = PaddlePong(true)
         ballPong = BallPong()
-        GameSettings.curPaint.color = App.instance.resources.getColor(R.color.white)
+        GameSettings.curPaint.color = App.instance.resources.getColor(R.color.white, App.instance.theme)
         changeColors()
     }
 
@@ -113,7 +115,6 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
     /**
      * draws all objects in play
      *
-     * @param canvas canvas everything is to be drawn on
      */
     private fun draw() {
         curCanvas = mHolder!!.lockCanvas()
@@ -295,7 +296,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
         ballPong.playersReady = true
         if (!player.isCpu && !ballPong.p1Scored && !ballPong.letGo || player.isCpu && ballPong.p1Scored && !ballPong.letGo) {
             if (event.action == MotionEvent.ACTION_UP) {
-                GameSounds.playWall()
+                playSound(WALL)
                 ballPong.letGo = true
 //                        ballA.forEach {
 //                            if (!it.p1Scored)
@@ -326,7 +327,7 @@ class GameViewPONG(context: Context) : SurfaceView(context), SurfaceHolder.Callb
                 && abs(p2cpu.posX - screenWidth / 2) <= 5f
                 && abs(ballPong.posX - screenWidth / 2) <= 5f
             ) {
-                GameSounds.playWall()
+                playSound(WALL)
                 ballPong.letGo = true
 //                ballA.forEach {
 //                    if (it.p1Scored)

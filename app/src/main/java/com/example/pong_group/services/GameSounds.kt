@@ -1,16 +1,21 @@
-package com.example.pong_group.Services
+package com.example.pong_group.services
 
 import android.content.Context
 import android.media.AudioAttributes
-import android.media.AudioManager
 import android.media.SoundPool
-import android.os.Build
-import com.example.pong_group.Controller.prefs
+import com.example.pong_group.controller.prefs
 import com.example.pong_group.R
+
+enum class Sounds{
+    WALL,
+    BRICK,
+    LIFE,
+    CLICK
+}
 
 
 object GameSounds {
-
+    //Game Sounds singleton class. Union class for manage sounds inside of game
     private var soundPool: SoundPool? = null
     private var pong_beep: Int = 0
     private var pong_bop: Int = 0
@@ -20,19 +25,18 @@ object GameSounds {
 
     private var alternate = true
 
+    //Creating sound pool for can run multiply sounds  simultaneously
     fun createSoundPool(context: Context) {
-        soundPool = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val audioAttributes = AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build()
-            SoundPool.Builder()
+
+            soundPool = SoundPool.Builder()
                 .setMaxStreams(6)
                 .setAudioAttributes(audioAttributes)
                 .build()
-        } else {
-            SoundPool(6, AudioManager.STREAM_MUSIC, 0)
-        }
+
         pong_beep = soundPool?.load(context, R.raw.pong_sound_high, 1) ?: 0
         pong_bop = soundPool?.load(context, R.raw.pong_sound, 1) ?: 0
         brick = soundPool?.load(context, R.raw.brick_break, 1) ?: 0
@@ -40,33 +44,40 @@ object GameSounds {
         click = soundPool?.load(context, R.raw.click_on, 1) ?: 0
     }
 
-    fun playWall() {
+    fun playSound(sounds: Sounds) {
         if (!prefs.isGameMute) {
+            when(sounds){
+                Sounds.WALL -> playWall()
+                Sounds.BRICK -> playBrick()
+                Sounds.LIFE -> playLifeLost()
+                Sounds.CLICK -> playClick()
+            }
+        }
+    }
+
+    // sound played when ball touches wall
+    private fun playWall() {
             alternate = if (alternate) {
                 soundPool!!.play(pong_beep, 1f, 1f, 0, 0, 1f)
                 false
             } else {
                 soundPool!!.play(pong_bop, 1f, 1f, 0, 0, 1f)
                 true
-            }
         }
     }
-
-    fun playBrick() {
-        if (!prefs.isGameMute) {
+    // sound of destroying brick
+    private fun playBrick() {
             soundPool!!.play(brick, 1f, 1f, 0, 0, 1f)
-        }
+
     }
 
-    fun playLifeLost() {
-        if (!prefs.isGameMute) {
+    // sound played every time when player lost life
+    private fun playLifeLost() {
             soundPool!!.play(lost, 1f, 1f, 0, 0, 1f)
-        }
     }
 
-    fun playClick() {
-        if (!prefs.isGameMute) {
+    //sound of players click
+    private fun playClick() {
                 soundPool!!.play(click, 1f, 1f, 0, 0, 1f)
-        }
     }
 }

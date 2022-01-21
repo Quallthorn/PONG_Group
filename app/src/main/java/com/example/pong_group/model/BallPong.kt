@@ -1,12 +1,12 @@
-package com.example.pong_group.Model
+package com.example.pong_group.model
 
-import com.example.pong_group.Controller.prefs
-import com.example.pong_group.Services.GameSettings
-import com.example.pong_group.Services.GameSettings.anglesCount
-import com.example.pong_group.Services.GameSettings.ballMaxSpeed
-import com.example.pong_group.Services.GameSettings.gameOver
-import com.example.pong_group.Services.GameSounds
-import com.example.pong_group.Services.GameSounds.playWall
+import com.example.pong_group.controller.prefs
+import com.example.pong_group.services.GameSettings
+import com.example.pong_group.services.GameSettings.anglesCount
+import com.example.pong_group.services.GameSettings.ballMaxSpeed
+import com.example.pong_group.services.GameSettings.gameOver
+import com.example.pong_group.services.GameSounds.playSound
+import com.example.pong_group.services.Sounds.*
 import kotlin.math.abs
 import kotlin.math.sqrt
 
@@ -53,7 +53,7 @@ class BallPong : BasicBall() {
      */
     private fun checkWalls(){
         if (posX >= GameSettings.screenWidth - radius) {
-            playWall()
+            playSound(WALL)
             posX = GameSettings.screenWidth - radius - 1f
             if (dirY > 0) {
                 addRandomDirYPositive()
@@ -63,7 +63,7 @@ class BallPong : BasicBall() {
             dirX = -sqrt(1 - dirY * dirY)
         } else if (posX <= radius) {
             posX = radius + 1f
-            playWall()
+            playSound(WALL)
             if (dirY > 0) {
                 addRandomDirYPositive()
             } else {
@@ -109,14 +109,14 @@ class BallPong : BasicBall() {
             p1Scored = false
             posY = GameSettings.screenHeight - (player.posY + radius)
             resetBall(false)
-            GameSounds.playBrick()
+            playSound(BRICK)
         } else if (posY <= radius) {
             dirY = 1f
             dirX = 0f
             p1Scored = true
             posY = player.posY + player.height + radius
             resetBall(true)
-            GameSounds.playBrick()
+            playSound(BRICK)
         }
     }
 
@@ -205,7 +205,7 @@ class BallPong : BasicBall() {
                 }
             }
         }
-        playWall()
+        playSound(WALL)
         changeColor()
         dirY = -sqrt(1 - dirX * dirX)
     }
@@ -241,7 +241,7 @@ class BallPong : BasicBall() {
                 }
             }
         }
-        playWall()
+        playSound(WALL)
         changeColor()
         dirY = sqrt(1 - dirX * dirX)
 

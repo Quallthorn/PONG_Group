@@ -1,4 +1,4 @@
-package com.example.pong_group.Controller
+package com.example.pong_group.controller
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -8,12 +8,13 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.pong_group.Controller.App.Companion.instance
-import com.example.pong_group.Model.GameType
-import com.example.pong_group.Model.Scores
-import com.example.pong_group.Model.ScoresRealm
+import com.example.pong_group.controller.App.Companion.instance
+import com.example.pong_group.model.GameType
+import com.example.pong_group.model.Scores
+import com.example.pong_group.model.ScoresRealm
 import com.example.pong_group.R
-import com.example.pong_group.Services.GameSounds
+import com.example.pong_group.services.GameSounds.playSound
+import com.example.pong_group.services.Sounds.*
 import com.example.pong_group.adapters.HighScoreAdapter
 
 class HighScore : AppCompatActivity() {
@@ -60,7 +61,7 @@ class HighScore : AppCompatActivity() {
         scoresRadioGroup.setOnCheckedChangeListener { radioGroup, radioButtonID ->
             val selectedRadioButton = radioGroup.findViewById<RadioButton>(radioButtonID)
             var list: MutableList<Scores>
-            GameSounds.playClick()
+            playSound(CLICK)
             when (selectedRadioButton.text) {
                 "CLASSIC" -> ScoresRealm.retrieveScores(GameType.CLASSIC).also {
                     list = it
@@ -82,7 +83,7 @@ class HighScore : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         //TODO: check if it properly way to go back
-        GameSounds.playClick()
+        playSound(CLICK)
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }

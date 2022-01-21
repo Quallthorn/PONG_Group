@@ -1,10 +1,11 @@
-package com.example.pong_group.Services
+package com.example.pong_group.services
 
-import android.util.Log
-import com.example.pong_group.Controller.prefs
-import com.example.pong_group.Model.Brick
+import com.example.pong_group.controller.prefs
+import com.example.pong_group.model.Brick
 import kotlin.properties.Delegates
 
+
+//singleton class for manage breakout games and share game settings through the game
 object SharedBreakout {
     var bricks = mutableListOf<Brick>()
     var brickCountX: Int = 15
@@ -13,7 +14,7 @@ object SharedBreakout {
 
     var ballSpeedStart = 10f
 
-    //Classic
+    //settings for classic game breakout
     var ballSpeed = ballSpeedStart
     private const val speedIncrease = 4f
     var hits = 0
@@ -22,11 +23,13 @@ object SharedBreakout {
     var upperWallHit = false
     var maxSpeedAchieved = false
 
-    //non-classic
+    //non-classic version
     var brickCounts = mutableListOf<Int>()
     var lowestBrick by Delegates.notNull<Int>()
     var totalRows by Delegates.notNull<Int>()
 
+
+    //setting up bricks for the game depend on settings
     fun gameSetUpBreakout() {
         brickCounts.clear()
         for (i in 0 until brickCountY)
@@ -35,6 +38,8 @@ object SharedBreakout {
         totalRows = brickCountY
     }
 
+
+    //check bricks around for fixing bug when ball can destroy two brick at once
     fun checkSurroundings(nr: Int) {
         var onEdge: Boolean
 
@@ -80,6 +85,7 @@ object SharedBreakout {
         return false
     }
 
+    //adding score if brick was broken
     fun addScore(pointBase: Int) {
         if (prefs.isClassicInterface || prefs.isInfiniteLevels)
             GameSettings.scoreBreakout += pointBase
@@ -94,6 +100,7 @@ object SharedBreakout {
         GameSettings.updateScoreBreakout()
     }
 
+    //updating speed during the game
     fun updateSpeedClassic(brickColor: Int) {
         if (hits <= 12)
             hits++

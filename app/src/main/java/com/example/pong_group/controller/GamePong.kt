@@ -1,10 +1,10 @@
-package com.example.pong_group.Controller
+package com.example.pong_group.controller
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.pong_group.Model.GameViewBreakout
-import com.example.pong_group.Model.GameViewPONG
-import com.example.pong_group.Services.GameSounds
+import com.example.pong_group.model.GameViewPONG
+import com.example.pong_group.services.GameSounds.playSound
+import com.example.pong_group.services.Sounds.*
 
 //container controller for surfaceview for gamePong
 class GamePong : AppCompatActivity() {
@@ -17,7 +17,7 @@ class GamePong : AppCompatActivity() {
     //override onBackPressed to stop running thread when user press on back arrow
     override fun onBackPressed() {
         super.onBackPressed()
-        GameSounds.playClick()
+        playSound(CLICK)
         GameViewPONG.running = false
         try {
             GameViewPONG.thread?.join()
