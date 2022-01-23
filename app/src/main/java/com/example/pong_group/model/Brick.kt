@@ -1,5 +1,6 @@
 package com.example.pong_group.model
 
+import android.graphics.Color
 import android.graphics.Paint
 import com.example.pong_group.controller.prefs
 import com.example.pong_group.model.GameViewBreakout.Companion.breakReady
@@ -48,7 +49,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
         nr = n
     }
 
-    fun setColor(color: Int){
+    fun setColor(color: Int) {
         paint.color = color
         resetPaint.color = color
     }
@@ -75,17 +76,14 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
                 || sqrt((ball.posY - posY).pow(2) + (ball.posX - posX).pow(2)) <= ball.radius
                 || sqrt((ball.posY - posY - height).pow(2) + (ball.posX - posX).pow(2)) <= ball.radius
             ) {
-                checkSnuckPassed(ball)
+                checkSnuckPast(ball)
                 if (breakReady && !holdOn)
                     ballCollide(ball)
             } else
                 holdOn = false
         }
-
-        if (!broken && !breakable)
-            updateOvershootDir(ball, true)
-        else if (broken)
-            updateOvershootDir(ball, false)
+        if (!broken && !breakable && !holdOn)
+            fixFlewPast(ball)
         isBreakable()
     }
 
@@ -102,27 +100,27 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
      *
      * @param ball ball in play
      */
-    private fun checkSnuckPassed(ball: BallBreakout) {
+    private fun checkSnuckPast(ball: BallBreakout) {
         calculateDelta(ball)
         if (ball.dirX > 0 && ball.dirY > 0 && !exL && !exT) { //right down not exposed left or top
             ball.dirPositiveX()
             ball.dirPositiveY()
-            fixSnuckPassed(ball, dL, dT, exLeft = true, exTop = true)
+            fixSnuckPast(ball, dL, dT, exLeft = true, exTop = true)
         }
         if (ball.dirX > 0 && ball.dirY < 0 && !exL && !exB) {//right up not exposed left or bottom
             ball.dirPositiveX()
             ball.dirNegativeY()
-            fixSnuckPassed(ball, dL, dB, exLeft = true, exTop = false)
+            fixSnuckPast(ball, dL, dB, exLeft = true, exTop = false)
         }
         if (ball.dirX < 0 && ball.dirY < 0 && !exR && !exB) {//left up not exposed right or bottom
             ball.dirNegativeX()
             ball.dirNegativeY()
-            fixSnuckPassed(ball, dR, dB, exLeft = false, exTop = false)
+            fixSnuckPast(ball, dR, dB, exLeft = false, exTop = false)
         }
         if (ball.dirX < 0 && ball.dirY > 0 && !exR && !exT) {//left down not exposed right or top
             ball.dirNegativeX()
             ball.dirPositiveY()
-            fixSnuckPassed(ball, dR, dT, exLeft = false, exTop = true)
+            fixSnuckPast(ball, dR, dT, exLeft = false, exTop = true)
         }
     }
 
@@ -136,16 +134,22 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
      * @param exLeft boolean for if Left or right side is exposed. true = left, false = right
      * @param exTop boolean for if Top or Bottom side is exposed. true = top, false = bottom
      */
-    private fun fixSnuckPassed(ball: BallBreakout, dLR: Float, dTB: Float, exLeft: Boolean, exTop: Boolean){
+    private fun fixSnuckPast(
+        ball: BallBreakout,
+        dLR: Float,
+        dTB: Float,
+        exLeft: Boolean,
+        exTop: Boolean
+    ) {
         holdOn = true
+        //paint.color = Color.BLUE
         d = minOf(dLR, dTB)
-        if (d == dLR){
+        if (d == dLR) {
             ball.posX = if (exLeft)
-                 posX
+                posX
             else
                 posX + width
-        }
-        else
+        } else
             ball.posY = if (exTop)
                 posY
             else
@@ -153,18 +157,32 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
     }
 
     /**
-     * tells ball if it overshoots so it can retrace its steps
+     * fixes if ball flies past a brick and ends up on the one behind it
+     * called by update if brick is not breakable yet
      *
      * @param ball ball in play
-     * @param shouldCheck should ball retrace its steps? (or back to normal)
      */
-    private fun updateOvershootDir(ball: BallBreakout, shouldCheck: Boolean) {
+    private fun fixFlewPast(ball: BallBreakout) {
         if (ball.posX >= posX && ball.posX <= posX + width && ball.posY + ball.radius >= posY && ball.posY + ball.radius <= posY + height //ball bottom edge
             || ball.posX >= posX && ball.posX <= posX + width && ball.posY - ball.radius >= posY && ball.posY - ball.radius <= posY + height //ball top edge
             || ball.posX + ball.radius >= posX && ball.posX + ball.radius <= posX + width && ball.posY >= posY && ball.posY <= posY + height //ball right edge
             || ball.posX - ball.radius >= posX && ball.posX - ball.radius <= posX + width && ball.posY >= posY && ball.posY <= posY + height //ball left edge
         ) {
-            ball.checkCollision = shouldCheck
+            holdOn = true
+            //paint.color = Color.GRAY
+            if (maxOf(abs(ball.dirX), abs(ball.dirY)) == ball.dirX) {
+                if (ball.dirX > 0) {
+                    ball.posX = posX
+                } else {
+                    ball.posX = posX + width
+                }
+            } else {
+                if (ball.dirY > 0) {
+                    ball.posY = posY
+                } else {
+                    ball.posY = posY + height
+                }
+            }
         }
     }
 
@@ -176,16 +194,6 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
             if (exT || exB || exR || exL)
                 canBreak()
         }
-    }
-
-    /**
-     * if ball has snuck passed two bricks, hit brick knows not to break or tell ball to go back to normal
-     *
-     * @param ball ball in play
-     */
-    private fun overshot(ball: BallBreakout) {
-        ball.checkCollision = true
-        holdOn = true
     }
 
     fun draw() {
@@ -205,7 +213,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
      *
      * @param ball ball in play
      */
-    private fun calculateDelta(ball: BallBreakout){
+    private fun calculateDelta(ball: BallBreakout) {
         dT = abs(ball.posY - posY)
         dB = abs(ball.posY - (posY + height))
         dR = abs(ball.posX - (posX + width))
@@ -222,60 +230,53 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
      */
     private fun ballCollide(ball: BallBreakout) {
         playSound(BRICK)
-        ball.checkCollision = false
         breakReady = false
         calculateDelta(ball)
 
         d = if (ball.dirX < 0 && ball.dirY < 0) { //hit-able faces: right & bottom
-            bounceDir(exLeft = false, exTop = false)
+            ballDir(exLeft = false, exTop = false)
         } else if (ball.dirX > 0 && ball.dirY < 0) { //hit-able faces: left & bottom
-            bounceDir(exLeft = true, exTop = false)
+            ballDir(exLeft = true, exTop = false)
         } else if (ball.dirX < 0 && ball.dirY > 0) { //hit-able faces: right & top
-            bounceDir(exLeft = false, exTop = true)
+            ballDir(exLeft = false, exTop = true)
         } else { //hit-able faces: left & top
-            bounceDir(exLeft = true, exTop = true)
+            ballDir(exLeft = true, exTop = true)
         }
 
         when (d) {
-            dT -> {
-                ball.posY = posY - ball.radius
-                ball.dirNegativeY()
-            }
-            dB -> {
-                ball.posY = posY + height + ball.radius
-                ball.dirPositiveY()
-            }
-            dR -> {
-                ball.posX = posX + width + ball.radius
-                ball.dirPositiveX()
-            }
-            else -> {
-                ball.posX = posX - ball.radius
-                ball.dirNegativeX()
-            }
+            dT -> bounceDir(ball, dir = 'T')
+            dB -> bounceDir(ball, dir = 'B')
+            dR -> bounceDir(ball, dir = 'R')
+            else -> bounceDir(ball, dir = 'L')
         }
         SharedBreakout.checkSurroundings(nr)
         breakBrick()
     }
 
-    private fun bounceDir(exLeft: Boolean, exTop: Boolean) : Float {
+    /**
+     * calculates which direction ball should bounce
+     * id does this by looking at witch sides of the brick is exposed
+     * and what direction the ball currently has
+     *
+     * @param exLeft boolean for if Left or right side is exposed. true = left, false = right
+     * @param exTop boolean for if Top or Bottom side is exposed. true = top, false = bottom
+     */
+    private fun ballDir(exLeft: Boolean, exTop: Boolean): Float {
         val exLR: Boolean
         val dLR: Float
         val exTB: Boolean
         val dTB: Float
-        if (exLeft){
+        if (exLeft) {
             exLR = exL
             dLR = dL
-        }
-        else{
+        } else {
             exLR = exR
             dLR = dR
         }
-        if (exTop){
+        if (exTop) {
             exTB = exT
             dTB = dT
-        }
-        else{
+        } else {
             exTB = exB
             dTB = dB
         }
@@ -285,6 +286,33 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
             dLR
         else
             dTB
+    }
+
+    /**
+     * sends ball off in direction
+     *
+     * @param ball ball in play
+     * @param dir which direction the ball should bounce, valid inputs: 'L', 'R', 'T' or 'B'
+     */
+    private fun bounceDir(ball: BallBreakout, dir: Char) {
+        when (dir) {
+            'L' -> {
+                ball.posX = posX - ball.radius
+                ball.dirNegativeX()
+            }
+            'R' -> {
+                ball.posX = posX + width + ball.radius
+                ball.dirPositiveX()
+            }
+            'T' -> {
+                ball.posY = posY - ball.radius
+                ball.dirNegativeY()
+            }
+            'B' -> {
+                ball.posY = posY + height + ball.radius
+                ball.dirPositiveY()
+            }
+        }
     }
 
     /**

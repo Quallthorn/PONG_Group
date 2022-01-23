@@ -31,10 +31,7 @@ object GameSettings {
     //Scores. Keeping all current scores for games
     var scoreBreakout = 0
     var savedScore = 0
-    //TODO: Do we really need different variables for scores?
     var highScoreBreakout = 0
-    var highScoreBreakoutClassic = 0
-    var highScoreBreakoutInfinite = 0
 
     //func for getting random color from color array
     fun getRandomColorFromArray(): Int {
@@ -49,18 +46,12 @@ object GameSettings {
     fun setScreenDimen(width: Float, height: Float) {
         screenWidth = width
         screenHeight = height
-        speedCoefficient = height / baseHeightDimen
+        speedCoefficient = baseHeightDimen / height
     }
 
     //keep high scores based on game type
-    //todo: can we trim this func?
     fun updateScoreBreakout() {
-        if (scoreBreakout > when {
-                prefs.isClassicInterface -> highScoreBreakoutClassic
-                prefs.isInfiniteLevels -> highScoreBreakoutInfinite
-                else -> highScoreBreakout
-            }
-        )
+        if (scoreBreakout > highScoreBreakout)
             SharedBreakout.highScoreBroken = true
     }
 }

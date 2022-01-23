@@ -12,10 +12,10 @@ object SharedBreakout {
     var brickCountY: Int = 0
     var highScoreBroken = false
 
-    var ballSpeedStart = 10f
+    var ballSpeedStart = 0f
 
     //settings for classic game breakout
-    var ballSpeed = ballSpeedStart
+    var ballSpeed = 0f
     private const val speedIncrease = 4f
     var hits = 0
     private var orangeHit = false

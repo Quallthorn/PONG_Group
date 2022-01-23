@@ -65,15 +65,15 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     init {
         if (classic) {
             lives = 1
-            GameSettings.highScoreBreakoutClassic = ScoresRealm.findHighestScore(GameType.CLASSIC)
+            GameSettings.highScoreBreakout = ScoresRealm.findHighestScore(GameType.CLASSIC)
             SharedBreakout.ballSpeedStart = 10f
+            SharedBreakout.ballSpeed = SharedBreakout.ballSpeedStart
             SharedBreakout.brickCountX = 14
             SharedBreakout.brickCountY = 8
             colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks_classic)
         } else {
             if (infinite)
-                GameSettings.highScoreBreakoutInfinite =
-                    ScoresRealm.findHighestScore(GameType.INFINITE)
+                GameSettings.highScoreBreakout = ScoresRealm.findHighestScore(GameType.INFINITE)
             else
                 GameSettings.highScoreBreakout = ScoresRealm.findHighestScore(GameType.BREAKOUT)
             colorArray = App.instance.resources.obtainTypedArray(R.array.breakout_bricks)
@@ -102,11 +102,10 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
     private fun setup() {
         ball.letGo = false
         basedOnScreenSize()
-        if (level == 1 || level == 2 && !classic){
+        if (level == 1 || level == 2 && !classic) {
             SharedBreakout.bricks.clear()
             createBricks()
-        }
-        else
+        } else
             resetBricks()
         ball.centerBall(player.posX, player.posY)
         outOfLives = false
@@ -218,7 +217,7 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
      * resets bricks fore a new level
      */
     private fun resetBricks() {
-        for (i in 0 until (SharedBreakout.brickCountX * SharedBreakout.brickCountY)){
+        for (i in 0 until (SharedBreakout.brickCountX * SharedBreakout.brickCountY)) {
             SharedBreakout.bricks[i].reset()
         }
         breakableTopAndBottom()
@@ -450,20 +449,8 @@ class GameViewBreakout(context: Context) : SurfaceView(context), SurfaceHolder.C
                     context.theme
                 )
             )
-            when {
-                classic -> highScoreText.text =
-                    context.getString(
-                        R.string.high_scores_text,
-                        GameSettings.highScoreBreakoutClassic
-                    )
-                infinite -> highScoreText.text =
-                    context.getString(
-                        R.string.high_scores_text,
-                        GameSettings.highScoreBreakoutInfinite
-                    )
-                else -> highScoreText.text =
-                    context.getString(R.string.high_scores_text, GameSettings.highScoreBreakout)
-            }
+            highScoreText.text =
+                context.getString(R.string.high_scores_text, GameSettings.highScoreBreakout)
         }
         highScoreText.textSize = textSize
         highScoreText.gravity = Gravity.END

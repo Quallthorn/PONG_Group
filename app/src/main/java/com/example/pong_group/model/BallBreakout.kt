@@ -16,7 +16,6 @@ import com.example.pong_group.services.Sounds.*
 import kotlin.math.sqrt
 
 class BallBreakout : BasicBall() {
-    var checkCollision = false
 
     init {
         speed = 15f * GameSettings.speedCoefficient
@@ -171,15 +170,8 @@ class BallBreakout : BasicBall() {
      * until it hits the brick it overshot
      */
     private fun move() {
-        //"forward"
-        if (!checkCollision) {
-            posX += speed * dirX
-            posY += speed * dirY
-        } else //"backwards"
-        {
-            posX -= speed * dirX * 0.25f
-            posY -= speed * dirY * 0.25f
-        }
+        posX += speed * dirX
+        posY += speed * dirY
     }
 
     /**
