@@ -142,7 +142,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
         exTop: Boolean
     ) {
         holdOn = true
-        paint.color = Color.BLUE
+        //paint.color = Color.BLUE
         d = minOf(dLR, dTB)
         if (d == dLR) {
             ball.posX = if (exLeft)
@@ -169,7 +169,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
             || ball.posX - ball.radius >= posX && ball.posX - ball.radius <= posX + width && ball.posY >= posY && ball.posY <= posY + height //ball left edge
         ) {
             holdOn = true
-            paint.color = Color.GRAY
+            //paint.color = Color.GRAY
             if (maxOf(abs(ball.dirX), abs(ball.dirY)) == ball.dirX) {
                 if (ball.dirX > 0) {
                     ball.posX = posX
@@ -347,6 +347,6 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
      */
     private fun canBreak() {
         breakable = true
-        paint.color = Color.WHITE
+        //paint.color = Color.WHITE
     }
 }
