@@ -142,7 +142,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
         exTop: Boolean
     ) {
         holdOn = true
-        //paint.color = Color.BLUE
+        paint.color = Color.BLUE
         d = minOf(dLR, dTB)
         if (d == dLR) {
             ball.posX = if (exLeft)
@@ -169,7 +169,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
             || ball.posX - ball.radius >= posX && ball.posX - ball.radius <= posX + width && ball.posY >= posY && ball.posY <= posY + height //ball left edge
         ) {
             holdOn = true
-            //paint.color = Color.GRAY
+            paint.color = Color.GRAY
             if (maxOf(abs(ball.dirX), abs(ball.dirY)) == ball.dirX) {
                 if (ball.dirX > 0) {
                     ball.posX = posX
@@ -233,21 +233,21 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
         breakReady = false
         calculateDelta(ball)
 
-        d = if (ball.dirX < 0 && ball.dirY < 0) { //hit-able faces: right & bottom
-            ballDir(exLeft = false, exTop = false)
-        } else if (ball.dirX > 0 && ball.dirY < 0) { //hit-able faces: left & bottom
-            ballDir(exLeft = true, exTop = false)
-        } else if (ball.dirX < 0 && ball.dirY > 0) { //hit-able faces: right & top
-            ballDir(exLeft = false, exTop = true)
-        } else { //hit-able faces: left & top
-            ballDir(exLeft = true, exTop = true)
+        d = if (ball.dirX < 0 && ball.dirY < 0) { //ball coming from: right & bottom
+            ballDir(fromLeft = false, fromTop = false)
+        } else if (ball.dirX > 0 && ball.dirY < 0) { //ball coming from: left & bottom
+            ballDir(fromLeft = true, fromTop = false)
+        } else if (ball.dirX < 0 && ball.dirY > 0) { //ball coming from: right & top
+            ballDir(fromLeft = false, fromTop = true)
+        } else { //ball coming from: left & top
+            ballDir(fromLeft = true, fromTop = true)
         }
 
         when (d) {
             dT -> bounceDir(ball, dir = 'T')
             dB -> bounceDir(ball, dir = 'B')
             dR -> bounceDir(ball, dir = 'R')
-            else -> bounceDir(ball, dir = 'L')
+            dL -> bounceDir(ball, dir = 'L')
         }
         SharedBreakout.checkSurroundings(nr)
         breakBrick()
@@ -258,22 +258,22 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
      * id does this by looking at witch sides of the brick is exposed
      * and what direction the ball currently has
      *
-     * @param exLeft boolean for if Left or right side is exposed. true = left, false = right
-     * @param exTop boolean for if Top or Bottom side is exposed. true = top, false = bottom
+     * @param fromLeft boolean for witch direction ball is coming from. true = left, false = right
+     * @param fromTop boolean for witch direction ball is coming from. true = top, false = bottom
      */
-    private fun ballDir(exLeft: Boolean, exTop: Boolean): Float {
+    private fun ballDir(fromLeft: Boolean, fromTop: Boolean): Float {
         val exLR: Boolean
         val dLR: Float
         val exTB: Boolean
         val dTB: Float
-        if (exLeft) {
+        if (fromLeft) {
             exLR = exL
             dLR = dL
         } else {
             exLR = exR
             dLR = dR
         }
-        if (exTop) {
+        if (fromTop) {
             exTB = exT
             dTB = dT
         } else {
@@ -281,7 +281,7 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
             dTB = dB
         }
         return if (exLR && exTB)
-            minOf(dB, dR)
+            minOf(dTB, dLR)
         else if (exLR && !exTB)
             dLR
         else
@@ -347,6 +347,6 @@ class Brick(w: Float, h: Float, x: Float, y: Float, s: Int, n: Int) {
      */
     private fun canBreak() {
         breakable = true
-        //paint.color = Color.WHITE
+        paint.color = Color.WHITE
     }
 }
